@@ -1,0 +1,22 @@
+{% extends 'SystemController.base.html.twig' %}
+{% block body %}
+    <h2>{{ Form.Label }}</h2>
+    <p>{{ Form.Description }}</p>
+    {% if Form.Keydict.hasException %}
+        <div class="alert alert-danger" role="alert">There were problems with your submission and the form was not saved.  Please review the form and try again.</div>
+    {% elseif Form.Keydict.Saved %}
+        <div class="alert alert-success" role="alert">Your changes were saved.</div>
+    {% endif %}
+    <form class="form-horizontal" method="POST" action="{{ Form.Handler }}" id="{{ Form.FormName }}">
+        <input type="hidden" name="submitform" value="true"/>
+        {% for Field in Form.Keydict.Fields  %}
+            {{ Macro.input(Field) }}
+        {% endfor %}
+        <div class="form-group">
+            <div class="col-sm-offset-3 col-sm-9">
+                <button type="submit" class="btn btn-default">Submit</button>
+            </div>
+        </div>
+    </form>
+
+{% endblock %}

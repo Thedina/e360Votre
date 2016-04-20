@@ -1,0 +1,194 @@
+<script id="hb-submittalphase-level2" type="text/x-handlebars-template">
+    <div class="submittalphase-level2">
+        <div class="row">
+            <div class="col-sm-6">
+                <h3>{{phase.title}} <small>{{phase.description}}</small></h3>
+            </div>
+            <div class="col-sm-6 clearfix use-perm" data-ifperm="Submittal:create || Submittal:write">
+                    <div class="btn-group pull-right h3" role="group" aria-label="Submittal Options">
+                        <button type="button" class="phase-btn-new btn btn-info use-perm" data-depth="{{phase.depth}}" data-ifperm="Submittal:create">New Phase</button>
+                        <button type="button" class="phase-btn-edit btn btn-default use-perm" data-idphase="{{phase.idSubmittalPhase}}" data-ifperm="Submittal:write">Edit</button>
+                    </div>
+            </div>
+            <div class="col-sm-12">
+                <ol class="breadcrumb">{{{ breadcrumbLinks phase.links }}}</ol>
+            </div>
+        </div>
+        <div class="submittalphase-children-container">
+        </div>
+    </div>
+</script>
+
+<script id="hb-submittalphase-level1" type="text/x-handlebars-template">
+    <div class="submittalphase-level1 panel panel-primary">
+        <div class="panel-heading clearfix"><strong><a href="{{meta.path}}/{{phase.idSubmittalPhase}}">{{phase.title}}</a></strong>
+            <span class="pull-right use-perm" data-ifperm="Submittal:create || Submittal:write || Submittal:delete">
+                <span class="dropdown">
+                  <button class="menu-button btn btn-primary btn-xs" style="padding-left: 2px; padding-right: 2px; margin-left: 1em;" id="dLabel-phase-{{phase.idSubmittalPhase}}" data-target="#" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                      <span class="glyphicon glyphicon-option-vertical" aria-hidden="true"></span>
+                  </button>
+                  <ul class="phase-menu dropdown-menu dropdown-menu-right" aria-labelledby="dLabel-phase-{{phase.idSubmittalPhase}}">
+                      <li><a href="#" data-action="new" data-depth="{{phase.depth}}" class="use-perm" data-ifperm="Submittal:create">New Phase</a></li>
+                      <li><a href="#" data-action="edit" data-idphase="{{phase.idSubmittalPhase}}" class="use-perm" data-ifperm="Submittal:write">Edit</a></li>
+                      <li><a href="#" data-action="delete" data-idphase="{{phase.idSubmittalPhase}}" class="use-perm" data-ifperm="Submittal:delete">Delete</a></li>
+                  </ul>
+                </span>
+            </span>
+            <p><small><em>{{phase.description}}</em></small></p></div>
+        <div class="table-responsive">
+            <table class="table">
+                <thead><tr><th>Name</th><th>Status</th><th>In</th><th>Due</th><th>Out</th></tr></thead>
+                <tbody class="submittalphase-children-container"></tbody>
+            </table>
+        </div>
+    </div>
+</script>
+
+<script id="hb-submittalphase-level1-expanded" type="text/x-handlebars-template">
+    <div class="submittalphase-level1">
+        <div class="row">
+            <div class="col-sm-6">
+                <h3>{{phase.title}} <small>{{phase.description}}</small></h3>
+            </div>
+            <div class="col-sm-6 clearfix use-perm" data-ifperm="Submittal:create || Submittal:write || Submittal:delete">
+                    <div class="btn-group pull-right h3" role="group" aria-label="Submittal Options">
+                        <button type="button" class="phase-btn-new btn btn-info use-perm" data-depth="{{phase.depth}}" data-ifperm="Submittal:create">New Phase</button>
+                        <button type="button" class="phase-btn-edit btn btn-default use-perm" data-idphase="{{phase.idSubmittalPhase}}" data-ifperm="Submittal:write">Edit</button>
+                        <button type="button" class="phase-btn-delete btn btn-default use-perm" data-idphase="{{phase.idSubmittalPhase}}">Delete</button>
+                    </div>
+            </div>
+            <div class="col-sm-12">
+                <ol class="breadcrumb">{{{ breadcrumbLinks phase.links }}}</ol>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead><tr><th>Name</th><th>Status</th><th>In</th><th>Due</th><th>Out</th></tr></thead>
+                    <tbody class="submittalphase-children-container"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script id="hb-submittalphase-level0" type="text/x-handlebars-template">
+    <tr>
+        <td><a href="{{meta.path}}/{{phase.idSubmittalPhase}}">{{phase.title}}</a> <em><small>{{phase.description}}</small></em></td>
+        <td>{{#if phase.activeSubmittalNumber}} #{{phase.activeSubmittalNumber}} {{/if}} {{{submittalStatus phase.activeSubmittalStatus}}}</td>
+        <td>{{dateFormatDisplay phase.activeSubmittalCreated}}</td>
+        <td>{{dateFormatDisplay phase.firstReviewDue}}</td>
+        <td>{{dateFormatDisplay phase.lastReviewOut}}</td>
+    </tr>
+</script>
+
+<script id="hb-submittalphase-level0-expanded" type="text/x-handlebars-template">
+    <div class="submittalphase-level0-expanded">
+        <div class="row">
+            <div class="col-sm-6">
+                <h3>{{phase.title}} <small>{{phase.description}}</small></h3>
+            </div>
+            <div class="col-sm-6 clearfix use-perm" data-ifperm="Submittal:create || Submittal:write || Submittal:delete">
+                    <div class="btn-group pull-right h3" role="group" aria-label="Submittal Options">
+                        <button type="button" class="submittal-btn-new btn btn-info use-perm" data-ifperm="Submittal:create">New Submittal</button>
+                        <button type="button" class="phase-btn-edit btn btn-default use-perm" data-idphase="{{phase.idSubmittalPhase}}" data-ifperm="Submittal:write">Edit</button>
+                        <button type="button" class="phase-btn-delete btn btn-default use-perm" data-idphase="{{phase.idSubmittalPhase}}" data-ifperm="Submittal:delete">Delete</button>
+                    </div>
+            </div>
+            <div class="col-sm-12">
+                <ol class="breadcrumb">{{{ breadcrumbLinks phase.links }}}</ol>
+            </div>
+        </div>
+        <div class="submittal-list"></div>
+    </div>
+</script>
+
+<script id="hb-submittal-incomplete-banner" type="text/x-handlebars-template">
+    <div class="alert alert-danger" role="alert"><button class="complete-submittal btn btn-danger pull-right">Complete &amp; Submit</button><strong>Incomplete Submittal</strong> The submittal is incomplete and must be marked complete when you have uploaded all necessary files.  Marking the submittal complete will prevent further changes.</div>
+</script>
+
+<script id="hb-submittal-single-open" type="text/x-handlebars-template">
+    <div class="submittal-single panel panel-primary">
+        <div class="panel-heading clearfix"><span class="header-text"><strong>#{{submittal.sequenceNumber}} {{submittal.title}} </strong></span> <span class="pull-right"><strong>{{{submittalStatus submittal.status}}}</strong>
+            <span class="dropdown">
+              <button class="menu-button btn btn-primary btn-xs" style="padding-left: 2px; padding-right: 2px; margin-left: 1em;" id="dLabel-submittal-{{submittal.idSubmittal}}" data-target="#" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                  <span class="glyphicon glyphicon-option-vertical" aria-hidden="true"></span>
+              </button>
+              <ul class="submittal-menu dropdown-menu dropdown-menu-right" aria-labelledby="dLabel-submittal-{{submittal.idSubmittal}}">
+                  <li><a href="#" class="use-perm" data-action="edit" data-ifperm="Submittal:write">Edit</a></li>
+                  <li><a href="#" class="use-perm" data-action="{{submittalCloseOpenAction submittal.status}}" data-ifperm="Submittal:write">{{submittalCloseOpenText submittal.status}}</a></li>
+                  <li><a href="#" class="use-perm" data-action="delete" data-idsubmittal="{{submittal.idSubmittal}}" data-ifperm="Submittal:delete">Delete</a></li>
+                  <li><a href="{{meta.path}}/submittals/{{submittal.idSubmittal}}/reviews">Reviews</a></li>
+              </ul>
+            </span></span>
+        </div>
+        <div class="submittal-contents">
+            <div class="panel-body" id="no-documents-for-submittal">There are no documents uploaded for submittal.</div>
+        </div>
+    </div>
+</script>
+
+<script id="hb-submittalphase-addedit-modal" type="text/x-handlebars-template">
+    <div class="submittalphase-addedit-modal modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    <h4 class="modal-title">Add/Edit Submittal Phase</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                            <label for="submittalphase-addedit-title" class="col-sm-2 control-label">Title</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="submittalphase-addedit-title" placeholder="Title">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="submittalphase-addedit-description" class="col-sm-2 control-label">Scope</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="submittalphase-addedit-description" placeholder="Scope">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary">Save</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+</script>
+
+<script id="hb-submittal-content-incomplete" type="text/x-handlebars-template">
+    <div class="panel-body">
+        <form class="form-horizontal">
+            <div class="btn-group pull-right" role="group" aria-label="Attach Files">
+                <button type="button" class="btn-add-file btn btn-default">Add File</button>
+                <button class="btn btn-danger btn-complete-submittal">Complete &amp; Submit</button>
+            </div>
+            <div class="clearfix"></div>
+            <p class="p-follows-btn">Drag and drop files below, or use 'Add File', to add files to this submittal. The files are not uploaded until 'Upload' or 'Complete &amp; Submit' are clicked.  Completing the submittal prevents further file additions. </p>
+        </form>
+    </div>
+</script>
+
+<script id="hb-submittal-reviews-main" type="text/x-handlebars-template">
+    <div class="table-responsive no-margin-bottom no-border review-table">
+        <table class="table no-margin-bottom">
+            <thead><tr><th>Reviews</th><th>Status</th><th>Reviewers</th><th>Due</th><th><a class="btn btn-default btn-xs pull-right" href="{{meta.path}}/submittals/{{submittal.idSubmittal}}/reviews">Manage Reviews</a></th></tr></thead>
+            <tbody class="review-list"></tbody>
+        </table>
+    </div>
+</script>
+
+<script id="hb-submittal-review-item" type="text/x-handlebars-template">
+    <tr>
+        <td>{{review.title}}</td>
+        <td>{{reviewStatus review.status}}</td>
+        <td>{{reviewerName review.idUser reviewerTable}}</td>
+        <td>{{dateFormatDisplay review.dateDue}}</td>
+        <th><a class="btn btn-default btn-xs pull-right" href="{{meta.path}}/submittals/{{submittal.idSubmittal}}/reviews/{{review.idReview}}">View</a></th>
+    </tr>
+</script>

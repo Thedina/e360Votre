@@ -1,0 +1,68 @@
+{% extends 'SystemController.backbone.base.html.twig' %}
+{% block moduleCSS %}
+    <link rel="Stylesheet" type="text/css" href="{{ Response.meta.SystemController.static }}/css/fileupload.css"/>
+    <link rel="Stylesheet" type="text/css" href="{{ Response.meta.Review.static }}/css/reviews.css"/>
+{% endblock %}
+{% block body %}
+    <div id="content-container"></div>
+{% endblock %}
+{% block moduleJS %}
+    <script src="{{ Response.meta.SystemController.static }}/js/util.js"></script>
+    <script src="{{ Response.meta.SystemController.static }}/js/bizzybone.js"></script>
+    <script src="{{ Response.meta.SystemController.static }}/js/dropzone.js"></script>
+    <script src="{{ Response.meta.SystemController.static }}/js/fileUpload.js"></script>
+    <script src="{{ Response.meta.SystemController.static }}/js/globalHelpers.js"></script>
+    <script src="{{ Response.meta.Review.static }}/js/helpers/reviewHelpers.js" type="text/javascript"></script>
+    <script src="{{ Response.meta.Review.static }}/js/models/reviews.js" type="text/javascript"></script>
+    <script src="{{ Response.meta.Review.static }}/js/views/reviews.js" type="text/javascript"></script>
+{% endblock %}
+{% block javascript %}
+    <script type="text/javascript">
+        $.fn.datepicker.defaults.format = 'm/d/yyyy';
+        $.fn.datepicker.defaults.autoclose = true;
+
+        $(document).ready(function() {
+            var getData, metaData;
+
+            // Precompile all the relevant templates
+            _.each({
+                reviewListMain: '#hb-review-list-main',
+                reviewListItem: '#hb-review-list-item',
+                reviewInsideMain: '#hb-review-inside-main',
+                reviewSubmittalContents: '#hb-review-submittal-contents',
+                reviewCommentsMain: '#hb-review-comments-main',
+                reviewFileUpload: '#hb-review-file-upload',
+                reviewModalAddEdit: '#hb-review-modal-addedit'
+            }, hbCompileTemplate);
+
+            // Precompile file upload templates
+            FileUpload.compileTemplates(hbCompileTemplate);
+
+            reviewModalAddEdit = new ModalAddEditReview();
+
+            getData = hbInitData().data;
+            metaData = hbInitData().meta;
+
+            //Individual review or review list?
+            if(_.has(getData, 'idReview')) {
+                baseModel = new ReviewModel(getData, {urlPrefix: metaData.Review.parentAPIPath});
+                baseView = new ReviewMainView({model: baseModel});
+                $('#content-container').append(baseView.render().$el);
+            }
+            else if(_.has(getData, 'reviews')) {
+                baseCollection = new ReviewList(_.map(getData.reviews, function(reviewData) {
+                    return new ReviewModel(reviewData, {urlPrefix: metaData.Review.parentAPIPath});
+                }));
+                baseView = new ReviewListMainView({
+                    collection: baseCollection,
+                    urlPrefix: metaData.Review.parentAPIPath,
+                    reviewTypes: getData.reviewTypes,
+                    reviewers: getData.reviewers,
+                    groups: getData.groups,
+                    links: getData.links
+                });
+                $('#content-container').append(baseView.render().$el);
+            }
+        });
+    </script>
+{% endblock %}

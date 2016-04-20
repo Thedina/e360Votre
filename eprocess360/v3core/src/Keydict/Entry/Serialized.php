@@ -1,0 +1,25 @@
+<?php
+
+namespace eprocess360\v3core\Keydict\Entry;
+use eprocess360\v3core\Keydict\Entry;
+use eprocess360\v3core\DB;
+
+
+class Serialized extends Entry
+{
+    public function __construct($name, $label, $default = NULL) {
+        parent::__construct($name, $label, $default);
+        $this->specification = [
+            'type'=>DB::TEXT
+        ];
+    }
+
+    public function wakeup($value) {
+        $this->value = unserialize($value);
+        return $this;
+    }
+
+    public function sleep($depth = 0) {
+        return serialize($this->value);
+    }
+}

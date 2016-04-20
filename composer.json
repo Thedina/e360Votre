@@ -1,0 +1,23 @@
+{
+
+    "require": {
+        "phpunit/phpunit": "4.7.*",
+        "phpunit/dbunit": "1.4.0",
+        "google/apiclient": "2.0.0-RC4",
+        "dompdf/dompdf": "v0.7.0-beta",
+        "ckeditor/ckeditor": "4.5.2",
+        "mikey179/vfsStream": "1.5.0",
+        "phpmailer/phpmailer": "v5.2.10",
+        "altorouter/altorouter": "v1.1.0",
+        "twig/twig": "~1.0",
+        "jlawrence/eos": "3.*"
+    },
+  "autoload": {
+    "psr-4": {
+      "eprocess360\\v3core\\":"eprocess360/v3core/src/",
+      "eprocess360\\v3modules\\":"eprocess360/v3modules/src/",
+      "eprocess360\\v3controllers\\":"eprocess360/v3controllers/src/",
+      "App\\":"app/"
+    }
+  }
+}

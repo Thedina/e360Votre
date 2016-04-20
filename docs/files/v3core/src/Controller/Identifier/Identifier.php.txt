@@ -1,0 +1,106 @@
+<?php
+
+namespace eprocess360\v3core\Controller\Identifier;
+
+use eprocess360\v3core\Controller\Controller;
+use eprocess360\v3core\Controller\Module;
+use eprocess360\v3core\Controller\Persistent;
+use eprocess360\v3core\DB;
+
+/**
+ * Class Identifier
+ * @package eprocess360\v3core\Controller\Identifier
+ *
+ * Allows for the automatic identification of Controllers.  Used by Persistent Controllers.
+ */
+class Identifier
+{
+    private static $instance;
+    private $table = [];
+    private $reverse = [];
+
+    /**
+     * Identifier constructor.
+     */
+    protected function __construct()
+    {
+        $data = DB::sql("SELECT Controllers.idController as id, Controllers.path FROM Controllers");
+        foreach ($data as $row) {
+            $row['id'] = (int)$row['id'];
+            $row['path'] = stripslashes($row['path']);
+            $this->table[$row['id']] = $row;
+            $this->reverse[$row['path']] = $row['id'];
+        }
+    }
+
+    /**
+     * @return Identifier
+     */
+    public static function get()
+    {
+        if (null === static::$instance) {
+            static::$instance = new static();
+        }
+        return static::$instance;
+    }
+
+    /**
+     * @param $id
+     * @return null
+     */
+    public function byId($id)
+    {
+        return isset($this->table[$id])?$this->table[$id]['path']:null;
+    }
+
+    /**
+     * @param $path
+     * @return null
+     */
+    public function byPath($path)
+    {
+        return isset($this->reverse[$path])?$this->table[$this->reverse[$path]]['id']:null;
+    }
+
+    /**
+     * @param Controller $controller
+     * @return int
+     * @throws \Exception
+     * @throws \eprocess360\v3core\Controller\ControllerException
+     */
+    public function make(Controller $controller)
+    {
+        if($controller->uses('Module')){
+            /** @var Module|Controller $controller */
+            $data = [
+                'path'=>$controller->getModulePath(),
+            ];
+        }
+        else {
+            $data = [
+                'path' => $controller->getPath(),
+            ];
+        }
+        $path = DB::cleanse($data['path']);
+        $class = DB::cleanse($controller->getClass());
+        $status = (int)$controller->uses('Persistent'); // If the Controller uses Persistent, it is commissioned
+        DB::sql("INSERT INTO Controllers (class, title, path, status_0)
+                 VALUES ('{$class}', '{$controller->getName()}', '{$path}', {$status})");
+        $data['id'] = (int)DB::iid();
+        $this->addController($data);
+        if($status){
+            /** @var Persistent $controller */
+            $controller->commission();
+        }
+        return $data['id'];
+    }
+
+    /**
+     * @param $data
+     */
+    private function addController($data)
+    {
+        $this->table[$data['id']] = $data;
+        $this->reverse[$data['path']] = $data['id'];
+    }
+}

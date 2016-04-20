@@ -1,0 +1,57 @@
+{% extends 'SystemController.backbone.base.html.twig' %}
+{% block moduleCSS %}
+{% endblock %}
+{% block body %}
+    <div id="content-container"></div>
+{% endblock %}
+{% block moduleJS %}
+    <script src="{{ Response.meta.SystemController.static }}/js/util.js"></script>
+    <script src="{{ Response.meta.SystemController.static }}/js/bizzybone.js"></script>
+    <script src="{{ Response.meta.SystemController.static }}/js/globalHelpers.js"></script>
+    <script src="{{ Response.meta.Group.static }}/js/models/groups.js"></script>
+    <script src="{{ Response.meta.Review.static }}/js/helpers/reviewHelpers.js" type="text/javascript"></script>
+    <script src="{{ Response.meta.Review.static }}/js/models/reviewSettings.js" type="text/javascript"></script>
+    <script src="{{ Response.meta.Review.static }}/js/views/reviewSettings.js" type="text/javascript"></script>
+{% endblock %}
+{% block javascript %}
+    <script type="text/javascript">
+        $.fn.datepicker.defaults.autoclose = true;
+
+        $(document).ready(function() {
+            var getData, metaData, conditionOptions;
+            //var baseCollection, baseView;
+
+            // Precompile all the relevant templates
+            _.each({
+                reviewTypeListMain: $('#hb-review-type-list-main'),
+                reviewTypeListItem: $('#hb-review-type-list-item'),
+                reviewTypeEditModal: $('#hb-review-type-edit-modal'),
+                reviewRuleListMain: $('#hb-review-rule-list-main'),
+                reviewRuleListItem: $('#hb-review-rule-list-item'),
+                reviewRuleEditModal: $('#hb-review-rule-edit-modal'),
+                reviewRuleEditModalCondition: $('#hb-review-rule-edit-modal-condition')
+            }, hbCompileTemplate);
+
+            getData = hbInitData().data;
+            metaData = hbInitData().meta.Review;
+
+            reviewTypeModal = new ReviewTypesModalView();
+            reviewRuleModal = new ReviewRulesModalView({conditionOptions: metaData.conditionOptions});
+
+            if(_.isArray(getData)) {
+                if(metaData.objectType === 'reviewType') {
+                    baseCollection = new ReviewTypeList();
+                    baseCollection.reset(getData, {silent: true});
+                    baseView = new ReviewTypesMainView({collection: baseCollection, el: $('#content-container')});
+                    baseView.render();
+                }
+                else if(metaData.objectType === 'reviewRule') {
+                    baseCollection = new ReviewRuleList();
+                    baseCollection.reset(getData, {silent: true});
+                    baseView = new ReviewRulesMainView({collection: baseCollection, el: $('#content-container')});
+                    baseView.render();
+                }
+            }
+        });
+    </script>
+{% endblock %}

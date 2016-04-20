@@ -1,0 +1,465 @@
+<script id="hb-fees-main" type="text/x-handlebars-template">
+        <div class="row">
+            <div class="col-sm-8">
+                <h3>Fees <small>Assessed for <a href="" id="btn-edit-feeschedule"></a></small></h3>
+            </div>
+            <div class="col-sm-4">
+                <h3 class="pull-right">
+                    <span class="btn-group" role="group" aria-label="Pay Fees">
+                        <button type="button" class="btn btn-success" id="btn-pay-fees">Pay <i class="fa fa-usd"></i> <span id="pay-btn-balance"></span></button>
+                    </span>
+                </h3>
+            </div>
+        </div>
+        {{#if meta.text.contact }}
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="alert alert-info">{{{ meta.text.contact }}}</div>
+            </div>
+        </div>
+        {{/if}}
+</script>
+
+<script id="hb-fee-list-balance-main" type="text/x-handlebars-template">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="panel panel-primary">
+                <div class="panel-heading clearfix">
+                    <strong>{{feeList.title}}</strong>
+                    <span class="h4 pull-right" style="margin: 0;">
+                        <small style="color: #FFF; opacity: 0.75;">Balance</small> {{formatMoney feeList.balance true}}
+                        <span class="dropdown">
+                            <button class="btn btn-primary btn-xs use-perm" data-ifperm="Fee:create || Fee:write" style="padding-left: 2px; padding-right: 2px; margin-left: 1em;" id="dLabel" data-target="#" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                <span class="glyphicon glyphicon-option-vertical" aria-hidden="true"></span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-right fee-menu" aria-labelledby="dLabel">
+                                <li><a href="#" class="use-perm" data-ifperm="Fee:create" data-action="new">Add New</a></li>
+                                <li><a href="#" class="use-perm" data-ifperm="Fee:write" data-action="recalculate">Recalculate</a></li>
+                            </ul>
+                        </span>
+                    </span>
+                </div>
+                {{#if feeList.hasFees}}
+                    <div class="table-responsive fee-table">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr><th>Name</th><th>Quantity</th><th>Unit Cost</th><th>Total</th><th>Paid</th><th>Balance</th><th style="width: 36px;"></th></tr>
+                            </thead>
+                            <tbody class="fee-list"></tbody>
+                            <tfoot>
+                                <tr><th></th><th></th><th></th><th>{{formatMoney feeList.total true}}</th><th>{{formatMoney feeList.paid true}}</th><th>{{formatMoney feeList.balance true}}</th><th></th></tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                {{else}}
+                    <div class="panel-body nofees-placeholder" style="font-weight: bold;">
+                       No {{feeList.title}}.
+                    </div>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+</script>
+
+<script id="hb-fee-list-balance-item" type="text/x-handlebars-template">
+    <tr>
+        <td>{{fee.feeTemplate.title}}</td>
+        <td>{{displayQuantity fee}}</td>
+        <td>{{displayUnitPrice fee true}}</td>
+        <td>{{formatMoney fee.total true}}</td>
+        <td>{{formatMoney fee.paid true}}</td>
+        <td>{{formatMoney fee.balance true}}</td>
+        <td>
+            <a class="btn btn-default btn-xs btn-edit use-perm" data-ifperm="Fee:write">Edit</a>
+        </td>
+    </tr>
+</script>
+
+<script id="hb-fee-list-total-main" type="text/x-handlebars-template">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="panel panel-primary">
+                <div class="panel-heading clearfix">
+                    <strong>{{feeList.title}}</strong>
+                    <span class="h4 pull-right" style="margin: 0;">
+                        <small style="color: #FFF; opacity: 0.75;">Total</small> {{formatMoney feeList.total true}}
+                        <span class="dropdown">
+                            <button class="btn btn-primary btn-xs use-perm" data-ifperm="Fee:create || Fee:write" style="padding-left: 2px; padding-right: 2px; margin-left: 1em;" id="dLabel" data-target="#" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                <span class="glyphicon glyphicon-option-vertical" aria-hidden="true"></span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-right fee-menu" aria-labelledby="dLabel">
+                                <li><a href="#" class="use-perm" data-ifperm="Fee:create" data-action="new">Add New</a></li>
+                                <li><a href="#" class="use-perm" data-ifperm="Fee:write" data-action="recalculate">Recalculate</a></li>
+                            </ul>
+                        </span>
+                    </span>
+                </div>
+                {{#if feeList.hasFees}}
+                    <div class="table-responsive fee-table">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr><th>Name</th><th>Quantity</th><th>Unit Cost</th><th>Total</th><th></th><th></th><th style="width: 36px;"></th></tr>
+                            </thead>
+                            <tbody class="fee-list"></tbody>
+                            <tfoot>
+                                <tr><th></th><th></th><th></th><th>{{formatMoney feeList.total true}}</th><th></th><th></th><th></th></tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                {{else}}
+                    <div class="panel-body nofees-placeholder" style="font-weight: bold;">
+                        No {{feeList.title}}.
+                    </div>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+</script>
+
+<script id="hb-fee-list-total-item" type="text/x-handlebars-template">
+    <tr>
+        <td>{{fee.feeTemplate.title}}</td>
+        <td>{{displayQuantity fee}}</td>
+        <td>{{displayUnitPrice fee true}}</td>
+        <td>{{formatMoney fee.total true}}</td>
+        <td></td>
+        <td></td>
+        <td>
+            <a class="btn btn-default btn-xs btn-edit use-perm" data-ifperm="Fee:write">Edit</a>
+        </td>
+    </tr>
+</script>
+
+<script id="hb-fee-receipt-list-main" type="text/x-handlebars-template">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-heading clearfix">
+                    <strong>Receipts</strong>
+                        <span class="h4 pull-right" style="margin: 0;">
+                            <small>Total</small> {{formatMoney sumPaid true}}
+                        </span>
+                </div>
+                {{#if hasReceipts}}
+                    <div class="table-responsive fee-table">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr><th>Payee</th><th>Receipt #</th><th>Date</th><th>Paid</th><th>&nbsp;</th></tr>
+                            </thead>
+                            <tbody class="receipt-list"></tbody>
+                            <tfoot>
+                                <tr><th></th><th></th><th></th><th>{{formatMoney sumPaid true}}</th><th></th></tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                {{else}}
+                    <div class="panel-body nofees-placeholder" style="font-weight: bold;">
+                        No receipts.
+                    </div>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+</script>
+
+<script id="hb-fee-receipt-list-item" type="text/x-handlebars-template">
+    <tr>
+        <td>{{receipt.userName}}</td>
+        <td>{{receipt.receiptNumber}}</td>
+        <td>{{dateFormatDisplay receipt.datePaid}}</td>
+        <td>{{formatMoney receipt.paid true}}</td>
+        <td>
+            {{#if receipt.status.isVoid}}Voided{{else}}<a class="btn btn-default btn-xs btn-void">Void</a>{{/if}}
+        </td>
+    </tr>
+</script>
+
+<script id="hb-fee-modal-edit" type="text/x-handlebars-template">
+    <div class="modal fade" id="feesAddEdit" tabindex="-1" role="dialog" aria-labelledby="feesAddEdit">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    <h4 class="modal-title">Add/Edit Fees</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                            <label for="modal-search-feetype" class="col-sm-3 control-label">Fee</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="modal-search-feetype" value="{{fee.feeTemplate.title}}">
+                            </div>
+                        </div>
+                        <div id="modal-fee-fields">
+                        </div>
+                        <div class="form-group">
+                            <label for="modal-fee-notes" class="col-sm-3 control-label">Notes</label>
+                            <div class="col-sm-9">
+                                <textarea class="form-control" id="modal-fee-notes">{{fee.notes}}</textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <div class="pull-left">
+                        <button type="button" class="btn btn-default" id="btn-delete-fee">Delete Fee</button>
+                    </div>
+                <button type="button" class="btn btn-default" id="btn-cancel" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="btn-save">Save</button>
+            </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script id="hb-fee-modal-edit-fields" type="text/x-handlebars-template">
+    <div class="form-group">
+        <label for="modal-fee-quantity" class="col-xs-12 col-sm-3 control-label">{{unitVariableLabel fee}}</label>
+        <div class="col-xs-6 col-sm-5">
+            <input type="text" class="form-control" id="modal-fee-quantity" placeholder="{{unitVariableLabel fee}}" {{#unless fee.feeTemplate.calculationMethod.isUnit}}disabled="disabled"{{/unless}} value="{{displayQuantity fee}}">
+        </div>
+        <div class="col-xs-6 col-sm-4">
+            <a href="javascript:;" class="btn btn-info" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">Function</a>
+        </div>
+    </div>
+    <div class="collapse" id="collapseExample">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Function</label>
+            <div class="col-sm-9">
+                <code class="control">
+                    {{displayFormula fee}}
+                </code>
+            </div>
+        </div>
+        <div id="modal-fee-formula-terms"></div>
+        <div class="alert alert-info"><i class="glyphicon glyphicon-asterisk"></i> Changing variables here will update them throughout the project.</div>
+    </div>
+    <div class="form-group">
+        <label for="modal-fee-unit-price" class="col-sm-3 control-label">Unit Price</label>
+        <div class="col-sm-5">
+            <label class="sr-only" for="modal-fee-unit-price">Amount (in dollars)</label>
+            <div class="input-group">
+                <span class="input-group-addon">$</span>
+                <input type="text" class="form-control" id="modal-fee-unit-price" placeholder="Amount" {{#unless fee.overrides.unitPriceOverride}}disabled="disabled"{{/unless}} value="{{displayUnitPrice fee false}}">
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" class="modal-override" data-override="unitPrice" {{#if fee.overrides.unitPriceOverride}}checked="checked"{{/if}} id="modal-fee-unit-price-override"> Override
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="modal-fee-total" class="col-sm-3 control-label">Total Price</label>
+        <div class="col-sm-5">
+            <label class="sr-only" for="modal-fee-total">Amount (in dollars)</label>
+            <div class="input-group">
+                <span class="input-group-addon">$</span>
+                <input type="text" class="form-control" id="modal-fee-total" placeholder="Amount" {{#unless fee.overrides.totalOverride}}disabled="disabled"{{/unless}} value="{{formatMoney fee.total false}}">
+            </div></div>
+        <div class="col-sm-4">
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" class="modal-override" data-override="total" {{#if fee.overrides.totalOverride}}checked="checked"{{/if}} id="modal-fee-total-override"> Override
+                </label>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script id="hb-fee-modal-formula-function" type="text/x-handlebars-template">
+    <div class="form-group">
+        <label for="modal-fee-term-{{termName}}" class="col-sm-3 control-label"><code>{{termName}}</code></label>
+        <div class="col-sm-9">
+            <label class="sr-only" for="modal-fee-term-{{termName}}">Amount (in dollars)</label>
+            <div class="input-group">
+                <span class="input-group-addon">$</span>
+                <input type="text" class="form-control" id="modal-fee-term-{{termName}}" name="{{termName}}" placeholder="Amount" disabled="disabled" value="{{termValue}}">
+            </div>
+        </div>
+    </div>
+</script>
+
+<script id="hb-fee-modal-formula-variable" type="text/x-handlebars-template">
+    <div class="form-group">
+        <label for="modal-fee-var-{{termName}}" class="col-sm-3 control-label"><code>{{termName}}</code></label>
+        <div class="col-sm-9">
+            <input type="text" class="form-control variable-input" id="modal-fee-var-{{termName}}" name="{{termName}}" placeholder="{{termName}}" value="{{termValue}}">
+        </div>
+
+    </div>
+</script>
+
+<script id="hb-fee-modal-pay" type="text/x-handlebars-template">
+    <div class="modal fade" id="feesPay" tabindex="-1" role="dialog" aria-labelledby="feesPay">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    <h4 class="modal-title">Pay</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form">
+                        <table class="table table-hover table-input">
+                            <thead>
+                                <tr>
+                                    <th style="width:10px; vertical-align: initial;">
+                                        <input type="checkbox" class="checkbox" id="payment-select-all" title="Select All" checked="checked">
+                                    </th>
+                                    <th>Item</th>
+                                    <th>Balance</th>
+                                    <th class="input-amount">Pay</th>
+                                </tr>
+                            </thead>
+                            <tbody id="fee-modal-payment-items"></tbody>
+                        </table>
+                        <div class="clearfix alert alert-info"><h3 style="margin:0; margin-right: 0px;" class="pull-right"><span style="opacity: 0.75; font-size: 0.5em">Total Payment</span> <span id="fee-payment-total"></span></h3></div>
+                    </form><div class="clearfix">
+                    <!-- Nav tabs -->
+                    <ul class="nav nav-pills" role="tablist" id="fee-payment-tabs">
+                        <li role="presentation" class="disabled"><a aria-controls="paywith-cc" role="tab" data-toggle=""><i class="fa fa-credit-card fa-fw"></i> Credit Card</a></li>
+                        <li role="presentation" class="active"><a href="#paywith-cash" aria-controls="paywith-cash" role="tab" data-toggle="tab">Cash/OTC</a></li>
+                        <li role="presentation" ><a href="#paywith-deposits" aria-controls="paywith-deposits" role="tab" data-toggle="tab">Deposits</a></li>
+                    </ul>
+                    <!-- Tab panes -->
+                    <div class="tab-content payment-content">
+                        <div role="tabpanel" class="tab-pane" id="paywith-cc">
+                            <form class="form-horizontal">
+                                <div class="form-group">
+                                    <label for="fee-payment-cc-type" class="col-sm-3 control-label">Card Type</label>
+                                    <div class="col-sm-9">
+                                        <select class="form-control" id="fee-payment-cc-type"><option>Visa</option><option>Master Card</option><option>American Express</option><option>Discover</option></select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="fee-payment-cc-number" class="col-sm-3 control-label">Card Number</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" inputmode="numeric" class="form-control" id="fee-payment-cc-number" placeholder="1234123412341234" value="">
+                                    </div>
+                                </div>
+                                <div class="col-xs-6 form-first-half">
+                                    <div class="form-group">
+                                            <label for="fee-payment-cc-exp" class="col-sm-6 control-label">Expiration Date</label>
+                                        <div class="col-sm-6">
+                                                <input type="text" inputmode="numeric" class="form-control col-sm-6" id="fee-payment-cc-exp" placeholder="MM / YY" value="">
+                                        </div>
+                                        </div>
+                                    </div>
+                                <div class="col-xs-6 form-second-half">
+                                    <div class="form-group">
+                                        <label for="fee-payment-cc-code" class="col-sm-6 control-label">Security Code</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" inputmode="numeric" class="form-control col-sm-6" id="fee-payment-cc-code" placeholder="123" value="">
+                                    </div>
+                                        </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="fee-payment-cc-name" class="col-sm-3 control-label">Name on Card</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" id="fee-payment-cc-name" placeholder="Name" value="">
+                                    </div>
+                                </div>
+                            </form>
+
+                        </div>
+                        <div role="tabpanel" class="tab-pane active" id="paywith-cash">
+                            <form class="form-horizontal">
+                                <div class="form-group">
+                                    <label for="fee-payment-otc-name" class="col-sm-3 control-label">Payee</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" id="fee-payment-otc-name" placeholder="Payee" value="">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="fee-payment-otc-type" class="col-sm-3 control-label">Type</label>
+                                    <div class="col-sm-9">
+                                        <select class="form-control" id="fee-payment-otc-type"><option>Cash</option><option>Check</option><option>Credit Card</option></select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="fee-payment-otc-receiptno" class="col-xs-12 col-sm-3 control-label">Receipt No.</label>
+                                    <div class="col-xs-7 col-sm-5">
+                                        <input type="text" class="form-control" id="fee-payment-otc-receiptno" placeholder="Receipt No." value="">
+                                    </div>
+                                    <div class="col-xs-5 col-sm-4">
+                                        <button class="btn btn-default" id="btn-generate-receipt">Generate</button>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="fee-payment-otc-notes" class="col-sm-3 control-label">Notes</label>
+                                    <div class="col-sm-9">
+                                        <textarea class="form-control" id="fee-payment-otc-notes"></textarea>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="paywith-deposits">
+                            <div class="clearfix">
+                                <h3 style="margin:6px; margin-right: 2px;" class="pull-right">
+                                    <span style="opacity: 0.75; font-size: 0.5em">Deposit Credit Current</span> <span id="deposit-allocatable-current">{{formatMoney depositsAllocatable true}}</span>
+                                </h3>
+                            </div>
+                            <div class="clearfix">
+                                <h3 style="margin:6px; margin-right: 2px;" class="pull-right">
+                                    <span style="opacity: 0.75; font-size: 0.5em">Deposit Credit After</span> <span id="deposit-allocatable-after"></span>
+                                </h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- /.modal-content -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" id="btn-close-modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save</button>
+                </div>
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+</script>
+
+<script id="hb-fee-modal-pay-item" type="text/x-handlebars-template">
+    <tr class="payment-item">
+        <td>
+            <label>
+                <input type="checkbox" class="checkbox pay-this" {{#if defaultSelected}}checked="checked"{{/if}}>
+            </label>
+        </td>
+        <td class="text">{{fee.feeTemplate.title}}</td>
+        <td class="text">{{formatMoney fee.balance true}}</td>
+        <td>
+            <div class="input-group">
+                <span class="input-group-addon">$</span>
+                    <input type="text" class="form-control input-amount" data-idfee="{{fee.idFee}}" value="{{formatMoney fee.balance false}}">
+            </div>
+        </td>
+    </tr>
+</script>
+
+<script id="hb-fee-modal-feeschedule" type="text/x-handlebars-template">
+    <div class="modal fade" id="editFeeSchedule" tabindex="-1" role="dialog" aria-labelledby="editFeeSchedule">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    <h4 class="modal-title">Edit Fee Schedule</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                            <label for="select-feeschedule" class="col-sm-3 control-label">Fee Schedule</label>
+                            <div class="col-sm-9">
+                                <select class="form-control" id="select-feeschedule">{{{feeScheduleOptions feeScheduleList idFeeSchedule}}}</select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+</script>

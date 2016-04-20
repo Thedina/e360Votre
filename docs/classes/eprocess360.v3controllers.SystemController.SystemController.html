@@ -1,0 +1,2769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+    <meta charset="utf-8"/>
+    <title>API Documentation</title>
+    <meta name="author" content=""/>
+    <meta name="description" content=""/>
+
+    <link href="../css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
+    <link href="../css/font-awesome.min.css" rel="stylesheet">
+    <link href="../css/prism.css" rel="stylesheet" media="all"/>
+    <link href="../css/template.css" rel="stylesheet" media="all"/>
+    
+    <!--[if lt IE 9]>
+    <script src="../js/html5.js"></script>
+    <![endif]-->
+    <script src="../js/jquery-1.11.0.min.js"></script>
+    <script src="../js/ui/1.10.4/jquery-ui.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/jquery.smooth-scroll.js"></script>
+    <script src="../js/prism.min.js"></script>
+    <!-- TODO: Add http://jscrollpane.kelvinluck.com/ to style the scrollbars for browsers not using webkit-->
+    <script type="text/javascript">
+    function loadExternalCodeSnippets() {
+        Array.prototype.slice.call(document.querySelectorAll('pre[data-src]')).forEach(function (pre) {
+            var src = pre.getAttribute('data-src');
+            var extension = (src.match(/\.(\w+)$/) || [, ''])[1];
+            var language = 'php';
+
+            var code = document.createElement('code');
+            code.className = 'language-' + language;
+
+            pre.textContent = '';
+
+            code.textContent = 'Loading…';
+
+            pre.appendChild(code);
+
+            var xhr = new XMLHttpRequest();
+
+            xhr.open('GET', src, true);
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4) {
+
+                    if (xhr.status < 400 && xhr.responseText) {
+                        code.textContent = xhr.responseText;
+
+                        Prism.highlightElement(code);
+                    }
+                    else if (xhr.status >= 400) {
+                        code.textContent = '✖ Error ' + xhr.status + ' while fetching file: ' + xhr.statusText;
+                    }
+                    else {
+                        code.textContent = '✖ Error: File does not exist or is empty';
+                    }
+                }
+            };
+
+            xhr.send(null);
+        });
+    }
+
+    $(document).ready(function(){
+        loadExternalCodeSnippets();
+    });
+    $('#source-view').on('shown', function () {
+        loadExternalCodeSnippets();
+    })
+</script>
+
+    <link rel="shortcut icon" href="../images/favicon.ico"/>
+    <link rel="apple-touch-icon" href="../images/apple-touch-icon.png"/>
+    <link rel="apple-touch-icon" sizes="72x72" href="../images/apple-touch-icon-72x72.png"/>
+    <link rel="apple-touch-icon" sizes="114x114" href="../images/apple-touch-icon-114x114.png"/>
+</head>
+<body>
+
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <i class="icon-ellipsis-vertical"></i>
+            </a>
+            <a class="brand" href="../index.html">API Documentation</a>
+
+            <div class="nav-collapse">
+                <ul class="nav pull-right">
+                                        <li class="dropdown">
+                        <a href="../index.html" class="dropdown-toggle" data-toggle="dropdown">
+                            API Documentation <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                                                        <li><a href="../namespaces/eprocess360.html">\eprocess360</a></li>
+                                                        <li><a href="../namespaces/Trigger.html">\Trigger</a></li>
+                                                    </ul>
+                    </li>
+                                        <li class="dropdown" id="charts-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Charts <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="../graphs/class.html">
+                                    <i class="icon-list-alt"></i>&#160;Class hierarchy diagram
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="dropdown" id="reports-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Reports <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="../reports/errors.html">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <i class="icon-list-alt"></i>&#160;Errors <span class="label label-info pull-right">1337</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="../reports/markers.html">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <i class="icon-list-alt"></i>&#160;Markers <span class="label label-info pull-right">18</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="../reports/deprecated.html">
+                                                                                                                                                                                                                                                                                                                                                                                                                            <i class="icon-list-alt"></i>&#160;Deprecated <span class="label label-info pull-right">4</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--<div class="go_to_top">-->
+    <!--<a href="#___" style="color: inherit">Back to top&#160;&#160;<i class="icon-upload icon-white"></i></a>-->
+    <!--</div>-->
+</div>
+
+<div id="___" class="container-fluid">
+        <section class="row-fluid">
+        <div class="span2 sidebar">
+                                <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-2121040423"></a>
+                                <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
+            </div>
+            <div id="namespace-2121040423" class="accordion-body collapse in">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-582932888"></a>
+                                <a href="../namespaces/eprocess360.html" style="margin-left: 30px; padding-left: 0">eprocess360</a>
+            </div>
+            <div id="namespace-582932888" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1494175245"></a>
+                                <a href="../namespaces/eprocess360.v3controllers.html" style="margin-left: 30px; padding-left: 0">v3controllers</a>
+            </div>
+            <div id="namespace-1494175245" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1489231022"></a>
+                                <a href="../namespaces/eprocess360.v3controllers.Controller.html" style="margin-left: 30px; padding-left: 0">Controller</a>
+            </div>
+            <div id="namespace-1489231022" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/eprocess360.v3controllers.Controller.Controller.html">Controller</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1095658696"></a>
+                                <a href="../namespaces/eprocess360.v3controllers.Dashboard.html" style="margin-left: 30px; padding-left: 0">Dashboard</a>
+            </div>
+            <div id="namespace-1095658696" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/eprocess360.v3controllers.Dashboard.Dashboard.html">Dashboard</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-192713024"></a>
+                                <a href="../namespaces/eprocess360.v3controllers.Download.html" style="margin-left: 30px; padding-left: 0">Download</a>
+            </div>
+            <div id="namespace-192713024" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/eprocess360.v3controllers.Download.Download.html">Download</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1036438361"></a>
+                                <a href="../namespaces/eprocess360.v3controllers.EULA.html" style="margin-left: 30px; padding-left: 0">EULA</a>
+            </div>
+            <div id="namespace-1036438361" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/eprocess360.v3controllers.EULA.EULA.html">EULA</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-627432514"></a>
+                                <a href="../namespaces/eprocess360.v3controllers.Group.html" style="margin-left: 30px; padding-left: 0">Group</a>
+            </div>
+            <div id="namespace-627432514" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1428851676"></a>
+                                <a href="../namespaces/eprocess360.v3controllers.Group.Model.html" style="margin-left: 30px; padding-left: 0">Model</a>
+            </div>
+            <div id="namespace-1428851676" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/eprocess360.v3controllers.Group.Model.GroupRoles.html">GroupRoles</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3controllers.Group.Model.Groups.html">Groups</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3controllers.Group.Model.GroupUsers.html">GroupUsers</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/eprocess360.v3controllers.Group.Group.html">Group</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1204241146"></a>
+                                <a href="../namespaces/eprocess360.v3controllers.Login.html" style="margin-left: 30px; padding-left: 0">Login</a>
+            </div>
+            <div id="namespace-1204241146" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/eprocess360.v3controllers.Login.Login.html">Login</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-849943587"></a>
+                                <a href="../namespaces/eprocess360.v3controllers.Logout.html" style="margin-left: 30px; padding-left: 0">Logout</a>
+            </div>
+            <div id="namespace-849943587" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/eprocess360.v3controllers.Logout.Logout.html">Logout</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-77965231"></a>
+                                <a href="../namespaces/eprocess360.v3controllers.Project.html" style="margin-left: 30px; padding-left: 0">Project</a>
+            </div>
+            <div id="namespace-77965231" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/eprocess360.v3controllers.Project.Project.html">Project</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-508680563"></a>
+                                <a href="../namespaces/eprocess360.v3controllers.Register.html" style="margin-left: 30px; padding-left: 0">Register</a>
+            </div>
+            <div id="namespace-508680563" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/eprocess360.v3controllers.Register.Register.html">Register</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1314972230"></a>
+                                <a href="../namespaces/eprocess360.v3controllers.Site404Handler.html" style="margin-left: 30px; padding-left: 0">Site404Handler</a>
+            </div>
+            <div id="namespace-1314972230" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/eprocess360.v3controllers.Site404Handler.Site404Handler.html">Site404Handler</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-634645839"></a>
+                                <a href="../namespaces/eprocess360.v3controllers.SystemController.html" style="margin-left: 30px; padding-left: 0">SystemController</a>
+            </div>
+            <div id="namespace-634645839" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/eprocess360.v3controllers.SystemController.SystemController.html">SystemController</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-261113653"></a>
+                                <a href="../namespaces/eprocess360.v3controllers.Test.html" style="margin-left: 30px; padding-left: 0">Test</a>
+            </div>
+            <div id="namespace-261113653" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/eprocess360.v3controllers.Test.Test.html">Test</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-858209753"></a>
+                                <a href="../namespaces/eprocess360.v3controllers.User.html" style="margin-left: 30px; padding-left: 0">User</a>
+            </div>
+            <div id="namespace-858209753" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/eprocess360.v3controllers.User.User.html">User</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1449056311"></a>
+                                <a href="../namespaces/eprocess360.v3core.html" style="margin-left: 30px; padding-left: 0">v3core</a>
+            </div>
+            <div id="namespace-1449056311" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1413162176"></a>
+                                <a href="../namespaces/eprocess360.v3core.CloudStorage.html" style="margin-left: 30px; padding-left: 0">CloudStorage</a>
+            </div>
+            <div id="namespace-1413162176" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                    <li class="interface"><a href="../classes/eprocess360.v3core.CloudStorage.CloudStorageAdapterInterface.html">CloudStorageAdapterInterface</a></li>
+                                                                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1679864827"></a>
+                                <a href="../namespaces/eprocess360.v3core.Controller.html" style="margin-left: 30px; padding-left: 0">Controller</a>
+            </div>
+            <div id="namespace-1679864827" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-101832899"></a>
+                                <a href="../namespaces/eprocess360.v3core.Controller.Identifier.html" style="margin-left: 30px; padding-left: 0">Identifier</a>
+            </div>
+            <div id="namespace-101832899" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/eprocess360.v3core.Controller.Identifier.Identifier.html">Identifier</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-2145073520"></a>
+                                <a href="../namespaces/eprocess360.v3core.Controller.State.html" style="margin-left: 30px; padding-left: 0">State</a>
+            </div>
+            <div id="namespace-2145073520" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/eprocess360.v3core.Controller.State.State.html">State</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-219772053"></a>
+                                <a href="../namespaces/eprocess360.v3core.Controller.Trigger.html" style="margin-left: 30px; padding-left: 0">Trigger</a>
+            </div>
+            <div id="namespace-219772053" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                    <li class="interface"><a href="../classes/eprocess360.v3core.Controller.Trigger.InterfaceTriggers.html">InterfaceTriggers</a></li>
+                                                                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-581371048"></a>
+                                <a href="../namespaces/eprocess360.v3core.Controller.Warden.html" style="margin-left: 30px; padding-left: 0">Warden</a>
+            </div>
+            <div id="namespace-581371048" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/eprocess360.v3core.Controller.Warden.Privilege.html">Privilege</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Controller.Warden.Role.html">Role</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Controller.Warden.Scope.html">Scope</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                            <li class="trait"><a href="../classes/eprocess360.v3core.Controller.Auth.html">Auth</a></li>
+                                                    <li class="trait"><a href="../classes/eprocess360.v3core.Controller.Module.html">Module</a></li>
+                                                    <li class="trait"><a href="../classes/eprocess360.v3core.Controller.ResponseHandler.html">ResponseHandler</a></li>
+                                                    <li class="trait"><a href="../classes/eprocess360.v3core.Controller.Router.html">Router</a></li>
+                                                    <li class="trait"><a href="../classes/eprocess360.v3core.Controller.Rules.html">Rules</a></li>
+                                                    <li class="trait"><a href="../classes/eprocess360.v3core.Controller.TriggerRegistrar.html">TriggerRegistrar</a></li>
+                                                                            <li class="class"><a href="../classes/eprocess360.v3core.Controller.ControllerException.html">ControllerException</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1842451015"></a>
+                                <a href="../namespaces/eprocess360.v3core.Files.html" style="margin-left: 30px; padding-left: 0">Files</a>
+            </div>
+            <div id="namespace-1842451015" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/eprocess360.v3core.Files.CloudTransferManager.html">CloudTransferManager</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Files.File.html">File</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Files.Folder.html">Folder</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-740496721"></a>
+                                <a href="../namespaces/eprocess360.v3core.Keydict.html" style="margin-left: 30px; padding-left: 0">Keydict</a>
+            </div>
+            <div id="namespace-740496721" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1862976103"></a>
+                                <a href="../namespaces/eprocess360.v3core.Keydict.Entry.html" style="margin-left: 30px; padding-left: 0">Entry</a>
+            </div>
+            <div id="namespace-1862976103" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/eprocess360.v3core.Keydict.Entry.Bits8.html">Bits8</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Keydict.Entry.BitString.html">BitString</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Keydict.Entry.Date.html">Date</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Keydict.Entry.Datetime.html">Datetime</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Keydict.Entry.Email.html">Email</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Keydict.Entry.FixedString128.html">FixedString128</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Keydict.Entry.FixedString16.html">FixedString16</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Keydict.Entry.FixedString256.html">FixedString256</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Keydict.Entry.FixedString32.html">FixedString32</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Keydict.Entry.FixedString64.html">FixedString64</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Keydict.Entry.Fullname.html">Fullname</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Keydict.Entry.IdInteger.html">IdInteger</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Keydict.Entry.IdProject.html">IdProject</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Keydict.Entry.IdTinyInt.html">IdTinyInt</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Keydict.Entry.Int.html">Int</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Keydict.Entry.Integer.html">Integer</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Keydict.Entry.IntList.html">IntList</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Keydict.Entry.JSONArray256.html">JSONArray256</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Keydict.Entry.JSONArrayFixed128.html">JSONArrayFixed128</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Keydict.Entry.JSONArrayText.html">JSONArrayText</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Keydict.Entry.KeydictName.html">KeydictName</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Keydict.Entry.Password.html">Password</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Keydict.Entry.PhoneNumber.html">PhoneNumber</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Keydict.Entry.PrimaryKeyFixedString16.html">PrimaryKeyFixedString16</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Keydict.Entry.PrimaryKeyFixedString32.html">PrimaryKeyFixedString32</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Keydict.Entry.PrimaryKeyInt.html">PrimaryKeyInt</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Keydict.Entry.PrimaryKeySmallInt.html">PrimaryKeySmallInt</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Keydict.Entry.PrimaryKeyTinyInt.html">PrimaryKeyTinyInt</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Keydict.Entry.ProjectName.html">ProjectName</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Keydict.Entry.Serialized.html">Serialized</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Keydict.Entry.String.html">String</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Keydict.Entry.String256.html">String256</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Keydict.Entry.String64.html">String64</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Keydict.Entry.String8.html">String8</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Keydict.Entry.SystemName.html">SystemName</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Keydict.Entry.Text.html">Text</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Keydict.Entry.TinyInteger.html">TinyInteger</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Keydict.Entry.UnsignedSmallInteger.html">UnsignedSmallInteger</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Keydict.Entry.UnsignedTinyInteger.html">UnsignedTinyInteger</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-803487842"></a>
+                                <a href="../namespaces/eprocess360.v3core.Keydict.Exception.html" style="margin-left: 30px; padding-left: 0">Exception</a>
+            </div>
+            <div id="namespace-803487842" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/eprocess360.v3core.Keydict.Exception.CompositeEntryException.html">CompositeEntryException</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Keydict.Exception.InvalidValueException.html">InvalidValueException</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Keydict.Exception.KeydictException.html">KeydictException</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1330970035"></a>
+                                <a href="../namespaces/eprocess360.v3core.Keydict.StorageStrategy.html" style="margin-left: 30px; padding-left: 0">StorageStrategy</a>
+            </div>
+            <div id="namespace-1330970035" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                    <li class="interface"><a href="../classes/eprocess360.v3core.Keydict.StorageStrategy.InterfaceStorageStrategy.html">InterfaceStorageStrategy</a></li>
+                                                                                                    <li class="class"><a href="../classes/eprocess360.v3core.Keydict.StorageStrategy.MultiColumn.html">MultiColumn</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Keydict.StorageStrategy.SingleColumn.html">SingleColumn</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                    <li class="interface"><a href="../classes/eprocess360.v3core.Keydict.InterfaceField.html">InterfaceField</a></li>
+                                                                                                    <li class="class"><a href="../classes/eprocess360.v3core.Keydict.Composite.html">Composite</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Keydict.Entry.html">Entry</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Keydict.Field.html">Field</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1198322653"></a>
+                                <a href="../namespaces/eprocess360.v3core.Mail.html" style="margin-left: 30px; padding-left: 0">Mail</a>
+            </div>
+            <div id="namespace-1198322653" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/eprocess360.v3core.Mail.Email.html">Email</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Mail.MailConfig.html">MailConfig</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Mail.MailException.html">MailException</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Mail.MailQueue.html">MailQueue</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Mail.Template.html">Template</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-348380405"></a>
+                                <a href="../namespaces/eprocess360.v3core.Model.html" style="margin-left: 30px; padding-left: 0">Model</a>
+            </div>
+            <div id="namespace-348380405" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/eprocess360.v3core.Model.Controllers.html">Controllers</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Model.Files.html">Files</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Model.Folders.html">Folders</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Model.MailFiles.html">MailFiles</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Model.MailLog.html">MailLog</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Model.MailQueue.html">MailQueue</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Model.MailRecipients.html">MailRecipients</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Model.MailTemplates.html">MailTemplates</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Model.ProjectControllers.html">ProjectControllers</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Model.Projects.html">Projects</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Model.Reports.html">Reports</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Model.Roles.html">Roles</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Model.SchedulerTasks.html">SchedulerTasks</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Model.Sessions.html">Sessions</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Model.SystemVariables.html">SystemVariables</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Model.UserRoles.html">UserRoles</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Model.Users.html">Users</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1468388755"></a>
+                                <a href="../namespaces/eprocess360.v3core.Request.html" style="margin-left: 30px; padding-left: 0">Request</a>
+            </div>
+            <div id="namespace-1468388755" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/eprocess360.v3core.Request.RequestException.html">RequestException</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1695150158"></a>
+                                <a href="../namespaces/eprocess360.v3core.Scheduler.html" style="margin-left: 30px; padding-left: 0">Scheduler</a>
+            </div>
+            <div id="namespace-1695150158" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-532360119"></a>
+                                <a href="../namespaces/eprocess360.v3core.Scheduler.Tasks.html" style="margin-left: 30px; padding-left: 0">Tasks</a>
+            </div>
+            <div id="namespace-532360119" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/eprocess360.v3core.Scheduler.Tasks.CheckIsSchedulerWorking.html">CheckIsSchedulerWorking</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Scheduler.Tasks.CleanupLocalUploads.html">CleanupLocalUploads</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Scheduler.Tasks.MailQueueWorker.html">MailQueueWorker</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Scheduler.Tasks.MoveUploadedToCloud.html">MoveUploadedToCloud</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Scheduler.Tasks.Task.html">Task</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Scheduler.Tasks.ThisTaskFails.html">ThisTaskFails</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                    <li class="interface"><a href="../classes/eprocess360.v3core.Scheduler.ScheduleProviderInterface.html">ScheduleProviderInterface</a></li>
+                                                                                                    <li class="class"><a href="../classes/eprocess360.v3core.Scheduler.CronScheduleProvider.html">CronScheduleProvider</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Scheduler.SchedulerException.html">SchedulerException</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-491913356"></a>
+                                <a href="../namespaces/eprocess360.v3core.Session.html" style="margin-left: 30px; padding-left: 0">Session</a>
+            </div>
+            <div id="namespace-491913356" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-831505585"></a>
+                                <a href="../namespaces/eprocess360.v3core.Session.Exception.html" style="margin-left: 30px; padding-left: 0">Exception</a>
+            </div>
+            <div id="namespace-831505585" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/eprocess360.v3core.Session.Exception.AbnormalSessionException.html">AbnormalSessionException</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Session.Exception.BadCredentialsException.html">BadCredentialsException</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1986275958"></a>
+                                <a href="../namespaces/eprocess360.v3core.Session.Strategy.html" style="margin-left: 30px; padding-left: 0">Strategy</a>
+            </div>
+            <div id="namespace-1986275958" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                    <li class="interface"><a href="../classes/eprocess360.v3core.Session.Strategy.SessionStrategy.html">SessionStrategy</a></li>
+                                                                                                    <li class="class"><a href="../classes/eprocess360.v3core.Session.Strategy.NoSession.html">NoSession</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1948060884"></a>
+                                <a href="../namespaces/eprocess360.v3core.tests.html" style="margin-left: 30px; padding-left: 0">tests</a>
+            </div>
+            <div id="namespace-1948060884" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1519361638"></a>
+                                <a href="../namespaces/eprocess360.v3core.tests.base.html" style="margin-left: 30px; padding-left: 0">base</a>
+            </div>
+            <div id="namespace-1519361638" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/eprocess360.v3core.tests.base.DBTestBase.html">DBTestBase</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.tests.base.PHPUnitArrayTable.html">PHPUnitArrayTable</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-2063320613"></a>
+                                <a href="../namespaces/eprocess360.v3core.tests.Mail.html" style="margin-left: 30px; padding-left: 0">Mail</a>
+            </div>
+            <div id="namespace-2063320613" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/eprocess360.v3core.tests.Mail.EmailTest.html">EmailTest</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.tests.Mail.MailQueueTest.html">MailQueueTest</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.tests.Mail.TemplateTest.html">TemplateTest</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-960693977"></a>
+                                <a href="../namespaces/eprocess360.v3core.tests.Scheduler.html" style="margin-left: 30px; padding-left: 0">Scheduler</a>
+            </div>
+            <div id="namespace-960693977" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/eprocess360.v3core.tests.Scheduler.FakeScheduleProvider.html">FakeScheduleProvider</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.tests.Scheduler.SchedulerTest.html">SchedulerTest</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.tests.Scheduler.TaskTest.html">TaskTest</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1549124076"></a>
+                                <a href="../namespaces/eprocess360.v3core.tests.Uploads.html" style="margin-left: 30px; padding-left: 0">Uploads</a>
+            </div>
+            <div id="namespace-1549124076" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/eprocess360.v3core.tests.Uploads.UploadManagerTest.html">UploadManagerTest</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.tests.Uploads.UploadTest.html">UploadTest</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-756144131"></a>
+                                <a href="../namespaces/eprocess360.v3core.Updater.html" style="margin-left: 30px; padding-left: 0">Updater</a>
+            </div>
+            <div id="namespace-756144131" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1840531535"></a>
+                                <a href="../namespaces/eprocess360.v3core.Updater.Exceptions.html" style="margin-left: 30px; padding-left: 0">Exceptions</a>
+            </div>
+            <div id="namespace-1840531535" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/eprocess360.v3core.Updater.Exceptions.ClientInvalidException.html">ClientInvalidException</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Updater.Exceptions.DatabaseUnavailableException.html">DatabaseUnavailableException</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Updater.Exceptions.ModuleNotReadyException.html">ModuleNotReadyException</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Updater.Exceptions.SettingsUnavailableException.html">SettingsUnavailableException</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Updater.Exceptions.TableUnavailableException.html">TableUnavailableException</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1061040773"></a>
+                                <a href="../namespaces/eprocess360.v3core.Updater.Module.html" style="margin-left: 30px; padding-left: 0">Module</a>
+            </div>
+            <div id="namespace-1061040773" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-925836057"></a>
+                                <a href="../namespaces/eprocess360.v3core.Updater.Module.SQLSync.html" style="margin-left: 30px; padding-left: 0">SQLSync</a>
+            </div>
+            <div id="namespace-925836057" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1525836507"></a>
+                                <a href="../namespaces/eprocess360.v3core.Updater.Module.SQLSync.Exception.html" style="margin-left: 30px; padding-left: 0">Exception</a>
+            </div>
+            <div id="namespace-1525836507" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/eprocess360.v3core.Updater.Module.SQLSync.Exception.InvalidAttachmentException.html">InvalidAttachmentException</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Updater.Module.SQLSync.Exception.InvalidRequestException.html">InvalidRequestException</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/eprocess360.v3core.Updater.Module.SQLSync.html">SQLSync</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                    <li class="interface"><a href="../classes/eprocess360.v3core.Updater.InterfaceModule.html">InterfaceModule</a></li>
+                                                    <li class="interface"><a href="../classes/eprocess360.v3core.Updater.InterfaceSendable.html">InterfaceSendable</a></li>
+                                                    <li class="interface"><a href="../classes/eprocess360.v3core.Updater.InterfaceUpdaterModule.html">InterfaceUpdaterModule</a></li>
+                                                                                                    <li class="class"><a href="../classes/eprocess360.v3core.Updater.Client.html">Client</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Updater.HttpAccept.html">HttpAccept</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Updater.HttpRequest.html">HttpRequest</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Updater.Request.html">Request</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Updater.Response.html">Response</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Updater.Sendable.html">Sendable</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Updater.Signature.html">Signature</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Updater.System.html">System</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-136842697"></a>
+                                <a href="../namespaces/eprocess360.v3core.View.html" style="margin-left: 30px; padding-left: 0">View</a>
+            </div>
+            <div id="namespace-136842697" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/eprocess360.v3core.View.Source.html">Source</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/eprocess360.v3core.CloudStorage.html">CloudStorage</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.DataSet.html">DataSet</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.DB.html">DB</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.GlobalId.html">GlobalId</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.GoogleAPIManager.html">GoogleAPIManager</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.MailManager.html">MailManager</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Pool.html">Pool</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Projects.html">Projects</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Scheduler.html">Scheduler</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Session.html">Session</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.SysVar.html">SysVar</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Toolbox.html">Toolbox</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.Updater.html">Updater</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.UploadManager.html">UploadManager</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.User.html">User</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3core.View.html">View</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-2103069106"></a>
+                                <a href="../namespaces/eprocess360.v3modules.html" style="margin-left: 30px; padding-left: 0">v3modules</a>
+            </div>
+            <div id="namespace-2103069106" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-392560005"></a>
+                                <a href="../namespaces/eprocess360.v3modules.FolderRoot.html" style="margin-left: 30px; padding-left: 0">FolderRoot</a>
+            </div>
+            <div id="namespace-392560005" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/eprocess360.v3modules.FolderRoot.FolderRoot.html">FolderRoot</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-2016779009"></a>
+                                <a href="../namespaces/eprocess360.v3modules.Quotes.html" style="margin-left: 30px; padding-left: 0">Quotes</a>
+            </div>
+            <div id="namespace-2016779009" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/eprocess360.v3modules.Quotes.Quotes.html">Quotes</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-71114171"></a>
+                                <a href="../namespaces/eprocess360.v3modules.Review.html" style="margin-left: 30px; padding-left: 0">Review</a>
+            </div>
+            <div id="namespace-71114171" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-968806015"></a>
+                                <a href="../namespaces/eprocess360.v3modules.Review.Model.html" style="margin-left: 30px; padding-left: 0">Model</a>
+            </div>
+            <div id="namespace-968806015" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/eprocess360.v3modules.Review.Model.Reviews.html">Reviews</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/eprocess360.v3modules.Review.Review.html">Review</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-959978721"></a>
+                                <a href="../namespaces/eprocess360.v3modules.RouteTree.html" style="margin-left: 30px; padding-left: 0">RouteTree</a>
+            </div>
+            <div id="namespace-959978721" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1901310120"></a>
+                                <a href="../namespaces/eprocess360.v3modules.RouteTree.Model.html" style="margin-left: 30px; padding-left: 0">Model</a>
+            </div>
+            <div id="namespace-1901310120" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/eprocess360.v3modules.RouteTree.Model.RouteOptions.html">RouteOptions</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3modules.RouteTree.Model.RouteTrees.html">RouteTrees</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/eprocess360.v3modules.RouteTree.RouteTree.html">RouteTree</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-91630095"></a>
+                                <a href="../namespaces/eprocess360.v3modules.Submittal.html" style="margin-left: 30px; padding-left: 0">Submittal</a>
+            </div>
+            <div id="namespace-91630095" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1635655497"></a>
+                                <a href="../namespaces/eprocess360.v3modules.Submittal.Model.html" style="margin-left: 30px; padding-left: 0">Model</a>
+            </div>
+            <div id="namespace-1635655497" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/eprocess360.v3modules.Submittal.Model.SubmittalPhases.html">SubmittalPhases</a></li>
+                                                    <li class="class"><a href="../classes/eprocess360.v3modules.Submittal.Model.Submittals.html">Submittals</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/eprocess360.v3modules.Submittal.Submittal.html">Submittal</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1779780536"></a>
+                                <a href="../namespaces/eprocess360.v3modules.Task.html" style="margin-left: 30px; padding-left: 0">Task</a>
+            </div>
+            <div id="namespace-1779780536" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1367241036"></a>
+                                <a href="../namespaces/eprocess360.v3modules.Task.Model.html" style="margin-left: 30px; padding-left: 0">Model</a>
+            </div>
+            <div id="namespace-1367241036" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/eprocess360.v3modules.Task.Model.Tasks.html">Tasks</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/eprocess360.v3modules.Task.Task.html">Task</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                                                    <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-130001928"></a>
+                                <a href="../namespaces/Trigger.html" style="margin-left: 30px; padding-left: 0">Trigger</a>
+            </div>
+            <div id="namespace-130001928" class="accordion-body collapse ">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Trigger.TriggerTest.html">TriggerTest</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/DummyDBTest.html">DummyDBTest</a></li>
+                                                    <li class="class"><a href="../classes/DummyTest.html">DummyTest</a></li>
+                                                    <li class="class"><a href="../classes/KeydictTest.html">KeydictTest</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        </div>
+    </section>
+    <section class="row-fluid">
+        <div class="span10 offset2">
+            <div class="row-fluid">
+                <div class="span8 content class">
+                    <nav>
+                                                <a href="../namespaces/eprocess360.v3controllers.SystemController.html">\eprocess360\v3controllers\SystemController</a> <i class="icon-level-up"></i>
+                                            </nav>
+                    <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal"><i class="icon-code"></i></a>
+
+                    <h1><small>\eprocess360\v3controllers\SystemController</small>SystemController</h1>
+                    <p><em>The main application bootstrapper.  This class should be extended and provided with the top level Controllers.</em></p>
+                    <p>Responsible for initial Request acceptance.
+Class SystemController</p>
+                    
+                                        
+                    <section id="summary">
+                        <h2>Summary</h2>
+                        <section class="row-fluid heading">
+                            <section class="span4">
+                                <a href="#methods">Methods</a>
+                            </section>
+                            <section class="span4">
+                                <a href="#properties">Properties</a>
+                            </section>
+                            <section class="span4">
+                                <a href="#constants">Constants</a>
+                            </section>
+                        </section>
+                        <section class="row-fluid public">
+                            <section class="span4">
+                                                                    <a href="../classes/eprocess360.v3core.Controller.Router.html#method_traitRouterReady" class="">traitRouterReady()</a><br />
+                                                                    <a href="../classes/eprocess360.v3core.Controller.Router.html#method_routesInit" class="">routesInit()</a><br />
+                                                                    <a href="../classes/eprocess360.v3controllers.SystemController.SystemController.html#method_routes" class="">routes()</a><br />
+                                                                    <a href="../classes/eprocess360.v3core.Controller.Router.html#method_routeDependencies" class="">routeDependencies()</a><br />
+                                                                    <a href="../classes/eprocess360.v3core.Controller.Router.html#method_addRoute" class="">addRoute()</a><br />
+                                                                    <a href="../classes/eprocess360.v3core.Controller.Router.html#method_route" class="">route()</a><br />
+                                                                    <a href="../classes/eprocess360.v3core.Controller.ResponseHandler.html#method_setResponseType" class="">setResponseType()</a><br />
+                                                                    <a href="../classes/eprocess360.v3core.Controller.ResponseHandler.html#method_setRequest" class="">setRequest()</a><br />
+                                                                    <a href="../classes/eprocess360.v3core.Controller.ResponseHandler.html#method_setResponse" class="">setResponse()</a><br />
+                                                                    <a href="../classes/eprocess360.v3core.Controller.ResponseHandler.html#method_addResponseMeta" class="">addResponseMeta()</a><br />
+                                                                    <a href="../classes/eprocess360.v3core.Controller.ResponseHandler.html#method_addTwigPath" class="">addTwigPath()</a><br />
+                                                                    <a href="../classes/eprocess360.v3core.Controller.ResponseHandler.html#method_getResponseMeta" class="">getResponseMeta()</a><br />
+                                                                    <a href="../classes/eprocess360.v3core.Controller.ResponseHandler.html#method_setErrorResponse" class="">setErrorResponse()</a><br />
+                                                                    <a href="../classes/eprocess360.v3core.Controller.ResponseHandler.html#method_setTemplate" class="">setTemplate()</a><br />
+                                                                    <a href="../classes/eprocess360.v3core.Controller.ResponseHandler.html#method_render" class="">render()</a><br />
+                                                                    <a href="../classes/eprocess360.v3core.Controller.ResponseHandler.html#method_getResponseType" class="">getResponseType()</a><br />
+                                                                    <a href="../classes/eprocess360.v3core.Controller.ResponseHandler.html#method_getResponseResult" class="">getResponseResult()</a><br />
+                                                                    <a href="../classes/eprocess360.v3core.Controller.ResponseHandler.html#method_getResponseEnvelope" class="">getResponseEnvelope()</a><br />
+                                                                    <a href="../classes/eprocess360.v3core.Controller.ResponseHandler.html#method_setResponseEnvelope" class="">setResponseEnvelope()</a><br />
+                                                                    <a href="../classes/eprocess360.v3core.Controller.ResponseHandler.html#method_getResponseErrors" class="">getResponseErrors()</a><br />
+                                                                    <a href="../classes/eprocess360.v3controllers.SystemController.SystemController.html#method_run" class="">run()</a><br />
+                                                                    <a href="../classes/eprocess360.v3controllers.SystemController.SystemController.html#method_buildChildren" class="">buildChildren()</a><br />
+                                                                    <a href="../classes/eprocess360.v3controllers.SystemController.SystemController.html#method_getName" class="">getName()</a><br />
+                                                                    <a href="../classes/eprocess360.v3controllers.SystemController.SystemController.html#method_getChildrenBuilt" class="">getChildrenBuilt()</a><br />
+                                                                    <a href="../classes/eprocess360.v3controllers.SystemController.SystemController.html#method_setChildrenBuilt" class="">setChildrenBuilt()</a><br />
+                                                                    <a href="../classes/eprocess360.v3controllers.SystemController.SystemController.html#method_getDefault" class="">getDefault()</a><br />
+                                                            </section>
+                            <section class="span4">
+                                                                    <em>No public properties found</em>
+                                                            </section>
+                            <section class="span4">
+                                                                    <em>No constants found</em>
+                                                            </section>
+                        </section>
+                        <section class="row-fluid protected">
+                            <section class="span4">
+                                                                    <em>No protected methods found</em>
+                                                            </section>
+                            <section class="span4">
+                                                                    <a href="../classes/eprocess360.v3core.Controller.Router.html#property_routes" class="">$routes</a><br />
+                                                                    <a href="../classes/eprocess360.v3core.Controller.ResponseHandler.html#property_responseExpires" class="">$responseExpires</a><br />
+                                                                    <a href="../classes/eprocess360.v3core.Controller.ResponseHandler.html#property_responseCode" class="">$responseCode</a><br />
+                                                                    <a href="../classes/eprocess360.v3core.Controller.ResponseHandler.html#property_responseResult" class="">$responseResult</a><br />
+                                                                    <a href="../classes/eprocess360.v3core.Controller.ResponseHandler.html#property_responseTemplate" class="">$responseTemplate</a><br />
+                                                                    <a href="../classes/eprocess360.v3core.Controller.ResponseHandler.html#property_responseMeta" class="">$responseMeta</a><br />
+                                                                    <a href="../classes/eprocess360.v3core.Controller.ResponseHandler.html#property_responseType" class="">$responseType</a><br />
+                                                                    <a href="../classes/eprocess360.v3core.Controller.ResponseHandler.html#property_responseEnvelope" class="">$responseEnvelope</a><br />
+                                                                    <a href="../classes/eprocess360.v3core.Controller.ResponseHandler.html#property_responseError" class="">$responseError</a><br />
+                                                                    <a href="../classes/eprocess360.v3core.Controller.ResponseHandler.html#property_responseRequest" class="">$responseRequest</a><br />
+                                                                    <a href="../classes/eprocess360.v3controllers.SystemController.SystemController.html#property_childrenBuilt" class="">$childrenBuilt</a><br />
+                                                            </section>
+                            <section class="span4">
+                                <em>N/A</em>
+                            </section>
+                        </section>
+                        <section class="row-fluid private">
+                            <section class="span4">
+                                                                    <em>No private methods found</em>
+                                                            </section>
+                            <section class="span4">
+                                                                    <a href="../classes/eprocess360.v3core.Controller.Router.html#property_routesInit" class="">$routesInit</a><br />
+                                                            </section>
+                            <section class="span4">
+                                <em>N/A</em>
+                            </section>
+                        </section>
+                    </section>
+                </div>
+                <aside class="span4 detailsbar">
+                                        
+                    
+                    <dl>
+                        <dt>File</dt>
+                            <dd><a href="../files/v3controllers.src.SystemController.SystemController.html"><div class="path-wrapper">v3controllers/src/SystemController/SystemController.php</div></a></dd>
+                                                <dt>Package</dt>
+                            <dd><div class="namespace-wrapper">v3core\Controller</div></dd>
+                                                <dt>Class hierarchy</dt>
+                            <dd class="hierarchy">
+                                                                                                                                                                                                                                                                                                
+                                        <div class="namespace-wrapper">\eprocess360\v3core\Controller\Controller</div>
+                                                                                                    <div class="namespace-wrapper">\eprocess360\v3controllers\SystemController\SystemController</div>
+                            </dd>
+
+                        
+                                                                                    <dt>Uses traits</dt>
+                                                        <dd>
+                                <a href="../classes/eprocess360.v3core.Controller.Router.html">                                    <div class="namespace-wrapper">\eprocess360\v3core\Controller\Router</div>
+                                </a>                            </dd>
+                                                                                <dd>
+                                <a href="../classes/eprocess360.v3core.Controller.ResponseHandler.html">                                    <div class="namespace-wrapper">\eprocess360\v3core\Controller\ResponseHandler</div>
+                                </a>                            </dd>
+                                                                                <dd>
+                                                                    <div class="namespace-wrapper">\eprocess360\v3core\Controller\Persistent</div>
+                                                            </dd>
+                                                                                <dd>
+                                                                    <div class="namespace-wrapper">\eprocess360\v3core\Controller\Children</div>
+                                                            </dd>
+                                                                                <dd>
+                                                                    <div class="namespace-wrapper">\eprocess360\v3core\Controller\Triggers</div>
+                                                            </dd>
+                                                                                <dd>
+                                <a href="../classes/eprocess360.v3core.Controller.TriggerRegistrar.html">                                    <div class="namespace-wrapper">\eprocess360\v3core\Controller\TriggerRegistrar</div>
+                                </a>                            </dd>
+                        
+                        
+                        
+                                                                        </dl>
+                    <h2>Tags</h2>
+                    <table class="table table-condensed">
+                                            <tr><td colspan="2"><em>None found</em></td></tr>
+                                        </table>
+                </aside>
+            </div>
+
+                        
+                                    <a id="properties" name="properties"></a>
+            <div class="row-fluid">
+                <div class="span8 content class">
+                    <h2>Properties</h2>
+                </div>
+                <aside class="span4 detailsbar"></aside>
+            </div>
+
+                                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_routes" name="property_routes" class="anchor"></a>
+            <article class="property">
+                <h3 class="protected ">$routes</h3>
+                <pre class="signature">$routes : \AltoRouter</pre>
+                <p><em></em></p>
+                
+
+                                <h4>Type</h4>
+                \AltoRouter
+                                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/eprocess360.v3core.Controller.Router.html"><div class="path-wrapper">\eprocess360\v3core\Controller\Router</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_responseExpires" name="property_responseExpires" class="anchor"></a>
+            <article class="property">
+                <h3 class="protected ">$responseExpires</h3>
+                <pre class="signature">$responseExpires : </pre>
+                <p><em></em></p>
+                
+
+                                <h4>Type</h4>
+                
+                                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/eprocess360.v3core.Controller.ResponseHandler.html"><div class="path-wrapper">\eprocess360\v3core\Controller\ResponseHandler</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_responseCode" name="property_responseCode" class="anchor"></a>
+            <article class="property">
+                <h3 class="protected ">$responseCode</h3>
+                <pre class="signature">$responseCode : </pre>
+                <p><em></em></p>
+                
+
+                                <h4>Type</h4>
+                
+                                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/eprocess360.v3core.Controller.ResponseHandler.html"><div class="path-wrapper">\eprocess360\v3core\Controller\ResponseHandler</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_responseResult" name="property_responseResult" class="anchor"></a>
+            <article class="property">
+                <h3 class="protected ">$responseResult</h3>
+                <pre class="signature">$responseResult : </pre>
+                <p><em></em></p>
+                
+
+                                <h4>Type</h4>
+                
+                                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/eprocess360.v3core.Controller.ResponseHandler.html"><div class="path-wrapper">\eprocess360\v3core\Controller\ResponseHandler</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_responseTemplate" name="property_responseTemplate" class="anchor"></a>
+            <article class="property">
+                <h3 class="protected ">$responseTemplate</h3>
+                <pre class="signature">$responseTemplate : </pre>
+                <p><em></em></p>
+                
+
+                                <h4>Type</h4>
+                
+                                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/eprocess360.v3core.Controller.ResponseHandler.html"><div class="path-wrapper">\eprocess360\v3core\Controller\ResponseHandler</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_responseMeta" name="property_responseMeta" class="anchor"></a>
+            <article class="property">
+                <h3 class="protected ">$responseMeta</h3>
+                <pre class="signature">$responseMeta : </pre>
+                <p><em></em></p>
+                
+
+                                <h4>Type</h4>
+                
+                                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/eprocess360.v3core.Controller.ResponseHandler.html"><div class="path-wrapper">\eprocess360\v3core\Controller\ResponseHandler</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_responseType" name="property_responseType" class="anchor"></a>
+            <article class="property">
+                <h3 class="protected ">$responseType</h3>
+                <pre class="signature">$responseType : </pre>
+                <p><em></em></p>
+                
+
+                                <h4>Type</h4>
+                
+                                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/eprocess360.v3core.Controller.ResponseHandler.html"><div class="path-wrapper">\eprocess360\v3core\Controller\ResponseHandler</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_responseEnvelope" name="property_responseEnvelope" class="anchor"></a>
+            <article class="property">
+                <h3 class="protected ">$responseEnvelope</h3>
+                <pre class="signature">$responseEnvelope : </pre>
+                <p><em></em></p>
+                
+
+                                <h4>Type</h4>
+                
+                                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/eprocess360.v3core.Controller.ResponseHandler.html"><div class="path-wrapper">\eprocess360\v3core\Controller\ResponseHandler</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_responseError" name="property_responseError" class="anchor"></a>
+            <article class="property">
+                <h3 class="protected ">$responseError</h3>
+                <pre class="signature">$responseError : </pre>
+                <p><em></em></p>
+                
+
+                                <h4>Type</h4>
+                
+                                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/eprocess360.v3core.Controller.ResponseHandler.html"><div class="path-wrapper">\eprocess360\v3core\Controller\ResponseHandler</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_responseRequest" name="property_responseRequest" class="anchor"></a>
+            <article class="property">
+                <h3 class="protected ">$responseRequest</h3>
+                <pre class="signature">$responseRequest : </pre>
+                <p><em></em></p>
+                
+
+                                <h4>Type</h4>
+                
+                                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/eprocess360.v3core.Controller.ResponseHandler.html"><div class="path-wrapper">\eprocess360\v3core\Controller\ResponseHandler</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_childrenBuilt" name="property_childrenBuilt" class="anchor"></a>
+            <article class="property">
+                <h3 class="protected ">$childrenBuilt</h3>
+                <pre class="signature">$childrenBuilt : </pre>
+                <p><em></em></p>
+                
+
+                                <h4>Type</h4>
+                
+                                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_routesInit" name="property_routesInit" class="anchor"></a>
+            <article class="property">
+                <h3 class="private ">$routesInit</h3>
+                <pre class="signature">$routesInit : </pre>
+                <p><em></em></p>
+                
+
+                                <h4>Type</h4>
+                
+                                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/eprocess360.v3core.Controller.Router.html"><div class="path-wrapper">\eprocess360\v3core\Controller\Router</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                            
+                                    <a id="methods" name="methods"></a>
+            <div class="row-fluid">
+                <div class="span8 content class"><h2>Methods</h2></div>
+                <aside class="span4 detailsbar"></aside>
+            </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_traitRouterReady" name="method_traitRouterReady" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">traitRouterReady()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">traitRouterReady() </pre>
+                <p><em>Ready function for the Router Trait</em></p>
+                
+
+                
+                
+                				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/eprocess360.v3core.Controller.Router.html"><div class="path-wrapper">\eprocess360\v3core\Controller\Router</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_routesInit" name="method_routesInit" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">routesInit()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">routesInit() : $this</pre>
+                <p><em>Prepares the Routes before the routes() functionality.</em></p>
+                
+
+                
+                
+                                    <h4>Returns</h4>
+                    $this
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/eprocess360.v3core.Controller.Router.html"><div class="path-wrapper">\eprocess360\v3core\Controller\Router</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_routes" name="method_routes" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">routes()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">routes() </pre>
+                <p><em>Define the available routes for the module here. This function should not perform any other logic outside of
+specifying available routes.</em></p>
+                
+
+                
+                
+                				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_routeDependencies" name="method_routeDependencies" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">routeDependencies()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">routeDependencies() </pre>
+                <p><em>Things that will be required to make the render and data proper, ie. loading twig templates, setting meta, etc.</em></p>
+                <p>routesInit() will provide the static address.</p>
+
+                
+                
+                				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/eprocess360.v3core.Controller.Router.html"><div class="path-wrapper">\eprocess360\v3core\Controller\Router</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_addRoute" name="method_addRoute" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">addRoute()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">addRoute(  <span class="argument">$method</span>,   <span class="argument">$route</span>,   <span class="argument">$target</span>, null  <span class="argument">$name = null</span>) </pre>
+                <p><em>Adds a route mapping to this controller&#039;s routes.</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$method </td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td></td>
+                                <td>$route </td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td></td>
+                                <td>$target </td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td>null</td>
+                                <td>$name </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                                    <h4>Throws</h4>
+                    <dl>
+                                                    <dt>\Exception</dt>
+                            <dd></dd>
+                                                                    </dl>
+                
+                				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/eprocess360.v3core.Controller.Router.html"><div class="path-wrapper">\eprocess360\v3core\Controller\Router</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_route" name="method_route" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">route()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">route(\eprocess360\v3core\Request\Request  <span class="argument">$request</span>) : $this</pre>
+                <p><em>Routes the Request. This function also adds a lot of Meta pertaining to this Controller.</em></p>
+                <p>..
+It also does Children Routing, in which case if the Request can be passsed along to a child controller, it is.</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>\eprocess360\v3core\Request\Request</td>
+                                <td>$request </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                                    <h4>Throws</h4>
+                    <dl>
+                                                    <dt>\eprocess360\v3core\Controller\ControllerException</dt>
+                            <dd></dd>
+                                                    <dt>\Exception</dt>
+                            <dd></dd>
+                                                                    </dl>
+                
+                                    <h4>Returns</h4>
+                    $this
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/eprocess360.v3core.Controller.Router.html"><div class="path-wrapper">\eprocess360\v3core\Controller\Router</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_setResponseType" name="method_setResponseType" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">setResponseType()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">setResponseType(  <span class="argument">$responseType</span>) </pre>
+                <p><em>Sets the Response type, such as &#039;html&#039; or &#039;json&#039;</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$responseType </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/eprocess360.v3core.Controller.ResponseHandler.html"><div class="path-wrapper">\eprocess360\v3core\Controller\ResponseHandler</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_setRequest" name="method_setRequest" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">setRequest()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">setRequest(\eprocess360\v3core\Request\Request  <span class="argument">$request</span>) </pre>
+                <p><em>Sets the Reponse Request.</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>\eprocess360\v3core\Request\Request</td>
+                                <td>$request </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/eprocess360.v3core.Controller.ResponseHandler.html"><div class="path-wrapper">\eprocess360\v3core\Controller\ResponseHandler</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_setResponse" name="method_setResponse" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">setResponse()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">setResponse(array|object  <span class="argument">$response</span>, integer  <span class="argument">$status = 200</span>, boolean  <span class="argument">$envelope = false</span>) : $this</pre>
+                <p><em>Set the Model (data) component of the response</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>array|object</td>
+                                <td>$response </td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td>integer</td>
+                                <td>$status </td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td>boolean</td>
+                                <td>$envelope </td>
+                                <td><p>whether to put the data in an envelope</p></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    $this
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/eprocess360.v3core.Controller.ResponseHandler.html"><div class="path-wrapper">\eprocess360\v3core\Controller\ResponseHandler</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_addResponseMeta" name="method_addResponseMeta" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">addResponseMeta()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">addResponseMeta(string  <span class="argument">$namespace</span>, array  <span class="argument">$meta</span>) </pre>
+                <p><em>Adds a key-&gt;entry to the response Meta.</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$namespace </td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td>array</td>
+                                <td>$meta </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/eprocess360.v3core.Controller.ResponseHandler.html"><div class="path-wrapper">\eprocess360\v3core\Controller\ResponseHandler</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_addTwigPath" name="method_addTwigPath" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">addTwigPath()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">addTwigPath(  <span class="argument">$twigPath</span>) </pre>
+                <p><em>Adds a twig path to the global twig_loader.</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$twigPath </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                                    <h4>Throws</h4>
+                    <dl>
+                                                    <dt>\Twig_Error_Loader</dt>
+                            <dd></dd>
+                                                                    </dl>
+                
+                				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/eprocess360.v3core.Controller.ResponseHandler.html"><div class="path-wrapper">\eprocess360\v3core\Controller\ResponseHandler</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getResponseMeta" name="method_getResponseMeta" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getResponseMeta()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getResponseMeta() : array</pre>
+                <p><em>Gets the Response Meta</em></p>
+                
+
+                
+                
+                                    <h4>Returns</h4>
+                    array
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/eprocess360.v3core.Controller.ResponseHandler.html"><div class="path-wrapper">\eprocess360\v3core\Controller\ResponseHandler</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_setErrorResponse" name="method_setErrorResponse" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">setErrorResponse()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">setErrorResponse(\Exception  <span class="argument">$exception</span>) : $this</pre>
+                <p><em>Sets an error response with a given exception.</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>\Exception</td>
+                                <td>$exception </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    $this
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/eprocess360.v3core.Controller.ResponseHandler.html"><div class="path-wrapper">\eprocess360\v3core\Controller\ResponseHandler</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_setTemplate" name="method_setTemplate" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">setTemplate()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">setTemplate(  <span class="argument">$template</span>, boolean  <span class="argument">$mode = false</span>,   <span class="argument">$handler = false</span>) : $this</pre>
+                <p><em>The template to use when responding to HTML requests.  There are two levels of templates: server and client.</em></p>
+                <p>Only one template for each may be specified.  Automatic templates will be applied when possible.</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$template </td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td>boolean</td>
+                                <td>$mode </td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td></td>
+                                <td>$handler </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    $this
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/eprocess360.v3core.Controller.ResponseHandler.html"><div class="path-wrapper">\eprocess360\v3core\Controller\ResponseHandler</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_render" name="method_render" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">render()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">render() </pre>
+                <p><em>Echo data back to the client.  If HTML, the response will echo a template.  Otherwise, the response is the raw
+JSON result.</em></p>
+                
+
+                
+                
+                				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/eprocess360.v3core.Controller.ResponseHandler.html"><div class="path-wrapper">\eprocess360\v3core\Controller\ResponseHandler</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getResponseType" name="method_getResponseType" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getResponseType()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getResponseType() : mixed</pre>
+                <p><em>Gets the Response type, such as &#039;html&#039; or &#039;json&#039;</em></p>
+                
+
+                
+                
+                                    <h4>Returns</h4>
+                    mixed
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/eprocess360.v3core.Controller.ResponseHandler.html"><div class="path-wrapper">\eprocess360\v3core\Controller\ResponseHandler</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getResponseResult" name="method_getResponseResult" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getResponseResult()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getResponseResult() : mixed</pre>
+                <p><em>Gets the Response type, such as &#039;html&#039; or &#039;json&#039;</em></p>
+                
+
+                
+                
+                                    <h4>Returns</h4>
+                    mixed
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/eprocess360.v3core.Controller.ResponseHandler.html"><div class="path-wrapper">\eprocess360\v3core\Controller\ResponseHandler</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getResponseEnvelope" name="method_getResponseEnvelope" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getResponseEnvelope()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getResponseEnvelope() : mixed</pre>
+                <p><em>Gets the Response Envelope, which determines if on render the response is wrapped into an envelope.</em></p>
+                
+
+                
+                
+                                    <h4>Returns</h4>
+                    mixed
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/eprocess360.v3core.Controller.ResponseHandler.html"><div class="path-wrapper">\eprocess360\v3core\Controller\ResponseHandler</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_setResponseEnvelope" name="method_setResponseEnvelope" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">setResponseEnvelope()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">setResponseEnvelope(mixed  <span class="argument">$responseEnvelope</span>) </pre>
+                <p><em>Sets the Response Envelope, which determines if on render the response is wrapped into an envelope.</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>mixed</td>
+                                <td>$responseEnvelope </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/eprocess360.v3core.Controller.ResponseHandler.html"><div class="path-wrapper">\eprocess360\v3core\Controller\ResponseHandler</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getResponseErrors" name="method_getResponseErrors" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getResponseErrors()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getResponseErrors() : array</pre>
+                <p><em>Gets the Response Errors.</em></p>
+                
+
+                
+                
+                                    <h4>Returns</h4>
+                    array
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/eprocess360.v3core.Controller.ResponseHandler.html"><div class="path-wrapper">\eprocess360\v3core\Controller\ResponseHandler</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_run" name="method_run" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">run()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">run() </pre>
+                <p><em></em></p>
+                
+
+                
+                
+                				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_buildChildren" name="method_buildChildren" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">buildChildren()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">buildChildren() </pre>
+                <p><em></em></p>
+                
+
+                
+                
+                				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getName" name="method_getName" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getName()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getName() : string</pre>
+                <p><em></em></p>
+                
+
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getChildrenBuilt" name="method_getChildrenBuilt" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getChildrenBuilt()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getChildrenBuilt() : mixed</pre>
+                <p><em></em></p>
+                
+
+                
+                
+                                    <h4>Returns</h4>
+                    mixed
+                                    				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_setChildrenBuilt" name="method_setChildrenBuilt" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">setChildrenBuilt()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">setChildrenBuilt(boolean  <span class="argument">$childrenBuilt</span>) </pre>
+                <p><em></em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>boolean</td>
+                                <td>$childrenBuilt </td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getDefault" name="method_getDefault" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getDefault()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getDefault() </pre>
+                <p><em></em></p>
+                
+
+                
+                                    <h4>Throws</h4>
+                    <dl>
+                                                    <dt>\Exception</dt>
+                            <dd></dd>
+                                                                    </dl>
+                
+                				
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                                                    </div>
+    </section>
+
+    <div id="source-view" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="source-view-label" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="source-view-label">SystemController.php</h3>
+        </div>
+        <div class="modal-body">
+            <pre data-src="../files/v3controllers/src/SystemController/SystemController.php.txt" class="language-php line-numbers"></pre>
+        </div>
+    </div>
+
+    <footer class="row-fluid">
+        <section class="span10 offset2">
+            <section class="row-fluid">
+                <section class="span10 offset1">
+                    <section class="row-fluid footer-sections">
+                        <section class="span4">
+                                                        <h1><i class="icon-code"></i></h1>
+                            <div>
+                                <ul>
+                                                                            <li><a href="../namespaces/eprocess360.html">\eprocess360</a></li>
+                                                                            <li><a href="../namespaces/Trigger.html">\Trigger</a></li>
+                                                                    </ul>
+                            </div>
+                        </section>
+                        <section class="span4">
+                                                        <h1><i class="icon-bar-chart"></i></h1>
+                            <div>
+                                <ul>
+                                    <li><a href="../graphs/class.html">Class Hierarchy Diagram</a></li>
+                                </ul>
+                            </div>
+                        </section>
+                        <section class="span4">
+                                                        <h1><i class="icon-pushpin"></i></h1>
+                            <div>
+                                <ul>
+                                    <li><a href="../reports/errors.html">Errors</a></li>
+                                    <li><a href="../reports/markers.html">Markers</a></li>
+                                </ul>
+                            </div>
+                        </section>
+                    </section>
+                </section>
+            </section>
+            <section class="row-fluid">
+                <section class="span10 offset1">
+                    <hr />
+                    Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
+                    on 
+Warning: date_default_timezone_get(): It is not safe to rely on the system's timezone settings. You are *required* to use the date.timezone setting or the date_default_timezone_set() function. In case you used any of those methods and you are still getting this warning, you most likely misspelled the timezone identifier. We selected the timezone 'UTC' for now, but please set date.timezone to select your timezone. in phar:///Users/kiranebilak/v3/phpDocumentor.phar/vendor/twig/twig/lib/Twig/Extension/Core.php on line 89
+January 14th, 2016 at 21:25.
+                </section>
+            </section>
+        </section>
+    </footer>
+</div>
+
+</body>
+</html>

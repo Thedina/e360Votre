@@ -1,0 +1,146 @@
+{% extends 'SystemController.backbone.base.html.twig' %}
+
+{% set active = 'settings' %}
+
+    {% block body %}
+
+
+        <div class="container">
+            <form class="form-horizontal" method="POST" action="{{ SysVar.get('siteUrl') }}/profile" id="formChangeInfo">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <h3>My Profile</h3>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="clearfix">
+                            <div class="btn-group pull-right h3" role="group" aria-label="User Options">
+                                <button type="submit" class="btn btn-info">Save</button>
+                                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#changePasswordModal">Change Password</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        {% if Response.data.errors %}
+                            <div class="alert alert-danger" role="alert"><p>There were problems with your submission:</p> <ul>{% for error in Response.data.errors %}<li>{{ error.getMessage }}</li>{% endfor %}</ul></div>
+                        {% elseif Response.data.keydict.Saved %}
+                            <div class="alert alert-success" role="alert">Your changes were saved.</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-10">
+                        <input type="hidden" name="submitChangeInfo" value="true">
+                        {{ Macro.input(Response.data.form.Keydict.Field('email')) }}
+                        {{ Macro.input(Response.data.form.Keydict.Field('alternateEmail')) }}
+                        {{ Macro.input(Response.data.form.Keydict.Field('firstName')) }}
+                        {{ Macro.input(Response.data.form.Keydict.Field('lastName')) }}
+                        {{ Macro.input(Response.data.form.Keydict.Field('phone')) }}
+                        <div class="col-sm-offset-3">
+                            <div class="form-group">
+                                {{ Macro.checkbox(Response.data.form.Keydict.Field('isAway')) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+
+        <!-- Modal for Password change -->
+        <div class="modal fade" id="changePasswordModal" tabindex="-1" role="dialog" aria-labelledby="changePasswordModalLabel">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <form class="form-horizontal" method="POST" action="{{ SysVar.get('siteUrl') }}/profile" id="formChangePassword">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                            <h4 class="modal-title" id="changePasswordModalLabel">Change Password</h4>
+                        </div>
+                        <div class="modal-body">
+
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <input type="hidden" name="submitChangePassword" value="true">
+                                    <div class="alert alert-danger" role="alert" id="passwordChangeMessage"></div>
+                                    {% if Response.meta.User.status == true %}
+                                        <div class="alert alert-danger" role="alert">Please update your password.</div>
+                                        {% else %}
+                                        {{ Macro.input(Response.data.form.Keydict.Field('currentPassword')) }}
+                                    {% endif %}
+                                    {{ Macro.input(Response.data.form.Keydict.Field('newPassword')) }}
+                                    {{ Macro.input(Response.data.form.Keydict.Field('repeatNewPassword')) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-info" id="btn-change-password">Change Password</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    {% endblock %}
+    {% block moduleJS %}
+        <script src="{{ Response.meta.SystemController.static }}/js/util.js"></script>
+    {% endblock %}
+    {% block javascript %}
+        <script type="text/javascript">
+
+            $(document).ready(function() {
+                $('#passwordChangeMessage').html('').hide();
+
+                {% if Response.meta.User.status == true %}
+                    $('#changePasswordModal').modal('show');
+                {% endif %}
+
+                $('#changePasswordModal').on('hidden.bs.modal', function () {
+                    $(this).find("input").val('').end();
+                    $('#passwordChangeMessage').html('').hide();
+                });
+
+                $('#changePasswordModal').on('show.bs.modal', function () {
+                    $(this).find("input").val('').end();
+                });
+
+                $('#btn-change-password').click(function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    $.ajax(hbInitData().meta.Profile.apiPath + '/password', {
+                        type: 'POST',
+                        contentType: 'application/json; charset=UTF-8',
+                        dataType: 'json',
+                        data: JSON.stringify({
+                            currentPassword : $('#form-currentPassword').val(),
+                            newPassword: $('#form-newPassword').val(),
+                            repeatPassword: $('#form-repeatNewPassword').val()
+                        })
+                    }).success(function(data) {
+                        $('#passwordChangeMessage').html('').hide();
+                        $('#changePasswordModal').modal('hide');
+                        bootbox.dialog({
+                            message: "<div class='alert alert-success' style='margin:0; margin-top:15px'>Your password has been changed successfully!</div>",
+                            buttons: {
+                                main: {
+                                    label: "Return to Profile",
+                                    className: "btn-default"
+                                }
+                            }
+                        });
+                    }).fail(function(response) {
+                        var errors = [];
+
+                        $.each(response.responseJSON.errors, function (index, value) {
+                            errors.push(value.message);
+                        });
+                        $('#passwordChangeMessage').html('')
+                                .show()
+                                .append('There were problems with your submission: ' + '<ul><li>' + errors.join('</li><li>') + '</li></ul>');
+                    });
+                });
+
+
+
+            });
+        </script>
+    {% endblock %}

@@ -1,0 +1,230 @@
+{% extends 'SystemController.backbone.base.html.twig' %}
+{% block moduleCSS %}
+{% endblock %}
+{% block body %}
+    <div class="container">
+        <form class="form-horizontal" method="POST" action="{{ SysVar.get('siteUrl') }}/users/{{ Response.idUser }}" id="formChangeInfo">
+            <div class="row">
+                <div class="col-sm-6">
+                    <h3>{{ Response.Form.Keydict.Field('firstName').CleanValue }} {{ Response.Form.Keydict.Field('lastName').CleanValue }}</h3>
+                </div>
+                <div class="col-sm-6">
+
+                    <div class="clearfix">
+                        <div class="btn-group pull-right h3" role="group" aria-label="User Options">
+
+                            <button type="submit" class="btn btn-info">Save</button>
+                            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#resetPasswordModal">Reset Password</button>
+                            <button type="button" class="btn btn-default">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-md-8">
+                    <input type="hidden" name="submitChangeInfo" value="true">
+                    {{ Macro.input(Response.Form.Keydict.Field('email')) }}
+                    {{ Macro.input(Response.Form.Keydict.Field('alternateEmail')) }}
+                    {{ Macro.input(Response.Form.Keydict.Field('firstName')) }}
+                    {{ Macro.input(Response.Form.Keydict.Field('lastName')) }}
+                    {{ Macro.input(Response.Form.Keydict.Field('phone')) }}
+                </div>
+                <div class="col-md-4">
+                    <h4 class="hidden-xs hidden-sm">Options</h4>
+                    <div class="col-sm-offset-3 col-lg-offset-0">
+                        <div class="form-group">
+                            {{ Macro.checkbox(Response.Form.Keydict.Field('isActive')) }}
+                            {{ Macro.checkbox(Response.Form.Keydict.Field('isSystem')) }}
+                            {{ Macro.checkbox(Response.Form.Keydict.Field('canLogin')) }}
+                            {{ Macro.checkbox(Response.Form.Keydict.Field('isAway')) }}
+                            {{ Macro.checkbox(Response.Form.Keydict.Field('mustChangePassword')) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <div class="row">
+            <div class="col-sm-6">
+                <h3>Projects</h3>
+            </div>
+            <div class="col-sm-6">
+                <div class="clearfix">
+                    <div class="btn-group pull-right h3" role="group" aria-label="Project View Options">
+                        <!-- placeholder for buttons in the future -->
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12">
+                <form role="form">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Role</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for project in Response.projectInfo %}
+                                    <tr>
+                                        <td><a href="{{ SysVar.get('siteUrl') }}/projects/{{ project.idProject }}">{{ project.title }}</a></td>
+                                        <td>{{ project.localRoles }}</td>
+                                        <td>{{ project.state }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Password change -->
+    <div class="modal fade" id="resetPasswordModal" tabindex="-1" role="dialog" aria-labelledby="resetPasswordModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form class="form-horizontal" method="POST" action="{{ SysVar.get('siteUrl') }}/users/{{ Response.idUser }}/password" id="formChangePassword">
+
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                        <h4 class="modal-title" id="resetPasswordModalLabel">Reset Password</h4>
+                    </div>
+                    <div class="modal-body">
+
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <input type="hidden" name="submitChangePassword" value="true">
+                                <div class="form-group">
+                                    <label for="form-newPassword" class="col-sm-3 control-label">New Password</label>
+                                    <div class="col-sm-9">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="form-newPassword" name="form-newPassword" value="" placeholder="New Password">
+                                            <span class="input-group-btn">
+                                                <button type="button" class="btn btn-default" id="btn-another-password">
+                                                    <span class="glyphicon glyphicon-repeat"></span>
+                                                </button>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="form-repeatNewPassword" class="col-sm-3 control-label">Repeat Password</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" id="form-repeatNewPassword" name="form-repeatNewPassword" value="" placeholder="Repeat New Password">
+                                    </div>
+                                </div>
+                                <div class="checkbox col-sm-offset-3 col-sm-9"><label><input type="checkbox" name="Login Reset" id="must-change-password" checked="">Require user to reset password with next login</label></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-info" id="btn-reset-password">Reset Password</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block moduleJS %}
+    <script src="{{ Response.meta.SystemController.static }}/js/util.js"></script>
+    <script src="{{ Response.meta.SystemController.static }}/js/bizzybone.js"></script>
+{% endblock %}
+{% block javascript %}
+    <script type="text/javascript">
+        function validatePassword(pwd) {
+            var minLength, maxLength, requiresLetter, requiresNumber, hasLetter, hasNum;
+
+            minLength = {{ SysVar.get('passwordMinLength') }};
+            maxLength = {{ SysVar.get('passwordMaxLength') }};
+            requiresLetter = {{ SysVar.get('passwordRequiresLetter') }};
+            requiresNumber = {{ SysVar.get('passwordRequiresNumber') }};
+
+            hasLetter = /[a-zA-Z]/;
+            hasNum = /[0-9]/;
+
+            if(pwd.length < minLength) return false;
+            if(pwd.length > maxLength) return false;
+            if(requiresLetter && !hasLetter.test(pwd)) return false;
+            if(requiresNumber && !hasNum.test(pwd)) return false;
+
+            return true;
+        }
+
+        function genValidPassword() {
+            var tryPass, passLength;
+            passLength = Math.min(12, {{ SysVar.get('passwordMaxLength') }});
+
+            do {
+                tryPass = Util.randomPassword(passLength);
+            } while(!validatePassword(tryPass));
+
+            return tryPass;
+        }
+
+        function fillRandomPassword() {
+            var pwd = genValidPassword();
+            $('#form-newPassword').val(pwd);
+            $('#form-repeatNewPassword').val(pwd);
+        }
+
+        $(document).ready(function() {
+            var getData, meta;
+
+            // Precompile all the relevant templates
+            /*_.each({
+            }, hbCompileTemplate);*/
+
+            getData = hbInitData().data;
+            meta = hbInitData().meta.User;
+
+            $('#formChangeInfo').submit(function() {
+                $('.checkdefault-hack').each(function(index) {
+                    var myName = $(this).attr('name');
+
+                    if($('input[type="checkbox"][name="' + myName + '"]').is(':checked')) {
+                        $(this).prop('disabled', true);
+                    }
+                });
+            });
+
+            $('#resetPasswordModal').on('show.bs.modal', function (e) {
+                fillRandomPassword();
+            });
+
+            $('#btn-another-password').click(function(e) {
+                fillRandomPassword();
+            });
+
+            $('#btn-reset-password').click(function(e) {
+                var thePassword;
+                e.preventDefault();
+                e.stopPropagation();
+
+                thePassword = $('#form-newPassword').val();
+
+                $.ajax(hbInitData().meta.Users.apiPath + '/' + {{ Response.idUser }} + '/password', {
+                    type: 'PUT',
+                    contentType: 'application/json; charset=UTF-8',
+                    dataType: 'json',
+                    data: JSON.stringify({
+                        newPassword: $('#form-newPassword').val(),
+                        confirmPassword: $('#form-repeatNewPassword').val(),
+                        mustChange: $('#must-change-password').is(':checked')
+                    })
+                }).success(function(data) {
+                    $('input[name="form-mustChangePassword"]').prop('checked', $('#must-change-password').is(':checked'));
+                    bootbox.alert("Password successfully reset to " + thePassword);
+                    $('#resetPasswordModal').modal('hide');
+                }).fail(function(response) {
+                    Util.showError(response.responseJSON);
+                });
+            });
+        });
+    </script>
+{% endblock %}

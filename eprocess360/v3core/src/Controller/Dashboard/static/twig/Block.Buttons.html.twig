@@ -1,0 +1,7 @@
+{% for button in block.buttons %}
+    <div class="admin-panel col-xs-6 col-sm-3 col-md-2 col-lg-2">
+        <a href="{{ button.link }}" class="panel panel-default btn btn-block btn-default">
+            <h2 class="text-center"><span class="glyphicon glyphicon-{{ button.icon }}"></span><small><br>{{ button.title }}</small></h2>
+        </a>
+    </div>
+{% endfor %}

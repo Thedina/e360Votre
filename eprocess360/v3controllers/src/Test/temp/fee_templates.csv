@@ -1,0 +1,5 @@
+Title,Description,Calculation Type,Formula,Deposit,Minimum,Payable,Tags,,,,,
+Unfinished Basement,,Unit,16,0,0,0,"2015,Building",,,,,
+Plan Check Fee,40% of Building Permit Fee,Formula,"0.40*fee(""Building Permit Fee"")",0,100,1,"2015,Building",,,,,
+Building Permit Fee,,Matrix,PROJ-VALUATION,0,0,1,"2015,Building",,,,,
+Pre-Paid Plan Check Fee (SET),Fee required before the plan review can take place,Fixed,100,1,100,1,"2015,Building",,,,,

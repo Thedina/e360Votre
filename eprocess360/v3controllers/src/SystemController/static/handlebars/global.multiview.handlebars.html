@@ -1,0 +1,118 @@
+<script id="hb-multiview-main" type="text/x-handlebars-template">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="row">
+                <div class="col-xs-12 col-sm-6 col-md-6 multiview-nav">
+                    <div class="navbar navbar-default navbar-margin" id="multiview-navbar">
+                        <div class="navbar-header">
+                            {{#if isBlock}}<a class="navbar-brand" href="#" style="">{{title}}</a>{{/if}} <a class="navbar-toggle" data-target=".multiview-navbar" data-toggle="collapse"><span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span></a>
+                        </div>
+                        <div class="navbar-collapse collapse multiview-navbar full-view">
+                            <form class="form-inline top-margin" id="filter-controls"></form>
+                        </div>
+                    </div>
+                    <div class="clearfix" id="page-controls"></div>
+                    <div class="panel panel-default">
+                        <table class="table table-hover">
+                            <thead id="multiview-list-header"></thead>
+                            <tbody id="multiview-list"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script id="hb-multiview-filter-controls" type="text/x-handlebars-template">
+    {{searchBy.[search.column]}}
+    {{#each searchInfo as | search index |}}
+        <input class="form-control input-md search-input" placeholder="{{search.label}}" id="search-input-{{search.column}}" data-column="{{search.column}}" type="text" value="{{lookup ../searchBy search.column}}">
+    {{/each}}
+    <div class="btn-group">
+        <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#">{{{bucketByCurrent bucketInfo bucketBy}}}<span class="caret"></span></a>
+        <ul class="dropdown-menu bucket-select">{{{bucketByOptions bucketInfo bucketBy}}}</ul>
+    </div>
+    {{#each filterInfo as | filter |}}
+        <select class="form-control filter-select" data-column="{{filter.column}}">{{{filterOptions filter.options (lookup ../filterBy filter.column)}}}</select>
+    {{/each}}
+    <button class="btn btn-default" id="btn-reset-filter">Reset</button>
+</script>
+
+<script id="hb-multiview-page-controls" type="text/x-handlebars-template">
+    <nav>
+        <ul class="pagination kpagination-sm pagination-margin">
+            <li {{#if firstPage}}class="disabled"{{/if}}>
+            <a href="#" aria-label="Previous Page" id="btn-prev-page">
+                <span aria-hidden="true">«</span>
+            </a>
+            </li>
+            {{{pageNumbers numPages curPage}}}
+            <li {{#if lastPage}}class="disabled"{{/if}}>
+            <a href="#" aria-label="Next Page" id="btn-next-page">
+                <span aria-hidden="true">»</span>
+            </a>
+            </li>
+        </ul>
+    </nav>
+</script>
+
+<script id="hb-multiview-column-headers" type="text/x-handlebars-template">
+    <tr>
+        {{#each columns as | col |}}
+        {{#if col.enabled}}
+        <th class="column-label" data-column="{{col.key}}">{{col.label}}&nbsp;{{{columnSortIcon ../sort col.key}}}</th>
+        {{/if}}
+        {{/each}}
+    </tr>
+</script>
+
+<script id="hb-multiview-bucket-header" type="text/x-handlebars-template">
+    <tr>
+        <td colspan="{{numColumns}}" style="background-color: #337AB7;">
+            <p class="lead" style="margin:0; color: #fff;">{{bucketVal}}</p>
+        </td>
+    </tr>
+</script>
+
+<script id="hb-multiview-row" type="text/x-handlebars-template">
+    <tr></tr>
+</script>
+
+<script id="hb-multiview-col-default" type="text/x-handlebars-template">
+    <td>{{val}}</td>
+</script>
+
+<script id="hb-multiview-col-link" type="text/x-handlebars-template">
+    <td>
+        <a href="{{url}}">{{val}}</a>
+    </td>
+</script>
+
+<!-- Extended (Optional) Templates -->
+<script id="hb-multiview-custom-column-edit" type="text/x-handlebars-template">
+    <td>
+        <div class="btn-group pull-right" role="group" aria-label="Options">
+            <button type="button" class="btn btn-default btn-xs btn-edit">Edit</button>
+            <button type="button" class="btn btn-default btn-xs btn-remove">Remove</button>
+        </div>
+    </td>
+</script>
+
+<script id="hb-multiview-custom-column-remove" type="text/x-handlebars-template">
+    <td>
+        <div class="btn-group pull-right" role="group" aria-label="Options">
+            <button type="button" class="btn btn-default btn-xs btn-remove">Remove</button>
+        </div>
+    </td>
+</script>
+
+<script id="hb-multiview-custom-status-active" type="text/x-handlebars-template">
+    <td>
+        {{#if row.status.isActive}}
+            <span class="label label-success">ACTIVE</span>
+        {{else}}
+            <span class="label label-warning">INACTIVE</span>
+        {{/if}}
+    </td>
+</script>

@@ -1,0 +1,531 @@
+{
+  "options": {
+    "Residential": {
+      "flags": [
+        "isResidential"
+      ],
+      "children": {
+        "New Construction": {
+          "flags": [
+            "isNewConstruction"
+          ],
+          "children": {
+            "Single Family": {
+              "flags": [
+                "isSingleFamily"
+              ]
+            },
+            "Two Family": {
+              "flags": [
+                "isTwoFamily"
+              ]
+            },
+            "Multi Family": {
+              "flags": [
+                "isMultiFamily"
+              ]
+            },
+            "Townhome": {
+              "flags": [
+                "isTownhome"
+              ]
+            },
+            "Accessory Structures": {
+              "flags": [
+                "isAccessoryStructure"
+              ],
+              "children": {
+                "Pool/Spa": {
+                  "flags": [
+                    "isPoolSpa"
+                  ]
+                },
+                "Gazebo": {
+                },
+                "Shed": {
+                },
+                "Detached Garage": {
+                },
+                "Other": {
+                }
+              }
+            }
+          }
+        },
+        "Upgrades": {
+          "flags": [
+            "isUpgrades"
+          ],
+          "children": {
+            "Solar/Wind": {
+              "flags": [
+                "isSolarWind"
+              ],
+              "children": {
+                "Windmill(s)": {},
+                "Hot Water (Solar)": {},
+                "Photovoltaic (Solar)": [
+                  "isPhotovoltaic"
+                ],
+                "Geothermal": {}
+              }
+            },
+            "Electrical": {
+              "flags": [
+                "isElectrical"
+              ],
+              "children": {
+                "New Service": {
+                  "flags": [
+                    "isElectricalNewService"
+                  ]
+                },
+                "Service Upgrade": {
+                  "flags": [
+                    "isElectricalServiceUpgrade"
+                  ]
+                },
+                "Temporary Power": {
+                  "flags": [
+                    "isTemporaryPower"
+                  ]
+                },
+                "Additional Circuits": {
+                  "flags": [
+                    "isAdditionalCircuit"
+                  ]
+                },
+                "Other": {}
+              }
+            },
+            "Mechanical": {
+              "flags": [
+                "isMechanical"
+              ],
+              "children": {
+                "Furnace": {
+                  "flags": [
+                    "isFurnace"
+                  ]
+                },
+                "Air Conditioner": {
+                  "flags": [
+                    "isAirConditioner"
+                  ]
+                },
+                "Air Cleaner": {
+                  "flags": [
+                    "isAirCleaner"
+                  ]
+                },
+                "Humidifier": {
+                  "flags": [
+                    "isHumidifier"
+                  ]
+                },
+                "Other": {
+                  "flags": []
+                }
+              }
+            },
+            "Plumbing": {
+              "flags": [
+                "isPlumbing"
+              ],
+              "children": {
+                "Water Heater": {
+                  "flags": "isWaterHeater"
+                },
+                "Water Softener": {
+                  "flags": "isWaterSoftener"
+                },
+                "Boiler": {
+                  "flags": "isBoiler"
+                },
+                "Other": {}
+              }
+            }
+          }
+        },
+        "Remodel": {
+          "flags": [
+            "isRemodel"
+          ],
+          "children": {
+            "Roofing": {
+              "flags": [
+                "isRoofing"
+              ],
+              "children": {
+                "Re-Roof": {
+                  "flags": [
+                    "isReRoof"
+                  ]
+                },
+                "Roof Conversion": {
+                  "flags": [
+                    "isRoofConversion"
+                  ]
+                }
+              }
+            },
+            "Disasters": {
+              "flags": [
+                "isDisaster"
+              ]
+            },
+            "Exterior Finishes": {
+              "flags": [
+                "isExteriorFinishes"
+              ]
+            },
+            "Windows": {
+              "flags": [
+                "isWindows"
+              ]
+            },
+            "General": {
+              "flags": [
+                "isGeneral"
+              ]
+            }
+          }
+        },
+        "Grading and Demolition": {
+          "flags": [
+            "isGradingDemolition"
+          ],
+          "children": {
+            "Grading": {
+              "flags": [
+                "isGrading"
+              ]
+            },
+            "Demolition": {
+              "flags": [
+                "isDemolition"
+              ]
+            }
+          }
+        },
+        "Addition": {
+          "flags": [
+            "isAddition"
+          ],
+          "children": {
+            "Attached Carport": {
+              "flags": "isAttachedCarport"
+            },
+            "Attached Deck": {
+              "flags": "isAttachedDeck"
+            },
+            "Living Space": {
+              "flags": "isLivingSpace"
+            },
+            "Attached Garage": {
+              "flags": "isAttachedGarage"
+            },
+            "General": {
+              "flags": "isGeneral"
+            }
+          }
+        },
+        "Other": {
+          "flags": [
+            "isCategoryOther"
+          ],
+          "children": {
+            "Fence": {
+              "flags": [
+                "isFence"
+              ]
+            },
+            "Retaining Wall": {
+              "flags": [
+                "isRetainingWall"
+              ]
+            },
+            "Pool/Spa": {
+              "flags": [
+                "isPoolSpa"
+              ]
+            },
+            "Generator": {
+              "flags": [
+                "isGenerator"
+              ]
+            },
+            "Other": {
+              "flags": [
+                "isSubCategoryOther"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "Commercial": {
+      "flags": [
+        "isCommercial"
+      ],
+      "children": {
+        "New Construction": {
+          "flags": [
+            "isNewConstruction"
+          ],
+          "children": {
+            "General": {
+              "flags": [
+                "isGeneralConstruction"
+              ]
+            },
+            "Accessory Structures": {
+              "flags": [
+                "isAccessoryStructure"
+              ],
+              "children": {
+                "Pool/Spa": {
+                  "flags": [
+                    "isPoolSpa"
+                  ]
+                },
+                "Canopy(ies)": {
+                  "flags": [
+                    "isCanopy"
+                  ]
+                },
+                "Shed": {
+                    "flags": [
+                      "isShed"
+                    ]
+                },
+                "Detached Garage": {
+                  "flags": [
+                    "isDetachedGarage"
+                  ]
+                },
+                "Sign(s)": {
+                  "flags": [
+                    "isSign"
+                  ]
+                },
+                "Other": {
+                  "flags": [
+                    "isSubSubOther"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "Upgrades": {
+          "flags": [
+            "isUpgrades"
+          ],
+          "children": {
+            "Solar/Wind": {
+              "flags": [
+                "isSolarWind"
+              ],
+              "children": {
+                "Windmill(s)": {},
+                "Hot Water (Solar)": {},
+                "Photovoltaic (Solar)": [
+                  "isPhotovoltaic"
+                ],
+                "Geothermal": {}
+              }
+            },
+            "Electrical": {
+              "flags": [
+                "isElectrical"
+              ],
+              "children": {
+                "New Service": {
+                  "flags": [
+                    "isElectricalNewService"
+                  ]
+                },
+                "Service Upgrade": {
+                  "flags": [
+                    "isElectricalServiceUpgrade"
+                  ]
+                },
+                "Temporary Power": {
+                  "flags": [
+                    "isTemporaryPower"
+                  ]
+                },
+                "Additional Circuits": {
+                  "flags": [
+                    "isAdditionalCircuit"
+                  ]
+                },
+                "Other": {}
+              }
+            },
+            "Mechanical": {
+              "flags": [
+                "isMechanical"
+              ],
+              "children": {
+                "Furnace": {
+                  "flags": [
+                    "isFurnace"
+                  ]
+                },
+                "Air Conditioner": {
+                  "flags": [
+                    "isAirConditioner"
+                  ]
+                },
+                "Air Cleaner": {
+                  "flags": [
+                    "isAirCleaner"
+                  ]
+                },
+                "Humidifier": {
+                  "flags": [
+                    "isHumidifier"
+                  ]
+                },
+                "Other": {
+                  "flags": []
+                }
+              }
+            },
+            "Plumbing": {
+              "flags": [
+                "isPlumbing"
+              ],
+              "children": {
+                "Water Heater": {
+                  "flags": "isWaterHeater"
+                },
+                "Water Softener": {
+                  "flags": "isWaterSoftener"
+                },
+                "Boiler": {
+                  "flags": "isBoiler"
+                },
+                "Other": {}
+              }
+            }
+          }
+        },
+        "Remodel": {
+          "flags": [
+            "isRemodel"
+          ],
+          "children": {
+            "Roofing": {
+              "flags": [
+                "isRoofing"
+              ],
+              "children": {
+                "Re-Roof": {
+                  "flags": [
+                    "isReRoof"
+                  ]
+                },
+                "Roof Conversion": {
+                  "flags": [
+                    "isRoofConversion"
+                  ]
+                }
+              }
+            },
+            "Disasters": {
+              "flags": [
+                "isDisaster"
+              ]
+            },
+            "Exterior Finishes": {
+              "flags": [
+                "isExteriorFinishes"
+              ]
+            },
+            "Windows": {
+              "flags": [
+                "isWindows"
+              ]
+            },
+            "General": {
+              "flags": [
+                "isGeneral"
+              ]
+            }
+          }
+        },
+        "Grading and Demolition": {
+          "flags": [
+            "isGradingDemolition"
+          ],
+          "children": {
+            "Grading": {
+              "flags": [
+                "isGrading"
+              ]
+            },
+            "Demolition": {
+              "flags": [
+                "isDemolition"
+              ]
+            }
+          }
+        },
+        "Addition": {
+          "flags": [
+            "isAddition"
+          ]
+        },
+        "Other": {
+          "flags": [
+            "isCategoryOther"
+          ],
+          "children": {
+            "Fence": {
+              "flags": [
+                "isFence"
+              ]
+            },
+            "Retaining Wall": {
+              "flags": [
+                "isRetainingWall"
+              ]
+            },
+            "Generator": {
+              "flags": [
+                "isGenerator"
+              ]
+            },
+            "Other": {
+              "flags": [
+                "isSubCategoryOther"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "Other": {
+      "flags": [
+        "isCategoryOther"
+      ],
+      "children": {
+        "Water Tanks": {
+          "flags": "isWaterTank"
+        },
+        "Cell Towers": {
+          "flags": "isCellTower"
+        },
+        "Agricultural Buildings": {
+          "flags": "isAgricultural"
+        },
+        "Other": {
+          "flags": "isOther"
+        }
+      }
+    }
+  }
+}

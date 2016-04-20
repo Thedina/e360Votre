@@ -1,0 +1,90 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: DanielMoreno
+ * Date: 12/15/15
+ * Time: 2:14 PM
+ */
+
+namespace eprocess360\v3controllers\Controller;
+
+use eprocess360\v3core\Controller\Auth;
+use eprocess360\v3core\Controller\Children;
+use eprocess360\v3core\Controller\Controller as ControllerTrait;
+use eprocess360\v3core\Controller\Project;
+use eprocess360\v3core\Controller\Router;
+use Exception;
+
+/**
+ * Class Controller
+ * @package eprocess360\v3controllers\Controller
+ */
+class Controller extends ControllerTrait
+{
+    use Router, Auth, Children;
+
+
+    /*********************************************   #ROUTING#  **********************************************/
+
+    /**
+     * Define the available routes for the module here. This function should not perform any other logic outside of
+     * specifying available routes.
+     * @throws Exception
+     */
+    public function routes()
+    {
+        $this->routes->map('GET|POST|PATCH|PUT|DELETE', '/[i:idController]/projects/[i:idProject]/[*:trailing]?', function ($idController, $idProject) {
+            $this->getControllerAPI($idController, $idProject);
+        });
+        $this->routes->map('POST', '', function () {
+            $this->createProjectControllerAPI();
+        });
+        $this->routes->map('POST', '/[i:idController]/projects', function ($idController) {
+            $this->createProjectAPI($idController);
+        });
+    }
+
+    /**
+     * Passer function that gets the specified Project Controller and passes the request.
+     * @param $idController
+     * @param $idProject
+     * @throws Exception
+     * @throws \eprocess360\v3core\Controller\ControllerException
+     */
+    public function getControllerAPI($idController, $idProject)
+    {
+        /** @var Controller $child*/
+        if($child = Project::getProjectControllerByIdProject($idProject)){
+            $child->setName('projects');
+            $child->setObjectId($idProject);
+            $this->setObjectId($idController);
+            $this->addController($child);
+            $child->ready()->run();
+        }
+        else
+            throw new Exception("Controller not found.");
+    }
+
+    /**
+     * API Function to create a new ProjectController. INCOMPLETE
+     */
+    public function createProjectControllerAPI()
+    {
+        //TODO VerifyPermission of System Level Admin. Also we need a way to get all possible types of ProjectController That can be Created.
+    }
+
+    /**
+     * API Function to create a new Project under the specified Project Controller.
+     * @param $idController
+     */
+    public function createProjectAPI($idController)
+    {
+        //TODO Verify Role By idController
+        $project = Project::createProject($idController);
+        $result = $project->toArray();
+
+        $response = $this->getResponseHandler();
+        $response->setResponse(['data' => $result]);
+    }
+
+}

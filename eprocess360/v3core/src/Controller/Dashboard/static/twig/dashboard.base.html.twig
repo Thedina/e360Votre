@@ -1,0 +1,55 @@
+{% extends 'SystemController.plain.html.twig' %}
+
+{% block body %}
+
+    <style>
+        .admin-panel h2 {
+            overflow: hidden;
+            white-space: nowrap;
+        }
+    </style>
+
+    <div class="container" style="margin-bottom: 30px;">
+        <div id="content-container">
+            <div class="row">
+                <div class="col-xs-12">
+                    <h2>{{ Response.data.title }}</h2>
+                </div>
+            </div>
+            {% set currentWidth = 0 %}
+            <div class="row">
+                {% for block in Response.data.blocks %}
+                    {% if currentWidth >= 100 %}
+                        </div>
+                        <div class="row">
+                        {% set currentWidth = 0 %}
+                    {% endif %}
+                    <div class= {{ block.width }}>
+                        {% include block.template %}
+                    </div>
+                    {% set currentWidth = currentWidth + block.widthLength %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+{% block javascript %}
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('.make-project').click(function() {
+                var controller = this;
+
+                $.ajax({
+                    url: $(controller).attr('data-SiteUrl')+'/api/v1/controllers/'+$(controller).attr('data-idController')+'/projects',
+                    type: 'POST',
+                    data: null,
+                    async: false,
+                    dataType: 'json'
+                }).done(function (data) {
+                    window.location = $(controller).attr('data-SiteUrl')+'/controllers/'+$(controller).attr('data-idController')+'/projects/'+data.data.idProject;
+                });
+            });
+        });
+    </script>
+{% endblock %}

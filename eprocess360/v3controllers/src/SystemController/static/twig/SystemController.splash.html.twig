@@ -1,0 +1,18 @@
+{#Use for splash pages: login, register, etc#}
+
+{% extends 'SystemController.base.html.twig' %}
+
+    {% set bodyclass = 'splash' %}
+
+{% block splash %}
+    <style>
+        .splash {
+            background: url({{ Response.meta.SystemController.static }}/img/view-of-yosemite-valley.jpg);
+            background-size: cover;
+            min-height:100vh;
+        }
+    </style>
+{% endblock %}
+{% block toolbar %}
+    <div class="splash-offset-header"></div>
+{% endblock %}

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit
+        convertErrorsToExceptions   = "true"
+        convertWarningsToExceptions = "true"
+        bootstrap = "test_bootstrap.php">
+    <php>
+        <ini name="display_errors" value="true"/>
+        <ini name="display_startup_errors" value="true"/>
+        <const name = "TEST_FLAG" value = "1"/>
+        <const name = "MYSQL_HOST" value = "127.0.0.1"/>
+        <const name = "MYSQL_USER" value = "testdb_user"/>
+        <const name = "MYSQL_PASSWORD" value = "gu(n$7P%tv8FI"/>
+        <const name = "MYSQL_DATABASE" value = "ep2test"/>
+        <const name = "TEST_TIMEOUT" value = "20"/>
+    </php>
+    <testsuites>
+        <testsuite name="Dummy">
+            <directory>Dummy</directory>
+        </testsuite>
+        <testsuite name="Upload">
+            <directory>Uploads</directory>
+        </testsuite>
+        <testsuite name="Scheduler">
+            <directory>Scheduler</directory>
+        </testsuite>
+        <testsuite name="Mail">
+            <directory>Mail</directory>
+        </testsuite>
+        <testsuite name="All">
+            <directory>Dummy</directory>
+            <directory>Uploads</directory>
+            <directory>Scheduler</directory>
+            <directory>Mail</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>

@@ -1,0 +1,210 @@
+{#
+    ProjTool Toolbar Template
+
+    Data should generally be from bound keydict entries or modules.  Progress is defined at runtime in the workflow.
+
+    dashboardBar array
+    - title string
+    - description string
+    - progress array
+    - - title string
+    - - value int(1,100)
+    - - link array
+    - - - url string(url)
+    - - - title string
+    - blocks array(0,3)
+    - - key string
+    - - value string
+    - home string(url)
+    - links array
+    - - title string
+    - - url string(url)
+    - - active bool
+    - more array
+    - - title string
+    - - url string(url)
+    - - active bool
+
+#}
+<style>
+    .navcrumb {
+        font-style: italic;
+    }
+    .navcrumb a {
+        color: #777;
+    }
+    .dashboardBar-slim-container {
+        background-color: #e5e5e5;
+        border-top: 1px #ddd solid;
+    }
+    .dashboardBar-title {
+        margin-top: 0em;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+    .dashboardBar-slim-container .dashboardBar-title {
+        text-transform: uppercase;
+        margin: 8px 0px 0px;
+    }
+    .dashboardBar-slim-container .dashboardBar-description {
+        text-transform: uppercase;
+        margin: 2px 0px 4px;
+        color: #777;
+        font-weight: 400;
+    }
+    @media screen and (max-width: 768px) {
+        .dashboardBar-slim-container {
+            padding: 0px;
+        }
+        #dashboardBar-nav.nav-tabs {
+            overflow-x: auto;
+            overflow-y: hidden;
+            display: -webkit-box;
+            display: -moz-box;
+            border-bottom: 0px solid;
+        }
+        #dashboardBar-nav.nav-tabs>li {
+            float:none!important;
+        }
+        #dashboardBar-nav.nav-tabs::-webkit-scrollbar {
+            display: none;
+        }
+    }
+    .dashboardBar-title::-webkit-scrollbar {
+        display: none;
+    }
+    .dashboardBar-title {
+        overflow-x: auto;
+        overflow-y: hidden;
+        display: -webkit-box;
+        display: -moz-box;
+        border-bottom: 0px solid;
+    }
+    .dashboardBar-slim-container .badge {
+        background-color: #337ab7;
+        color: #FFF;
+        font-weight: 600;
+    }
+
+    .dashboardBar-slim-progress {
+        margin: 10px 0px;
+        position: relative;
+        font-size: 12px;
+        line-height: 20px;
+    }
+    .dashboardBar-slim-progress-span {
+        overflow: hidden!important;
+        text-overflow: hidden!important;
+        white-space: nowrap!important;
+        left: 15px;
+        position: absolute;
+        z-index: 2;
+    }
+    .dashboardBar-slim-progress .progress-bar {
+        position: absolute;
+        z-index: 3;
+        overflow: hidden!important;
+        text-overflow: hidden!important;
+        white-space: nowrap!important;
+    }
+    .dashboardBar-slim-progress-span-inner {
+
+        padding-left: 15px;
+
+    }
+    .dashboardBar-slim-progress-link {
+        margin: 9px 0px 10px;
+        padding-left: 10px;
+
+    }
+    .dashboardBar-slim-progress-link .btn-xs {
+        padding-top: 0px;
+        padding-bottom: 0px;
+        font-size: 12px;
+        line-height: 17px;
+    }
+    .col-nopad-right {
+        padding-right: 0px;
+    }
+    .col-nopad-left {
+        padding-left: 0px;
+    }
+</style>
+<div class="container-fluid dashboardBar-slim-container">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-7 col-xs-12">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <h4 class="dashboardBar-title">{{ Response.meta.dashboardBar.title }}
+                            <small>
+                                {% for icon in Response.meta.dashboardBar.icons %}
+                                    <a href="{{ icon.link }}" title="{{ icon.title }}"><i
+                                                class="glyphicon {{ icon.icon }} glyph-dashboardBar-status"></i></a>
+                                {% endfor %}
+                                {{ Response.meta.dashboardBar.description }}</small>
+                        </h4>
+                    </div>
+                    {% if Response.meta.dashboardBar.progress %}
+                        <div class="{% if Response.meta.dashboardBar.progress.link %}col-xs-10 col-md-11{% else %}col-xs-12{% endif %} col-nopad-right">
+                            <div class="dashboardBar-slim-progress progress">
+                                <span class="dashboardBar-slim-progress-span">{{ Response.meta.dashboardBar.progress.title }}</span>
+                                <div aria-valuemax="100" aria-valuemin="0"
+                                     aria-valuenow="{{ Response.meta.dashboardBar.progress.value }}" class="progress-bar" role=
+                                     "progressbar" style="width: {{ Response.meta.dashboardBar.progress.value }}%;">
+                                <span class=
+                                      "dashboardBar-slim-progress-span-inner">
+                                    {{ Response.meta.dashboardBar.progress.title }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        {% if Response.meta.dashboardBar.progress.link %}
+                            <div class="col-xs-2 col-md-1 dashboardBar-slim-progress-link">
+                                <a class="btn btn-primary btn-xs"
+                                   href="{{ Response.meta.dashboardBar.progress.link.url }}">{{ Response.meta.dashboardBar.progress.link.title }}</a>
+                            </div>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-sm-5 col-xs-12">
+                <div class="row">
+                    {% for block in Response.meta.dashboardBar.blocks %}
+                        <div class="col-xs-{{ 12 / Response.meta.dashboardBar.blocks|length }} text-right">
+                            <h5>{{ block.value }}<br>
+                                <small>{{ block.key }}</small>
+                            </h5>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <ul class="nav nav-tabs" id="dashboardBar-nav">
+                    
+                    <li role="presentation" class="{% if Response.meta.dashboardBar.home.active == true %}active{% endif %}">
+                        <a href="{{ Response.meta.dashboardBar.home.link }}"><i class="glyphicon glyphicon-home"></i></a>
+                    </li>
+                    {% for link in Response.meta.dashboardBar.links %}
+                        <li role="presentation" class="{% if link.active %}active{% elseif not link.available %}navcrumb{% endif %}">
+                            <a href="{{ link.url }}" title="{{ link.title }}">{{ link.title }}</a>
+                        </li>
+                    {% endfor %}
+                    {% if Response.meta.dashboardBar.more %}
+                        <li role="presentation" class="pull-right">
+                            <a href="#" style="padding: 10px 4px;" id="dashboardBar-more-btn" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="glyphicon glyphicon-option-vertical"></i></a>
+                            <ul class="dropdown-menu" aria-labelledby="dashboardBar-more-btn">
+                                {% for link in Response.meta.dashboardBar.more %}
+                                    <li role="presentation" class="{% if link.active %}active{% endif %}">
+                                        <a href="{{ link.url }}" title="{{ link.title }}">{{ link.title }}</a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

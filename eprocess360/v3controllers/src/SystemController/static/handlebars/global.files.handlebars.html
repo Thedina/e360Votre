@@ -1,0 +1,29 @@
+<script id="hb-fileupload-main" type="text/x-handlebars-template">
+    <div class="table-responsive no-margin-bottom no-border">
+        <table class="table no-margin-bottom">
+            <tbody>
+            <tr><th>File Type</th><th>Description</th><th>Status</th><th></th></tr>
+            </tbody>
+            <tbody class="file-list"></tbody>
+        </table>
+    </div>
+</script>
+
+<script id="hb-fileupload-file" type="text/x-handlebars-template">
+    <tr data-idfile="{{file.idFile}}"><td><select class="form-control file-type">{{{fileCategories meta.fileCategories file.category}}}</select></td><td><input type="text" class="form-control file-desc" value="{{file.description}}"></td><td style="line-height: 2.3em;"><small class="ul-status">Done</small></td><td><div class="btn-group pull-right" role="group" aria-label="Submittal Options"><button class="btn btn-default btn-delete"><span class="glyphicon glyphicon glyphicon-trash" aria-hidden="true"></span></button></div></td></tr>
+</script>
+
+<script id="hb-filelist-main" type="text/x-handlebars-template">
+    <div class="table-responsive no-margin-bottom no-border">
+        <table class="table no-margin-bottom">
+            <tbody>
+            <tr><th>File Type</th><th>Description</th><th>Size</th><th><a class="btn btn-default btn-xs pull-right btn-downall">Download All</a></th></tr>
+            </tbody>
+            <tbody class="file-list"></tbody>
+        </table>
+    </div>
+</script>
+
+<script id="hb-filelist-file" type="text/x-handlebars-template">
+    <tr><td>{{displayCategory file.category}} <small>{{fileTypeText}}</small></td><td><a href="{{file.url}}">{{file.fileName}}</a></td><td>{{fileSize file.size}}</td><td></td></tr>
+</script>

@@ -1,0 +1,19 @@
+{% extends 'SystemController.splash.html.twig' %}
+
+{% block body %}
+
+    <div class="row" style="padding-top:25px">
+        <div class="col-md-offset-3 col-md-6 col-sm-offset-2 col-sm-8">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Logout
+                </div>
+                <div class="panel-body">
+                    <p>You have been logged out of {{ SysVar.get('productTitle') }}.</p>
+                    <a href="{{ SysVar.get('siteUrl') }}" class="btn btn-default" role="button" style="float:right">Re-Login</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

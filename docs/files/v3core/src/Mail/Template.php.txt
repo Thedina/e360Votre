@@ -1,0 +1,205 @@
+<?php
+
+namespace eprocess360\v3core\Mail;
+use eprocess360\v3core\DB;
+use eprocess360\v3core\Pool;
+use eprocess360\v3core\Model;
+use eprocess360\v3core\Keydict\Table;
+
+/**
+ * Class Template
+ * Class for loading, saving, and rendering Twig-driven email templates
+ * @package eprocess360\v3core\Mail
+ */
+class Template
+{
+    const HTML_BODY_HEADER = "<!-- htmlBody -->";
+    const TEXT_BODY_HEADER = "<!-- textBody -->";
+    /**
+     * @var Table $data
+     */
+    private $data;
+
+    /**
+     * @param int|null $idController
+     * @param string|null $name
+     * @param string|null $template
+     */
+    public function __construct($idController = 0, $name = NULL, $template = NULL) {
+        $rowData = ['idController'=>$idController, 'templateName'=>$name, 'template'=>$template];
+        $this->data = Model\MailTemplates::keydict();
+        $this->data->wakeup($rowData);
+    }
+
+    /**
+     * Render the template and return split into subject/html body/text body
+     * @param array $vars
+     * @return array
+     */
+    public function render(array $vars) {
+        $pool = Pool::getInstance();
+
+        foreach($vars as $k=>$v) {
+            $pool->add($v, $k);
+        }
+
+        $template = $this->data->template->get();
+        $rendered = $pool->evaluate($template);
+
+        $split = explode(self::HTML_BODY_HEADER, $rendered);
+        if(count($split) != 2) {
+            throw new MailException("Template->render(): improperly declared html body section");
+        }
+        $subject = trim($split[0]);
+        $split = explode(self::TEXT_BODY_HEADER, $split[1]);
+        if(count($split) != 2) {
+            throw new MailException("Template->render(): improperly declared text body section");
+        }
+        $htmlBody = trim($split[0]);
+        $textBody = trim($split[1]);
+
+        return [
+            'subject'=>$subject,
+            'bodyHTML'=>$htmlBody,
+            'bodyText'=>$textBody
+        ];
+    }
+
+    /**
+     * Insert a DB entry for this template
+     */
+    public function insert() {
+        $this->data->insert();
+    }
+
+    /**
+     * Update the DB entry for this template
+     */
+    public function update() {
+        $this->data->update();
+    }
+
+    /**
+     * Load template data from the DB by id
+     * @param $idTemplate
+     * @throws DB\Exception\MySQLException
+     */
+    public function load($idTemplate = NULL) {
+        if(!$idTemplate) {
+            $idTemplate = $this->data->idTemplate->get();
+        }
+
+        $rows = DB::sql("SELECT * FROM MailTemplates WHERE idTemplate = ".(int)$idTemplate);
+
+        if(!empty($rows)) {
+            $this->data->wakeup($rows[0]);
+        }
+    }
+
+    /**
+     * Load template data from the DB by name and controller
+     * @param $idController
+     * @param $name
+     * @throws \eprocess360\v3core\DB\Exception\MySQLException
+     */
+    public function loadByName($idController, $name) {
+        $rows = DB::sql("SELECT * FROM MailTemplates WHERE idController = '".(int)$idController."' AND templateName = '".DB::cleanse($name)."'");
+        if(!empty($rows)) {
+            $this->data->wakeup($rows[0]);
+        }
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getIdTemplate()
+    {
+        return $this->data->idTemplate->get();
+    }
+
+    /**
+     * @param mixed $idTemplate
+     */
+    public function setIdTemplate($idTemplate)
+    {
+        $this->data->idTemplate->set($idTemplate);
+    }
+
+    /**
+     * @return int
+     */
+    public function getIdController()
+    {
+        return $this->data->idController->get();
+    }
+
+    /**
+     * @param int $idController
+     */
+    public function setIdController($idController)
+    {
+        $this->data->idController->set($idController);
+    }
+
+    /**
+     * @return string
+     */
+    public function getTemplateName()
+    {
+        return $this->data->templateName->get();
+    }
+
+    /**
+     * @param string $name
+     */
+    public function setTemplateName($name)
+    {
+        $this->data->templateName->set($name);
+    }
+
+    /**
+     * @return string
+     */
+    public function getTemplate()
+    {
+        return $this->data->template->get();
+    }
+
+    /**
+     * @param string $subject
+     */
+    public function setTemplate($template)
+    {
+        $this->data->template->set($template);
+    }
+
+    public static function getByID($idTemplate) {
+        $t = new Template();
+        $t->load($idTemplate);
+        return $t;
+    }
+
+    /**
+     * Load from the DB the email template for $idController with $name
+     * @param $controller
+     * @param $name
+     * @return Template
+     */
+    public static function getByName($idController, $name) {
+        $t = new Template();
+        $t->loadByName($idController, $name);
+        return $t;
+    }
+
+    /**
+     * Insert a new email template into the DB
+     * @param $idController
+     * @param $name
+     * @param $subject
+     * @param $body
+     */
+    public static function create($idController, $name, $template) {
+        $t = new Template($idController, $name, $template);
+        $t->insert();
+    }
+}

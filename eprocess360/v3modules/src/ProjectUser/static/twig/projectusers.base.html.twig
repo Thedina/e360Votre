@@ -1,0 +1,42 @@
+{% extends 'SystemController.backbone.base.html.twig' %}
+{% block moduleCSS %}
+    <link rel="Stylesheet" type="text/css" href="{{ Response.meta.SystemController.static }}/css/typeahead.css"/>
+{% endblock %}
+{% block body %}
+    <div id="content-container"></div>
+{% endblock %}
+{% block moduleJS %}
+    <script src="{{ Response.meta.SystemController.static }}/js/util.js"></script>
+    <script src="{{ Response.meta.SystemController.static }}/js/bizzybone.js"></script>
+    <script src="{{ Response.meta.SystemController.static }}/js/globalHelpers.js"></script>
+    <script src="{{ Response.meta.SystemController.static }}/js/typeahead.bundle.min.js"></script>
+    <script src="{{ Response.meta.ProjectUser.static }}/js/helpers/projectUserHelpers.js" type="text/javascript"></script>
+    <script src="{{ Response.meta.ProjectUser.static }}/js/models/projectUsers.js" type="text/javascript"></script>
+    <script src="{{ Response.meta.ProjectUser.static }}/js/views/projectUsers.js" type="text/javascript"></script>
+{% endblock %}
+{% block javascript %}
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var getData, metaData;
+
+            // Precompile all the relevant templates
+            _.each({
+                projectUsersMain: $('#hb-project-users-main'),
+                projectUsersItem: $('#hb-project-users-item'),
+                projectUsersEditModal: $('#hb-project-users-edit-modal'),
+                projectUsersModalRole: $('#hb-project-users-modal-role')
+            }, hbCompileTemplate);
+
+            // Initialize modals
+            projectUserModal = new ProjectUsersEditModalView();
+
+            getData = hbInitData().data;
+            metaData = hbInitData().meta;
+
+            // Instantiate and render base view from JSON data
+            baseCollection = new ProjectUserList(getData);
+            baseView = new ProjectUsersMainView({collection: baseCollection, el: $('#content-container')});
+            baseView.render();
+        });
+    </script>
+{% endblock %}

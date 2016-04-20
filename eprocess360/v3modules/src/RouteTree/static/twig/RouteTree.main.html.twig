@@ -1,0 +1,102 @@
+{% extends 'SystemController.plain.html.twig' %}
+{% macro stepNode(depth, item) %}
+    <div class="col-md-3 routetree-col routetree-col-depth-{{ depth }}" data-routetree-depth="{{ depth }}">
+        {% for key, node in item %}
+        <div class="panel panel-default routetree-panel routetree-panel-{{ node.node.FormName }}"  style="display: none;">
+            <div class="panel-heading ">{{ node.node.Label }}<br/><small><strong>{{ node.parent }}</strong></small></div>
+            <div class="panel-body">
+
+                    {% for field in node.children %}
+                        {% set flag = field.getFieldByClass('Flag') %}
+                        <div class="checkbox"><label>
+                            <input type="checkbox" class="routetree-node" name="{{ flag.FormName }}" id="{{ flag.FormName }}" value="1"{% if flag.get == 1 %} checked{% endif %}>
+                            {{ flag.Label }}
+                        </label></div>
+                    {% endfor %}
+
+            </div>
+        </div>
+        {% endfor %}
+        <button id="routetree-submit-{{ depth }}" class="btn btn-primary btn-block routetree-submit" style="display: none;">Save and Continue</button>
+    </div>
+{% endmacro %}
+
+
+{% import _self as LocalMacro %}
+{% block body %}
+    <form role="form" method="POST" action="{{ Response.data.Handler }}" id="{{ Response.data.Name }}">
+
+    <div class="row">
+        <div class="col-md-12"><h2>Application Routing</h2>
+
+            <p class="lead">Please describe your project using the following options.</p></div>
+    </div>
+
+    <div class="row">
+        {% for depth, depthNode in Response.data.Nodes %}
+            {{ LocalMacro.stepNode(depth, depthNode) }}
+        {% endfor %}
+    </div>
+
+    </form>
+    <script language="JavaScript">
+        /**
+         * RouteTree JS
+         */
+        $(document).ready(function () {
+            $('.routetree-col-depth-0 .routetree-panel').show();
+            $('.routetree-node').on('click', function () {
+                $(this).routeTree($(this).is(':checked'));
+            });
+            $.fn.routeTree = function (state) {
+                resultPanel = $('.routetree-panel-'+$(this).attr('id'));
+                if (state) {
+                    if (resultPanel.length) {
+                        resultPanel.show().parent().show();
+                    }
+                } else {
+                    if (resultPanel.length) {
+                        resultPanel.hide().find(':checked').each(function () {
+                            $(this).attr('checked', false);
+                            $(this).routeTree(false);
+                        });
+                    }
+                }
+
+                var showButton = false;
+                var count = 0;
+                $('.routetree-node:checked').each(function () {
+                    resultPanel = $('.routetree-panel-'+$(this).attr('id'));
+                    if (!resultPanel.length) {
+                        showButton = true;
+                        return false;
+                    }
+                });
+                visiblePanels = $('.routetree-panel:visible');
+                visiblePanels.each(function () {
+                    if ($(this).find(':checked').length) {
+                        count++;
+                        $(this).removeClass('panel-primary').addClass('panel-default');
+                    } else {
+                        $(this).removeClass('panel-default').addClass('panel-primary');
+                    }
+                });
+
+                if (showButton && visiblePanels.length == count) {
+                    lastVisible = visiblePanels.last().closest('.routetree-col').attr('data-routetree-depth');
+                    targetVisible = $('#routetree-submit-'+lastVisible);
+                    $('.routetree-submit').not(targetVisible).hide();
+                    if (!targetVisible.has(':visible').length) {
+                        $('#routetree-submit-'+lastVisible).show();
+                    }
+                } else {
+                    $('.routetree-submit').hide();
+                }
+            };
+            $('.routetree-node:checked').each(function () {
+                $(this).routeTree(true);
+            });
+
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends 'SystemController.backbone.base.html.twig' %}
+{% block moduleCSS %}
+    <link rel="Stylesheet" type="text/css" href="{{ Response.meta.SystemController.static }}/css/multiview.css"/>
+{% endblock %}
+{% block body %}
+    <div id="content-container"></div>
+{% endblock %}
+{% block moduleJS %}
+    <script src="{{ Response.meta.SystemController.static }}/js/util.js"></script>
+    <script src="{{ Response.meta.SystemController.static }}/js/bizzybone.js"></script>
+    <script src="{{ Response.meta.SystemController.static }}/js/globalHelpers.js"></script>
+    <script src="{{ Response.meta.SystemController.static }}/js/multiview.js"></script>
+    <script src="{{ Response.meta.Controller.static }}/js/models/workflows.js" type="text/javascript"></script>
+    <script src="{{ Response.meta.Controller.static }}/js/views/workflows.js" type="text/javascript"></script>
+{% endblock %}
+{% block javascript %}
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var getData, metaData;
+
+            // Precompile all the relevant templates
+            _.each({
+                workflowListMain: $('#hb-workflow-list-main')
+            }, hbCompileTemplate);
+
+            // Compile multiview templates
+            Multiview.compileTemplates(hbCompileTemplate);
+            Multiview.compileExtendedTemplates(hbCompileTemplate);
+
+            getData = hbInitData().data;
+            metaData = hbInitData().meta.Controller;
+
+            if(metaData.objectType === 'workflow') {
+                if(_.isObject(getData) && _.has(getData, 'results')) {
+                    // Workflow list (multiview) page
+                    baseCollection = new WorkflowList();
+                    baseCollection.loadData(getData, {silent: true});
+                    baseView = new WorkflowListMainView({collection: baseCollection, el: $('#content-container')});
+                    baseView.render();
+                }
+            }
+        });
+    </script>
+{% endblock %}

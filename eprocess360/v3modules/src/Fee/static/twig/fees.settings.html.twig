@@ -1,0 +1,203 @@
+{% extends 'SystemController.backbone.base.html.twig' %}
+{% block moduleCSS %}
+    <link rel="Stylesheet" type="text/css" href="{{ Response.meta.SystemController.static }}/css/typeahead.css"/>
+    <link rel="Stylesheet" type="text/css" href="{{ Response.meta.SystemController.static }}/css/multiview.css"/>
+    <link rel="Stylesheet" type="text/css" href="{{ Response.meta.Fee.static }}/css/fees.css"/>
+{% endblock %}
+{% block body %}
+    <div id="content-container"></div>
+{% endblock %}
+{% block moduleJS %}
+    <script src="{{ Response.meta.SystemController.static }}/js/util.js"></script>
+    <script src="{{ Response.meta.SystemController.static }}/js/bizzybone.js"></script>
+    <script src="{{ Response.meta.SystemController.static }}/js/globalHelpers.js"></script>
+    <script src="{{ Response.meta.SystemController.static }}/js/multiview.js"></script>
+    <script src="{{ Response.meta.SystemController.static }}/js/bignumber.min.js"></script>
+    <script src="{{ Response.meta.SystemController.static }}/js/accounting.min.js"></script>
+    <script src="{{ Response.meta.SystemController.static }}/js/typeahead.bundle.min.js"></script>
+    <script src="{{ Response.meta.Fee.static }}/js/helpers/feeHelpers.js" type="text/javascript"></script>
+    <script src="{{ Response.meta.Fee.static }}/js/models/fees.js" type="text/javascript"></script>
+    <script src="{{ Response.meta.Fee.static }}/js/views/feeSettings.js" type="text/javascript"></script>
+{% endblock %}
+{% block javascript %}
+    <script type="text/javascript">
+        var currencyOptions = hbInitData().meta.Fee.currencyOptions;
+
+        accounting.settings.currency = {
+            symbol : currencyOptions.symbol,
+            format: "%s%v",
+            decimal: currencyOptions.decimalSeparator,
+            thousand: currencyOptions.digitSeparator,
+            precision : 2
+        };
+
+        /**
+         * Helper to format money with format specified in metadata
+         * @param {number} value
+         * @param {boolean} showSymbol
+         * @param {number} places
+         * @returns {string}
+         */
+        function feesFormatMoney(value, showSymbol, places) {
+            showSymbol = (typeof showSymbol !== 'undefined' ? showSymbol : true);
+            places = _.isNumber(places) ? places : accounting.settings.currency.precision;
+
+            if(showSymbol) return accounting.formatMoney(value, accounting.settings.currency.symbol, places);
+            else return accounting.formatMoney(value, '', places);
+        }
+
+        function initCheckButton() {
+            // Settings
+            var $widget = $(this),
+                    $button = $widget.find('button'),
+                    $checkbox = $widget.find('input:checkbox'),
+                    color = $button.data('color'),
+                    settings = {
+                        on: {
+                            icon: 'glyphicon glyphicon-check'
+                        },
+                        off: {
+                            icon: 'glyphicon glyphicon-unchecked'
+                        }
+                    };
+
+            // Event Handlers
+            $button.off();
+            $button.on('click', function () {
+                $checkbox.prop('checked', !$checkbox.is(':checked'));
+                $checkbox.trigger('change');
+                updateDisplay();
+            });
+            $checkbox.on('change', function () {
+                updateDisplay();
+            });
+
+            // Actions
+            function updateDisplay() {
+                var isChecked = $checkbox.is(':checked');
+
+                // Set the button's state
+                $button.data('state', (isChecked) ? "on" : "off");
+
+                // Set the button's icon
+                $button.find('.state-icon').removeClass().addClass('state-icon ' + settings[$button.data('state')].icon);
+
+                // Update the button's color
+                if (isChecked) {
+                    $button.removeClass('btn-warning').addClass('btn-' + color + ' ');
+                }
+                else {
+                    $button.removeClass('btn-' + color + ' ').addClass('btn-warning');
+                }
+            }
+
+            // Initialization
+            function init() {
+                updateDisplay();
+                // Inject the icon if applicable
+                if ($button.find('.state-icon').length == 0) {
+                    $button.prepend('<i class="state-icon ' + settings[$button.data('state')].icon + '">&nbsp;</i>');
+                }
+            }
+            init();
+        }
+
+        function initCheckButtons() {
+            $('.button-checkbox').each(function () {
+                initCheckButton.call(this);
+            });
+
+            $(".panel-title").click(function() {
+                $(this).children().children().prop("checked", true);
+            });
+        }
+
+        $(document).ready(function() {
+            var getData, metaData;
+            newObject = false;
+
+            // Precompile all the relevant templates
+            _.each({
+                feeSettingsMain: $('#hb-fee-settings-main'),
+                feeSettingsTagCategory: $('#hb-fee-settings-tag-category'),
+                feeSettingsTagItem: $('#hb-fee-settings-tag-item'),
+                feeSettingsMatrix: $('#hb-fee-settings-matrix'),
+                feeMatrixRow: $('#hb-fee-matrix-row'),
+                feeModalSave: $('#hb-fee-modal-save'),
+                feeTemplateListMain: $('#hb-fee-template-list-main'),
+                feeTagListMain: $('#hb-fee-tag-list-main'),
+                feeTagEditModal: $('#hb-fee-tag-edit-modal'),
+                feeTagCategoryListMain: $('#hb-fee-tag-category-list-main'),
+                feeTagCategoryEditModal: $('#hb-fee-tag-category-edit-modal'),
+                feeTypeListMain: $('#hb-fee-type-list-main'),
+                feeTypeEditModal: $('#hb-fee-type-edit-modal')
+            }, hbCompileTemplate);
+
+            // Compile multiview templates
+            Multiview.compileTemplates(hbCompileTemplate);
+            Multiview.compileExtendedTemplates(hbCompileTemplate);
+
+            getData = hbInitData().data;
+            metaData = hbInitData().meta.Fee;
+
+            if(metaData.objectType === 'feeTemplate') {
+                // Initialize modals
+                modalSaveTemplate = new FeeTemplateSaveModalView();
+
+                if(_.isObject(getData) && _.has(getData, 'results')) {
+                    // Fee template list page
+                    baseCollection = new FeeTemplateList();
+                    baseCollection.loadData(getData, {silent: true});
+                    baseView = new FeeTemplateListMainView({collection: baseCollection, el: $('#content-container')});
+                    baseView.render();
+                }
+                else if(_.isObject(getData)) {
+                    // Fee template edit page
+                    if(_.isEmpty(getData)) newObject = true;
+
+                    baseModel = new FeeTemplateModel(getData);
+                    baseView = new FeeSettingsMainView({model: baseModel, el: $('#content-container')});
+                    baseView.render();
+                }
+            }
+            else if(metaData.objectType === 'feeTag') {
+                // Initialize modals
+                modalEditTag = new FeeTagEditModalView();
+
+                if(_.isObject(getData) && _.has(getData, 'results')) {
+                    // Fee tag list page
+                    baseCollection = new FeeTagList();
+                    baseCollection.loadData(getData, {silent: true});
+                    baseView = new FeeTagListMainView({collection: baseCollection, el: $('#content-container')});
+                    baseView.render();
+                }
+            }
+            else if(metaData.objectType === 'feeTagCategory') {
+                // Initialize modals
+                modalEditCategory = new FeeTagCategoryEditModalView();
+
+                if(_.isObject(getData) && _.has(getData, 'results')) {
+                    // Fee tag category list page
+                    baseCollection = new FeeTagCategoryList();
+                    baseCollection.loadData(getData, {silent: true});
+                    baseView = new FeeTagCategoryListMainView({collection: baseCollection, el: $('#content-container')});
+                    baseView.render();
+                }
+            }
+            else if(metaData.objectType === 'feeType') {
+                //Initialize modals
+                modalEditType = new FeeTypeEditModalView();
+
+                if(_.isObject(getData) && _.has(getData, 'results')) {
+                    // Fee type list page
+                    baseCollection = new FeeTypeList();
+                    baseCollection.loadData(getData, {silent: true});
+                    baseView = new FeeTypeListMainView({collection: baseCollection, el: $('#content-container')});
+                    baseView.render();
+                }
+            }
+
+            initCheckButtons();
+        });
+    </script>
+{% endblock %}

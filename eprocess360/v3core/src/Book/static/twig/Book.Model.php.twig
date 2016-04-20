@@ -1,0 +1,39 @@
+{% macro buildEntry(Entry) %}{{ Entry.Class }}::build({% if Entry.Class=='Bit' %}{{ Entry.Position }},{% endif %}'{{
+Entry.Name }}', '{{ Entry.Label }}'){% endmacro %}
+{% import _self as f %}
+<?php
+namespace {{ Model.ModelNamespace }};
+use eprocess360\v3core\Model;
+use eprocess360\v3core\Keydict\Table;
+{% for EntryType in Model.EntryTypes %}
+use eprocess360\v3core\Keydict\Entry\{{ EntryType }};
+{% endfor %}
+
+class {{ Model.modelName }} extends Model
+{
+{% for Trait in Model.Traits %}{% if loop.first %}    use {% endif %}Traits\{{ Trait }}{% if loop.last %};
+{% else %}, {% endif %}{% endfor %}
+    public static function keydict() {
+        return Table::build(
+{% for Entry in Model.Entries %}
+            {{ f.buildEntry(Entry) }}{% if Entry.specification.type == 'BIT' %}
+->addBit({% for Bit in Entry.allFields(31, true) %}
+
+                {{ f.buildEntry(Bit) }}
+{% endfor %}
+            ){% endif %}{% if loop.index < loop.length %},{% endif %}
+
+{% endfor %}
+        )->setName('{{ Model.modelName }}')->setLabel('{{ Model.modelLabel }}');
+    }
+
+{% for Namespace, Method in Model.Methods %}
+    {% if Method.Public %}public{% elseif Method.Protected %}protected{% elseif Method.Private %}private{% endif %} static function {{ Method.Name }}({%
+for Parameter in Method.Parameters %}{% if Parameter.hasType %}{{ Parameter.Type.Name }} {% endif %}{% if Parameter.Variadic %}...{% endif %}${{ Parameter.Name }}{% if Parameter.Optional and Parameter.Variadic != true %} = {% if Parameter.DefaultValue|get_type == 'string' %}'{% endif %}{{ Parameter.getDefaultValue }}{% if Parameter.DefaultValue|get_type == 'string' %}'{% endif %}{% endif %}{% if loop.last != true %}, {% endif %}
+{% endfor %}) {
+        return {{ Namespace }}::{{ Method.Name }}({%
+for Parameter in Method.Parameters %}{% if Parameter.Variadic %}...{% endif %}${{ Parameter.Name }}{% if loop.last != true %}, {% endif %}
+{% endfor %});
+    }
+{% endfor %}
+}

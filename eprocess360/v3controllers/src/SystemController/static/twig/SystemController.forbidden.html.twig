@@ -1,0 +1,7 @@
+{% extends 'SystemController.base.html.twig' %}
+{% block body %}
+    <h2>Forbidden</h2>
+    {% for error in Response.errors %}
+    <p class="lead">{{ error.message }}</p>
+    {% endfor %}
+{% endblock %}

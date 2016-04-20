@@ -1,0 +1,167 @@
+<script id="hb-mail-template-editor" type="text/x-handlebars-template">
+    <div class="row">
+        <div class="col-sm-6">
+            <h3>{{#if template.templateName}}{{template.templateName}}{{else}}*New Template*{{/if}}</h3>
+        </div>
+        <div class="col-sm-6">
+            <h3 class="pull-right">
+                <span class="btn-group" role="group" aria-label="E-mail Options">
+                    <button type="button" class="workflows-btn-new btn btn-info" id="btn-save">Save</button>
+                </span>
+            </h3>
+        </div>
+        <div class="col-sm-12">
+            <ol class="breadcrumb"><li><a href="{{meta.path}}/templates">Mail Templates</a></li><li class="active">{{#if template.templateName}}{{template.templateName}}{{else}}*New Template*{{/if}}</li></ol>
+        </div>
+    </div>
+    <div class="row">
+        <form class="form-horizontal">
+            <div class="col-xs-12 panel-summer">
+                <div class="panel panel-default panel-form">
+                    <div class="panel-heading">
+                        <div class="form-group" style="margin:0;">
+                            <label for="template-edit-name" class="col-sm-2 control-label" style="text-align: left;">Template Name</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="template-edit-name" placeholder="Template Name" value="{{template.templateName}}">
+                            </div>
+                        </div>
+                        <div class="form-group" style="margin:0;">
+                            <label for="template-edit-subject" class="col-sm-2 control-label" style="text-align: left;">Subject</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="template-edit-subject" placeholder="Subject" value="{{template.subject}}">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="mailbody"></div>
+                <div style="display: none;">
+                    <ul id="variable-options">
+                        {{#each meta.variableOptions as | var |}}
+                            <li class="variable-option">{{var}}</li>
+                        {{/each}}
+                    </ul>
+                </div>
+            </div>
+        </form>
+    </div>
+</script>
+
+<script id="hb-mail-template-list-main" type="text/x-handlebars-template">
+    <div class="row">
+        <div class="col-sm-6">
+            <h3>Mail Templates</h3>
+        </div>
+        <div class="col-sm-6 clearfix">
+            <div class="btn-group pull-right h3" role="group" aria-label="Options">
+                <a href="{{meta.path}}/templates/new"><button type="button" class="btn btn-info" id="btn-new-template">New Template</button></a>
+            </div>
+        </div>
+    </div>
+    <div id="multiview"></div>
+</script>
+
+<script id="hb-mail-log-view" type="text/x-handlebars-template">
+    <div class="row">
+        <div class="col-sm-6">
+            <h3>{{mail.subject}} {{{mailSent mail.queue}}}</h3>
+        </div>
+        <div class="col-sm-6">
+            <h3 class="pull-right">
+                <span class="btn-group" role="group" aria-label="E-mail Options">
+                    <button type="button" class="workflows-btn-new btn btn-info" id="btn-resend">Resend</button>
+                    <button type="button" class="workflows-btn-new btn btn-default" data-toggle="collapse" data-target="#debug">Debug</button>
+                </span>
+            </h3>
+        </div>
+        <div class="col-sm-12">
+            <ol class="breadcrumb"><li><a href="{{meta.path}}/logs">Mail Logs</a></li><li class="active">{{mail.subject}}</li></ol>
+        </div>
+    </div>
+    <form class="form-horizontal">
+        <div class="collapse" id="debug">
+            {{#if mail.idProject}}
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">Workflow</label>
+                    <div class="col-sm-10">
+                        <button class="btn btn-default">#{{mail.projectData.idWorkflow}}: {{mail.projectData.workflowTitle}}</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">Project</label>
+                    <div class="col-sm-10">
+                        <button class="btn btn-default">#{{mail.idProject}}: {{mail.projectData.projectTitle}}</button>
+                    </div>
+                </div>
+            {{/if}}
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Status Date</label>
+                <div class="col-sm-10">
+                    <span class="control">{{mailStatus mail.queue}}</span>
+                </div>
+            </div>
+            <div id="variable-list"></div>
+        </div>
+    </form>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <div class="panel-row">
+                        <strong>{{mail.subject}}</strong> &nbsp; <a href="{{meta.path}}/templates/{{mail.idTemplate}}"><button class="btn btn-link btn-xs">Template <i class="fa fa-external-link"></i></button></a>
+                        <span class="pull-right">{{dateFormatDisplay mail.dateAdded}}&nbsp;{{timeFormatDisplay mail.dateAdded}}</span>
+                    </div>
+                    <div class="panel-row">
+                        <strong>To: </strong><span id="recipient-list"></span>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    {{{mail.bodyHTML}}}
+                    <h4 style="margin-top: 20px" id="attachment-header">Attachments</h4>
+                    <div class="list-group" id="attachment-list">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script id="hb-mail-log-recipient-item" type="text/x-handlebars-template">
+    <button class="btn btn-default btn-xs btn-recipient" title="{{user.email}}">{{user.name}}</button>
+</script>
+
+<script id="hb-mail-log-attachment-item" type="text/x-handlebars-template">
+    <a href="{{file.url}}"><button class="list-group-item"><i class="fa fa-file"></i> {{file.fileName}} <span class="pull-right">{{formatFileSize file.size}}</span></button></a>
+</script>
+
+<script id="hb-mail-log-variable-item" type="text/x-handlebars-template">
+    <div class="form-group">
+        <label class="col-sm-2 control-label"><code>{{variable.key}}</code></label>
+        <div class="col-sm-10">
+            <span class="control">{{variable.value}}</span>
+        </div>
+    </div>
+</script>
+
+<script id="hb-mail-log-list-main" type="text/x-handlebars-template">
+    <div class="row">
+        <div class="col-sm-12">
+            <h3>Mail Log</h3>
+        </div>
+    </div>
+    <div id="multiview"></div>
+</script>
+
+<script id="hb-multiview-custom-mail-status" type="text/x-handlebars-template">
+    <td>
+        {{#if row.sent}}
+            <span class="label label-success">SENT</span>
+        {{else if row.failed}}
+            <span class="label label-danger">FAILED</span>
+        {{else}}
+            <span class="label label-warning">UNSENT</span>
+        {{/if}}
+        {{#if row.fakeMail}}
+            <span style="font-size: small;">(dummy)</span>
+        {{/if}}
+    </td>
+</script>

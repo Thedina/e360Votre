@@ -1,0 +1,99 @@
+{% extends 'SystemController.backbone.base.html.twig' %}
+{% block moduleCSS %}
+    <link rel="Stylesheet" type="text/css" href="{{ Response.meta.Submittal.static }}/css/submittals.css"/>
+    <link rel="Stylesheet" type="text/css" href="{{ Response.meta.SystemController.static }}/css/fileupload.css"/>
+{% endblock %}
+{% block body %}
+    <div id="modal-node"></div>
+    <div id="content-container"></div>
+{% endblock %}
+{% block moduleJS %}
+    <script src="{{ Response.meta.SystemController.static }}/js/util.js"></script>
+    <script src="{{ Response.meta.SystemController.static }}/js/bizzybone.js"></script>
+    <script src="{{ Response.meta.SystemController.static }}/js/dropzone.js"></script>
+    <script src="{{ Response.meta.SystemController.static }}/js/fileUpload.js"></script>
+    <script src="{{ Response.meta.SystemController.static }}/js/globalHelpers.js"></script>
+    <script src="{{ SysVar.get('siteUrl') }}/eprocess360/v3modules/src/Review/static/js/helpers/reviewHelpers.js"></script>
+    <script src="{{ SysVar.get('siteUrl') }}/eprocess360/v3modules/src/Review/static/js/models/reviews.js"></script>
+    <script src="{{ Response.meta.Submittal.static }}/js/helpers/submittalHelpers.js" type="text/javascript"></script>
+    <script src="{{ Response.meta.Submittal.static }}/js/models/submittal.js" type="text/javascript"></script>
+    <script src="{{ Response.meta.Submittal.static }}/js/views/submittal.js" type="text/javascript"></script>
+    <script src="{{ Response.meta.Submittal.static }}/js/models/submittalPhase.js" type="text/javascript"></script>
+    <script src="{{ Response.meta.Submittal.static }}/js/views/submittalPhase.js" type="text/javascript"></script>
+{% endblock %}
+{% block javascript %}
+    <script type="text/javascript">
+        /**
+         * Helper function to render a top-level submittal phase from data.
+         * The resulting model and view are appended to phaseModels and
+         * phaseViews, respectively.
+         * @param {Object} data
+         * @param {jQuery} element
+         * @param {SubmittalPhaseList} phaseModels
+         * @param {Array.<SubmittalPhaseView>} phaseViews
+         * @returns {SubmittalPhaseView}
+         */
+        function topLevelPhase(data, element, phaseModels, phaseViews) {
+            var model, view;
+            maxDepth = parseInt(data.depth);
+            model = new SubmittalPhaseModel(data);
+            phaseModels.add(model);
+            view = new SubmittalPhaseView({el: element, model: model, maxDepth: maxDepth});
+            phaseViews.push(view);
+            view.render();
+            return view;
+        }
+
+        $(document).ready(function() {
+            var getData;
+
+            // Precompile all the relevant templates
+            _.each({
+                subPhaseL2: '#hb-submittalphase-level2',
+                subPhaseL1: '#hb-submittalphase-level1',
+                subPhaseL1Expanded: '#hb-submittalphase-level1-expanded',
+                subPhaseL0: '#hb-submittalphase-level0',
+                subPhaseL0Expanded: '#hb-submittalphase-level0-expanded',
+                subPhaseModal: '#hb-submittalphase-addedit-modal',
+                submittalSingle: '#hb-submittal-single-open',
+                incompleteBanner: '#hb-submittal-incomplete-banner',
+                submittalContentIncomplete: '#hb-submittal-content-incomplete',
+                submittalReviewsMain: '#hb-submittal-reviews-main',
+                submittalReviewItem: '#hb-submittal-review-item'
+            }, hbCompileTemplate);
+
+            // Precompile file upload templates
+            FileUpload.compileTemplates(hbCompileTemplate);
+
+            // Initialize a ModalBaseView for the add/edit phase/submittal modal
+            phaseEditModal = new ModalBaseView({
+                template: Handlebars.templates.subPhaseModal,
+                fields: {
+                    title: '#submittalphase-addedit-title',
+                    description: '#submittalphase-addedit-description'
+                }
+            });
+
+            // Retrieve the JSON data included in the page and initialize empty
+            // containers for top-level phase models and views
+            getData = hbInitData().data;
+            window.phaseModels = new SubmittalPhaseList();
+            window.phaseViews = [];
+
+            // If our data contains data for one phase start the rendering there and
+            // put the results in the content container. If it contains an array of phases
+            // repeat that process for each and concatenate them all in the content container.
+            if(_.isArray(getData)) {
+                _.each(getData, function(phaseData) {
+                    if(_.isObject(phaseData)) {
+                        $('#content-container').append(topLevelPhase(phaseData, null, window.phaseModels, window.phaseViews).$el);
+                    }
+                });
+                $('.breadcrumb').remove(); //Haaaaaack!
+            }
+            else if(_.isObject(getData)) {
+                topLevelPhase(getData, $('#content-container'), window.phaseModels, window.phaseViews);
+            }
+        });
+    </script>
+{% endblock %}

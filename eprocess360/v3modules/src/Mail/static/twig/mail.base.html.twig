@@ -1,0 +1,156 @@
+{% extends 'SystemController.backbone.base.html.twig' %}
+{% block moduleCSS %}
+    <link rel="Stylesheet" type="text/css" href="{{ Response.meta.SystemController.static }}/css/multiview.css"/>
+    <link rel="Stylesheet" type="text/css" href="{{ Response.meta.SystemController.static }}/css/summernote.css"/>
+    <link rel="Stylesheet" type="text/css" href="{{ Response.meta.Mail.static }}/css/mail.css"/>
+{% endblock %}
+{% block body %}
+    <div class="container-fluid">
+        <div id="content-container"></div>
+    </div>
+{% endblock %}
+{% block moduleJS %}
+    <script src="{{ Response.meta.SystemController.static }}/js/util.js"></script>
+    <script src="{{ Response.meta.SystemController.static }}/js/bizzybone.js"></script>
+    <script src="{{ Response.meta.SystemController.static }}/js/globalHelpers.js"></script>
+    <script src="{{ Response.meta.SystemController.static }}/js/multiview.js"></script>
+    <script src="{{ Response.meta.SystemController.static }}/js/summernote.min.js"></script>
+    <script src="{{ Response.meta.Mail.static }}/js/helpers/mailHelpers.js" type="text/javascript"></script>
+    <script src="{{ Response.meta.Mail.static }}/js/models/mail.js" type="text/javascript"></script>
+    <script src="{{ Response.meta.Mail.static }}/js/views/mail.js" type="text/javascript"></script>
+{% endblock %}
+{% block javascript %}
+    <script type="text/javascript">
+        function initSummernote() {
+            var range_history = {};
+
+            // The current selection
+            //range_history.currentSelection;
+
+            range_history.backuprange = function(){
+                var selection = window.getSelection();
+                var range = selection.getRangeAt(0);
+                range_history.currentSelection = {"startContainer": range.startContainer, "startOffset":range.startOffset,"endContainer":range.endContainer, "endOffset":range.endOffset};
+            };
+
+            range_history.restorerange = function(){
+                var selection = window.getSelection();
+                selection.removeAllRanges();
+                var range = document.createRange();
+                range.setStart(range_history.currentSelection.startContainer, range_history.currentSelection.startOffset);
+                range.setEnd(range_history.currentSelection.endContainer, range_history.currentSelection.endOffset);
+                selection.addRange(range);
+            };
+
+            var ParametrosButton = function (context) {
+
+                var ui = $.summernote.ui;
+                var list = $('#variable-options').html();
+
+                var button = ui.buttonGroup([
+                    ui.button({
+                        className: 'dropdown-toggle',
+                        contents: 'Variables <span class="caret"></span>',
+                        tooltip: "Insert Variable",
+                        data: {
+                            toggle: 'dropdown'
+                        }
+                    }),
+                    ui.dropdown({
+                        className: 'drop-default summernote-list variable-list',
+                        contents: "<ul>"+list+"</ul>",
+                        callback: function ($dropdown) {
+                            var context2 = context;
+                            $('.note-editable').on('focusout', function () { range_history.backuprange(); });
+                            $dropdown.find('li').each(function () {
+
+                                $(this).click(function () {
+                                    range_history.restorerange();
+                                    context2.invoke("editor.insertText", '\{\{ ' + $(this).html() + ' \}\}');
+                                });
+                            });
+                        }
+                    })
+                ]);
+
+                return button.render();   // return button as jquery object
+            };
+
+
+            $('#mailbody').summernote({
+                placeholder: "Message Body",
+                toolbar: [
+                    ['myotherbutton', ['parametros']],
+
+                    ['style', ['bold', 'italic', 'underline', 'clear']],
+                    ['font', ['strikethrough', 'superscript', 'subscript']],
+                    ['fontsize', ['fontsize']],
+                    ['color', ['color']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['height', ['height']]
+
+
+                ],
+                buttons: {
+                    parametros: ParametrosButton
+                }
+            });
+        }
+
+        $(document).ready(function() {
+            var getData, metaData;
+
+            // Precompile all the relevant templates
+            _.each({
+                mailTemplateEditor: $('#hb-mail-template-editor'),
+                mailTemplateListMain: $('#hb-mail-template-list-main'),
+                mailLogView: $('#hb-mail-log-view'),
+                mailLogRecipientItem: $('#hb-mail-log-recipient-item'),
+                mailLogAttachmentItem: $('#hb-mail-log-attachment-item'),
+                mailLogVariableItem: $('#hb-mail-log-variable-item'),
+                mailLogListMain: $('#hb-mail-log-list-main'),
+                mvCustomMailStatus: $('#hb-multiview-custom-mail-status')
+            }, hbCompileTemplate);
+
+            // Compile multiview templates
+            Multiview.compileTemplates(hbCompileTemplate);
+            Multiview.compileExtendedTemplates(hbCompileTemplate);
+
+            getData = hbInitData().data;
+            metaData = hbInitData().meta.Mail;
+
+            if(metaData.objectType === 'mailLog') {
+                if(_.isObject(getData) && _.has(getData, 'results')) {
+                    // Render list of emails
+                    baseCollection = new MailLogList();
+                    baseCollection.loadData(getData, {silent: true});
+                    baseView = new MailLogListMainView({collection: baseCollection, el: $('#content-container')});
+                    baseView.render();
+                }
+                else if(_.isObject(getData)) {
+                    // Render single email
+                    baseModel = new MailLogModel(getData);
+                    baseView = new MailLogEntryView({model: baseModel, el: $('#content-container')});
+                    baseView.render();
+                }
+            }
+            else if(metaData.objectType === 'mailTemplate') {
+                if(_.isObject(getData) && _.has(getData, 'results')) {
+                    // Render list of templates
+                    baseCollection = new MailTemplateList();
+                    baseCollection.loadData(getData, {silent: true});
+                    baseView = new MailTemplateListMainView({collection: baseCollection, el: $('#content-container')});
+                    baseView.render();
+                }
+                else if(_.isObject(getData)) {
+                    // Render single template
+                    baseModel = new MailTemplateModel(getData);
+                    baseView = new MailTemplateEditView({model: baseModel, el: $('#content-container')});
+                    baseView.render();
+                    initSummernote();
+                    baseView.fillEditor();
+                }
+            }
+        });
+    </script>
+{% endblock %}

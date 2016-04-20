@@ -1,0 +1,541 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: DanielMoreno
+ * Date: 12/1/15
+ * Time: 11:30 AM
+ */
+
+namespace eprocess360\v3modules\Review;
+
+
+use eprocess360\v3core\Controller\Children;
+use eprocess360\v3core\Controller\Controller;
+use eprocess360\v3core\Controller\Module;
+use eprocess360\v3core\Controller\Persistent;
+use eprocess360\v3core\Controller\Router;
+use eprocess360\v3core\Controller\Rules;
+use eprocess360\v3core\Controller\Trigger\InterfaceTriggers;
+use eprocess360\v3core\Controller\Triggers;
+use eprocess360\v3core\DB;
+use eprocess360\v3core\Files\Folder;
+use eprocess360\v3core\Request\Request;
+use eprocess360\v3modules\Submittal\Model;
+use eprocess360\v3core\Controller\Warden\Privilege;
+use eprocess360\v3modules\FolderRoot\FolderRoot;
+use eprocess360\v3core\Model\Files;
+use eprocess360\v3modules\Review\Model\Reviews;
+use eprocess360\v3modules\Task\Model\Tasks;
+use eprocess360\v3modules\Task\Task;
+use Exception;
+
+/**
+ * Class Review
+ * @package eprocess360\v3modules\Review
+ */
+class Review extends Controller implements InterfaceTriggers
+{
+    use Router, Module, Persistent, Triggers, Children, Rules;
+    private $groups;
+    private $reviewers;
+    private $reviewTypes;
+    /** @var  FolderRoot */
+    private $folderRoot;
+    private $idObject;
+    private $url;
+    private $baseObject;
+    private $task;
+    private $objectIdFolder;
+    private $objectTitle;
+    protected $staticPath;
+    private $messages = [200 => false,
+        404 => "404 Not Found - Resource not found",
+        403 => "Permissions are not sufficient."];
+    public $identified;
+
+
+    /**
+     * Used as a fail-safe in Controllers to make sure that their dependencies and initializations are met; If not, exception is thrown.
+     */
+    public function dependencyCheck()
+    {
+        if($this->groups === NULL)
+            throw new Exception("Review Module does not have Groups set, please bindGroups in the initialization function.");
+        if($this->reviewers === NULL)
+            throw new Exception("Review Module does not have Reviewers set, please bindReviewers in the initialization function.");
+        if($this->reviewTypes === NULL)
+            throw new Exception("Review Module does not have Review Types set, please bindReviewTypes in the initialization function.");
+        if($this->folderRoot === NULL)
+            throw new Exception("Review Module does not have a Folder Root set, please bindFolderRoot in the initialization function.");
+
+        $this->folderRoot->dependencyCheck();
+    }
+
+
+    /*********************************************   #ROUTING#  **********************************************/
+
+
+    /**
+     * Define the available routes for the module here. This function should not perform any other logic outside of
+     * specifying available routes.
+     */
+    public function routes()
+    {
+        $this->routes->map('GET', '', function () {
+            $this->getReviewsAPI();
+        });
+        $this->routes->map('POST', '', function () {
+            $this->createReviewAPI();
+        });
+        $this->routes->map('GET', '/[i:idReview]?', function ($idReview) {
+            $this->getReviewAPI($idReview);
+        });
+        $this->routes->map('PUT', '/[i:idReview]', function ($idReview) {
+            $this->editReviewAPI($idReview);
+        });
+        $this->routes->map('DELETE', '/[i:idReview]', function ($idReview) {
+            $this->deleteReviewAPI($idReview);
+        });
+        $this->routes->map('GET', '/types', function () {
+            $this->getReviewTypesAPI();
+        });
+        $this->routes->map('GET', '/groups', function () {
+            $this->getGroupsAPI();
+        });
+        $this->routes->map('GET|POST|PATCH|PUT|DELETE', '/[i:idReview]/files/[*:trailing]?', function ($idReview) {
+            $this->reviewFilesAPI($idReview);
+        });
+    }
+
+    /**
+     * API Function to get the Reviews of a given Controller and Object.
+     * @Required_Privilege: Read
+     */
+    public function getReviewsAPI()
+    {
+        $this->verifyPrivilege(Privilege::READ);
+
+        $data = Reviews::getReviews($this);
+
+        $this->standardResponse($data);
+    }
+
+    /**
+     * API Function to get a specified Review
+     * @param $idReview
+     * @Required_Privilege: Read
+     */
+    public function getReviewAPI($idReview)
+    {
+        $this->verifyPrivilege(Privilege::READ);
+
+        $data = Reviews::getReview($this, $idReview);
+
+        $this->standardResponse($data);
+    }
+
+    /**
+     * API Function to create a Review given type, description, idGroup, idUser, and dateDue
+     * @Required_Privilege: Create
+     * @Triggers: onReviewCreate
+     */
+    public function createReviewAPI()
+    {
+        $this->verifyPrivilege(Privilege::CREATE);
+
+        $data = Request::get()->getRequestBody();
+        $type = $data['type'];
+        $description = $data['description'];
+        $idGroup = $data['idGroup'];
+        $idUser = $data['idUser'];
+        $dateDue = $data['dateDue'];
+
+        $data =  Reviews::create($this, $type, $description, $idGroup, $idUser, $dateDue);
+        $this->trigger('onReviewCreate');
+
+        $this->standardResponse($data);
+    }
+
+    /**
+     * API Function to edit a review. specifically: type, description, idGroup, idUser, dateDue, status->isAccepted, status->isCompleted
+     * @param $idReview
+     * @Required_Privilege: Write
+     * @Triggers: onReviewComplete
+     */
+    public function editReviewAPI($idReview)
+    {
+        $this->verifyPrivilege(Privilege::WRITE);
+
+        $data = Request::get()->getRequestBody();
+        $type = isset($data['type'])? $data['type']:null;
+        $description = isset($data['description'])? $data['description']:null;
+        $idGroup = isset($data['idGroup'])? $data['idGroup']:null;
+        $idUser = isset($data['idUser'])? $data['idUser']:null;
+        $dateDue = isset($data['dateDue'])? $data['dateDue']:null;
+        $isAccepted = isset($data['status']['isAccepted'])? $data['status']['isAccepted']:null;
+        $isComplete = isset($data['status']['isComplete'])? $data['status']['isComplete']:null;
+
+        //$this->verifyPrivilege(Privilege::WRITE);
+
+        $idTask = Reviews::sqlFetch($idReview)->idTask->get();
+        $oldIsComplete = Tasks::sqlFetch($idTask)->status->isComplete->get();
+
+        $data = Reviews::editReview($this, $idReview, $type, $description, $idGroup, $idUser, $dateDue, $isAccepted, $isComplete);
+
+        if ($oldIsComplete != $isComplete && $isComplete==true) {
+            $this->trigger('onReviewComplete');
+        }
+        $this->standardResponse($data);
+    }
+
+    /**
+     * API Function to delete a specified Review.
+     * @param $idReview
+     * @Required_Privilege: Delete
+     * @Triggers: onReviewDelete
+     */
+    public function deleteReviewAPI($idReview)
+    {
+        $this->verifyPrivilege(Privilege::DELETE);
+
+        $data = Reviews::deleteReview($idReview);
+        $this->trigger('onReviewDelete');
+
+        $this->standardResponse($data);
+    }
+
+    /**
+     * Returns the array of Review Types on the Review Controller.
+     * @return array|null
+     */
+    public function getReviewTypesAPI()
+    {
+        $this->standardResponse($this->reviewTypes);
+    }
+
+    /**
+     * Returns the array of Groups on the Review Controller.
+     * @return array|null
+     */
+    public function getGroupsAPI()
+    {
+        $this->standardResponse($this->groups);
+    }
+
+    /**
+     * Passer Function that continues to the FolderRoot Module
+     * @param $idReview
+     * @throws Exception
+     * @throws \eprocess360\v3core\Controller\ControllerException
+     * @Required_Privilege: GET: Read, POST/PUT/PATCH: Write, DELETE: Delete
+     */
+    public function reviewFilesAPI($idReview)
+    {
+        //TODO VERIFY that the File is within this Review, for all file functions
+        $type = Request::get()->getRequestMethod();
+        switch ($type) {
+            case 'GET':
+                $this->verifyPrivilege(Privilege::READ);
+                break;
+            case 'POST':
+            case 'PUT':
+            case 'PATCH':
+                $this->verifyPrivilege(Privilege::WRITE);
+                if(Reviews::isComplete($idReview))
+                    throw new Exception("Unable to edit a file off a completed review.");
+                break;
+            case 'DELETE':
+                $this->verifyPrivilege(Privilege::DELETE);
+                if(Reviews::isComplete($idReview))
+                    throw new Exception("Unable to delete a file off a completed review.");
+                break;
+        }
+
+        if($this->folderRoot){
+            /** @var FolderRoot $child */
+            $child= $this->folderRoot;
+            $this->setObjectId($idReview);
+            $this->addController($child);
+
+            $data = Reviews::sqlFetch($idReview);
+            $idFolder = $data->idFolder->get();
+            $child->setVerified(true);
+            $child->setFolder(Folder::getByID($idFolder));
+
+            $child->ready()->run();
+        }
+        else
+            throw new Exception("No Folder Root configured for this Module.");
+    }
+
+
+    /**********************************************   #HELPER#  **********************************************/
+
+
+    /**
+     * Helper function that sets the Response's template, data, response code, and errors.
+     * @param array $data
+     * @param int $responseCode
+     * @param bool|false $error
+     */
+    private function standardResponse($data = [], $responseCode = 200, $error = false)
+    {
+        global $pool;
+        if($error == false)
+            $error = $this->messages[$responseCode];
+
+        $responseData = [
+            'error' => $error,
+            'data' => $data
+        ];
+
+        $response = $this->getResponseHandler();
+
+        /** @var FolderRoot $folderRoot */
+        $folderRoot = $this->folderRoot;
+        $response->addResponseMeta('fileCategories',$folderRoot->getFileCategories());
+
+        $response->setTemplate('reviews.base.html.twig', 'server');
+        $response->setTemplate('module.reviews.handlebars.html', 'client', $this);
+
+        $response->setResponse($responseData, $responseCode, false);
+        if($error)
+            $response->setErrorResponse(new \Exception($error));
+    }
+
+
+    /*********************************************   #WORKFLOW#  *********************************************/
+
+
+    /**
+     * Returns the FolderRoot that was binded to this Review
+     * @return FolderRoot
+     */
+    public function getFolderRoot(){
+        return $this->folderRoot;
+    }
+
+    /**
+     * Identify function used to connect a Module that uses Reviews, to this Review Module.
+     * @param $baseObject; baseObject is the connected Module Controller, ie Submittal.
+     * @param $idObject; idObject is the specified Object that a created Review would be connected to
+     * @param $url; url that the review will link to.
+     * @param $objectTitle; Name of the object the review is for.
+     * @param $objectIdFolder; The Folder for the Object so the review can see the object's files.
+     * @return $this;
+     */
+    public function identify($baseObject, $idObject, $url, $objectTitle, $objectIdFolder)
+    {
+        $this->baseObject = $baseObject;
+        $this->idObject = $idObject;
+        $this->url = $url;
+        $this->objectTitle = $objectTitle;
+        $this->objectIdFolder = $objectIdFolder;
+        $callable = function ($controller) {
+            return get_class($controller)==="App\\System" ? $controller : null;
+        };
+        $this->task = $this->getClosest($callable)->getChild('tasks');
+
+        return $this;
+    }
+
+    /**
+     * Workflow function to create a new review ALREADY IDENTIFIED Review Controller
+     * @param $type
+     * @param $description
+     * @param $idGroup
+     * @param $idUser
+     * @param $dateDue
+     * @return array|string
+     * @Triggers: onReviewCreate
+     */
+    public function createReview($type, $description, $idGroup, $idUser, $dateDue)
+    {
+        $review = Reviews::create($this, $type, $description, $idGroup, $idUser, $dateDue);
+        $this->trigger('onReviewCreate');
+        return $review;
+    }
+
+    /**
+     * Returns the IdObject of an identified Review Controller.
+     * @return mixed
+     */
+    public function getIdObject()
+    {
+        return $this->idObject;
+    }
+
+    /**
+     * Returns the baseObject, which is the Controller the Review is connected to (like Submittal), of an identified Review Controller.
+     * @return Module
+     */
+    public function getBaseObject()
+    {
+        return $this->baseObject;
+    }
+
+    /**
+     * Returns the URL link of an identified Review Controller.
+     * @return mixed
+     */
+    public function getUrl()
+    {
+        return $this->url;
+    }
+
+    /**
+     * Returns the Task Controller of an identified Review Controller.
+     * @return Task
+     */
+    public function getTask()
+    {
+        return $this->task;
+    }
+
+    /**
+     * Returns the Object Folder of an identified Review Controller.
+     * @return mixed
+     */
+    public function getObjectFolder()
+    {
+        return $this->objectIdFolder;
+    }
+
+    /**
+     * Returns the Object Title of an identified Review Controller.
+     * @return mixed
+     */
+    public function getObjectTitle()
+    {
+        return $this->objectTitle;
+    }
+
+    /**
+     * Returns the array of Reviewers on the Review Controller.
+     * @return array|null
+     */
+    public function getReviewers()
+    {
+        return $this->reviewers;
+    }
+
+    /**
+     * Returns the array of Groups on the Review Controller.
+     * @return array|null
+     */
+    public function getGroups()
+    {
+        return $this->groups;
+    }
+
+    /**
+     * Returns the array of Review Types on the Review Controller.
+     * @return array|null
+     */
+    public function getReviewTypes()
+    {
+        return $this->reviewTypes;
+    }
+
+    /******************************************   #INITIALIZATION#  ******************************************/
+
+
+    /**
+     * Binds the FolderRoot used for this Review Controller.
+     * @param FolderRoot $folderRoot
+     * @return $this
+     */
+    public function bindFolderRoot(FolderRoot $folderRoot)
+    {
+        $this->folderRoot = $folderRoot;
+        return $this;
+    }
+
+    /**
+     * Binds an array of Reviewers usable by this Review Controller.
+     * @param array $reviewers
+     * @return $this
+     */
+    public function bindReviewers(array $reviewers)
+    {
+        $this->reviewers = $reviewers;
+        return $this;
+    }
+
+    /**
+     * Binds an array of Groups usable by this Review Controller.
+     * @param array $groups
+     * @return $this
+     */
+    public function bindGroups(array $groups)
+    {
+        $sql = "SELECT g.idGroup, g.title, GROUP_CONCAT(gu.idUser) AS users
+                FROM Groups g
+                LEFT JOIN GroupUsers gu ON gu.idGroup = g.idGroup
+                GROUP BY g.idGroup
+                ORDER BY g.idGroup DESC";
+        $groups = DB::sql($sql);
+
+        foreach($groups as &$g) {
+            $g['users'] = explode(',', $g['users']);
+        }
+
+        unset($g); //cleanup $g 'cause PHP is PHP
+
+        $this->groups = $groups;
+
+        $sql = "SELECT DISTINCT Users.idUser, Users.firstName, Users.lastName FROM GroupUsers LEFT JOIN Users
+            ON GroupUsers.idUser = Users.idUser";
+        $users = DB::sql($sql);
+        $this->reviewers = $users;
+
+        return $this;
+    }
+
+    /**
+     * Binds an array of Types usable by this Review Controller.
+     * @param array $reviewTypes
+     * @return $this
+     */
+    public function bindReviewTypes(array $reviewTypes)
+    {
+        $this->reviewTypes = $reviewTypes;
+        return $this;
+    }
+
+
+    /*********************************************   #TRIGGERS#  *********************************************/
+
+
+    /**
+     * Trigger when a Review is created
+     * @param \Closure $closure
+     * @return \eprocess360\v3core\Controller\Trigger\Trigger
+     */
+    public function onReviewCreate($closure)
+    {
+        return $this->addTrigger(__FUNCTION__, $closure);
+    }
+
+    /**
+     * Trigger when a Review is deleted
+     * @param \Closure $closure
+     * @return \eprocess360\v3core\Controller\Trigger\Trigger
+     */
+    public function onReviewDelete($closure)
+    {
+        return $this->addTrigger(__FUNCTION__, $closure);
+    }
+
+    /**
+     * Trigger when a Review is marked isCompleted from a non completed state.
+     * @param \Closure $closure
+     * @return \eprocess360\v3core\Controller\Trigger\Trigger
+     */
+    public function onReviewComplete(\Closure $closure)
+    {
+        return $this->addTrigger(__FUNCTION__, $closure);
+    }
+
+
+}

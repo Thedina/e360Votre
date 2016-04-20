@@ -1,0 +1,23 @@
+{% extends 'SystemController.plain.html.twig' %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-md-8">
+            <h3>{{ Response.data.title }}</h3>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    {{ Response.data.body|raw }}
+                </div>
+                {% if Response.data.buttons %}
+                <div class="panel-footer clearfix">
+                    <div class="btn-group pull-right">
+                        {% for button in Response.data.buttons %}
+                            <a class="btn btn-{{ button.color }}" href="{{ button.link }}">{{ button.text }}</a>
+                        {% endfor %}
+                    </div>
+                </div>
+                    {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

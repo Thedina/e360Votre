@@ -1,0 +1,209 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: Kira
+ * Date: 9/15/2015
+ * Time: 11:17 AM
+ */
+
+namespace eprocess360\v3core\View;
+
+
+use Composer\Util\Filesystem;
+use eprocess360\v3core\Keydict\Entry;
+use eprocess360\v3core\Keydict\Entry\SystemName;
+use eprocess360\v3core\Keydict\Field;
+use eprocess360\v3core\View;
+
+/**
+ * Class Column
+ * Configure a column that the user can select and use on a View.  Adding a column exposes the data in that column to
+ * the end user.
+ * @package eprocess360\v3core\View
+ * @deprecated
+ */
+class Column
+{
+    protected $name;
+    protected $label;
+    /** @var Entry[] */
+    protected $fields = [];
+    protected $view;
+    /** @var null|\Closure  */
+    protected $handler = null;
+    /** @var bool Whether or not to use this column by default */
+    protected $enabled = true;
+    protected $sort = null;
+    protected $template = null;
+    /**
+     * @param $name
+     * @param $label
+     * @throws \eprocess360\v3core\Keydict\Exception\InvalidValueException
+     */
+    private function __construct($name, $label)
+    {
+        $this->name = SystemName::validate($name);
+        $this->label = $label;
+    }
+
+    /**
+     * @param $name
+     * @param $label
+     * @param $fields
+     * @return Column
+     */
+    public static function build ($name, $label, Field ...$fields)
+    {
+        $column = new static($name, $label);
+        foreach ($fields as $field) {
+            $column->addField($field);
+        }
+        return $column;
+    }
+
+    /**
+     * Create a Column with the exact same properties as the Field
+     * @param Field $field
+     * @return static
+     */
+    public static function import(Field $field)
+    {
+        $column = new static ($field->getName(), $field->getLabel());
+        $column->addField($field);
+        return $column;
+    }
+
+    /**
+     * @param Field $field
+     * @return Column
+     */
+    private function addField(Field $field)
+    {
+        if (!in_array($field, $this->fields)) {
+            $this->fields[] = $field;
+        }
+        return $this;
+    }
+
+    /**
+     * The handler is the function for compiling the available data and returning a response.  If it isn't specified,
+     * the Column will return the data available from the Field->get() method.  For multiple columns, it will separate
+     * the responses with a space.
+     * @param $handler
+     * @return Column
+     */
+    public function addHandler($handler)
+    {
+        $this->handler = $handler;
+        return $this;
+    }
+
+    /**
+     * @param StandardView $view
+     * @return Column
+     */
+    public function setView(StandardView $view)
+    {
+        $this->view = $view;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTemplate()
+    {
+        if ($this->template) {
+            return $this->template;
+        }
+        $value = [];
+        foreach ($this->fields as $field) {
+            $value[] = '{{ this.'.$field->getName().'.get() }}';
+        }
+        return implode(' ', $value);
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLabel()
+    {
+        return $this->label;
+    }
+
+    /**
+     * @return Column
+     */
+    public function ascending()
+    {
+        $this->sort = 'ASC';
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSort()
+    {
+        return $this->sort;
+    }
+
+    /**
+     * @return Column
+     */
+    public function descending()
+    {
+        $this->sort = 'DESC';
+        return $this;
+    }
+    /**
+     * @param $template
+     * @param bool $useLoader
+     * @return Column
+     */
+    public function setTemplate($template, $useLoader = true)
+    {
+        if ($useLoader) {
+            global $twig_loader;
+            $this->template = $twig_loader->getSource($template);
+        } else {
+            $this->template = $template;
+        }
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isEnabled()
+    {
+        return $this->enabled;
+    }
+
+    /**
+     * @param bool $enabled
+     * @return Column
+     */
+    public function setEnabled($enabled)
+    {
+        $this->enabled = $enabled;
+        return $this;
+    }
+
+    /**
+     * @return Field[]|Entry[]
+     */
+    public function getFields()
+    {
+        return $this->fields;
+    }
+
+}

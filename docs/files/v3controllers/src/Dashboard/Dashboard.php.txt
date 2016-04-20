@@ -1,0 +1,78 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: DanielMoreno
+ * Date: 12/9/15
+ * Time: 10:05 AM
+ */
+
+namespace eprocess360\v3controllers\Dashboard;
+
+
+use eprocess360\v3core\Controller\Auth;
+use eprocess360\v3core\Controller\Controller;
+use eprocess360\v3core\Controller\Router;
+
+/**
+ * Class Dashboard
+ * @package eprocess360\v3controllers\Dashboard
+ */
+class Dashboard extends Controller
+{
+    use Router, Auth;
+
+    protected $controllers;
+    protected $projects;
+
+
+    /*********************************************   #ROUTING#  **********************************************/
+
+    /**
+     * Define the available routes for the module here. This function should not perform any other logic outside of
+     * specifying available routes.
+     * @throws \Exception
+     */
+    public function routes()
+    {
+        $this->routes->map('GET', '', function () {
+            $this->getDashboardAPI();
+        });
+    }
+
+    /**
+     * API Function to get render the Dashboard.
+     */
+    public function getDashboardAPI()
+    {
+        $responseData = [
+            'controllers' => $this->controllers,
+            'projects' => $this->projects
+        ];
+
+        $response = $this->getResponseHandler();
+        $response->setResponse($responseData);
+        $response->setTemplate('Dashboard.main.html.twig');
+    }
+
+
+    /*********************************************   #WORKFLOW#  *********************************************/
+
+
+    /**
+     * Sets the array of Project Controllers available on the Dashboard.
+     * @param $controllers
+     */
+    public function setControllers($controllers)
+    {
+        $this->controllers = $controllers;
+    }
+
+    /**
+     * Sets the array of Projects available on the Dashboard.
+     * @param $projects
+     */
+    public function setProjects($projects)
+    {
+        $this->projects = $projects;
+    }
+}

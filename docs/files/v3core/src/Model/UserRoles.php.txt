@@ -1,0 +1,45 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: Kira
+ * Date: 8/19/2015
+ * Time: 7:16 PM
+ */
+
+namespace eprocess360\v3core\Model;
+use eprocess360\v3core\Keydict;
+use eprocess360\v3core\Keydict\Entry\Bit;
+use eprocess360\v3core\Keydict\Entry\Bits;
+use eprocess360\v3core\Keydict\Entry\FixedString128;
+use eprocess360\v3core\Keydict\Entry\FixedString256;
+use eprocess360\v3core\Keydict\Entry\FixedString32;
+use eprocess360\v3core\Keydict\Entry\Flag;
+use eprocess360\v3core\Keydict\Entry\IdInteger;
+use eprocess360\v3core\Keydict\Entry\IdTinyInt;
+use eprocess360\v3core\Keydict\Entry\Integer;
+use eprocess360\v3core\Keydict\Entry\JSONArrayFixed128;
+use eprocess360\v3core\Keydict\Entry\PrimaryKeyInt;
+use eprocess360\v3core\Keydict\Entry\TinyInteger;
+use eprocess360\v3core\Keydict\Table;
+use eprocess360\v3core\Model;
+
+/**
+ * @package eprocess360\v3core\Model
+ */
+class UserRoles extends Model
+{
+    /**
+     * @return Table
+     */
+    public static function keydict()
+    {
+        return Table::build(
+            PrimaryKeyInt::build('idUserRole', 'User Roles ID'),
+            IdInteger::build('idUser', 'User ID')->joinsOn(Users::model())->index(),
+            IdInteger::build('idSystemRole', 'System Role ID')->joinsOn(Roles::model())->index(),
+            IdInteger::build('idProject', 'Project ID')->joinsOn(Projects::model())->index(),
+            IdInteger::build('idLocalRole', 'Local Role ID')->index(),
+            IdInteger::build('grantedBy', 'Role Granted By')->joinsOn(Users::model(), 'idUser')->index()
+        )->setName('UserRoles')->setLabel('UserRoles');
+    }
+}

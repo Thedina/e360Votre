@@ -1,0 +1,90 @@
+<script id="hb-module-rule-list-main" type="text/x-handlebars-template">
+    <div class="row">
+        <div class="col-sm-6">
+            <h3>Rules</h3>
+        </div>
+        <div class="col-sm-6">
+            <h3 class="pull-right">
+                <span class="btn-group" role="group" aria-label="Rules">
+                    <button type="button" class="modules-btn-new btn btn-info" id="btn-add-module-rule">New Rule</button>
+                </span>
+            </h3>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12">
+            <form role="form">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead><tr><th>Order</th><th>Expression</th><th>Action</th><th width="100px"></th></tr></thead>
+                        <tbody id="module-rule-list"></tbody>
+                    </table>
+                </div>
+            </form>
+        </div>
+    </div>
+</script>
+
+<script id="hb-module-rule-list-item" type="text/x-handlebars-template">
+    <tr>
+        <td>{{moduleRule.order}}</td>
+        <td><code>{{moduleRule.expression}}</code></td>
+        <td>{{moduleRule.moduleType}} {{moduleRule.objectActionTitle}}</td>
+        <td>
+            <div class="btn-group modules-btngrp-editdel">
+            <button class="btn btn-default btn-xs btn-edit">Edit</button>
+            <button class="btn btn-default btn-xs btn-delete">Delete</button>
+            </div>
+        </td>
+    </tr>
+</script>
+
+<script id="hb-module-rule-edit-modal" type="text/x-handlebars-template">
+    <div class="modal fade" id="module-rule-edit-modal" tabindex="-1" role="dialog" aria-labelledby="module-rule-edit-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    <h4 class="modal-title">Add/Edit Rule</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal">
+                        <label class="col-sm-12">Expression</label>
+                        <div id="rule-form-condition-list"></div>
+                        <div class="form-group">
+                            <label for="module-rule-edit-action-type" class="col-sm-2 control-label">Action</label>
+                            <div class="col-sm-4">
+                                <select class="form-control" id="module-rule-edit-action-type">{{{ruleActionTypeOptions moduleRule.actionType}}}</select>
+                            </div>
+                            <div class="col-sm-6">
+                                <select class="form-control" id="module-rule-edit-action-target">{{{moduleTypeOptions moduleTypes moduleRule.idObjectAction}}}</select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script id="hb-module-rule-edit-modal-condition" type="text/x-handlebars-template">
+    <div class="form-group module-rule-condition" data-num="{{conditionNum}}">
+        <div class="col-sm-5 col-nopad-right condition-stub">
+            <select class="form-control edit-variable">{{{genericStringOptions conditionOptions.variables condition.variable}}}</select>
+        </div>
+        <div class="col-sm-2 col-nopad-right condition-full">
+            <select class="form-control edit-comparator">{{{genericStringOptions conditionOptions.comparators condition.comparator}}}</select>
+        </div>
+        <div class="col-sm-3 col-nopad-right condition-full">
+            <input type="text" class="form-control edit-value" placeholder="Value" value="{{condition.value}}">
+        </div>
+        <div class="col-sm-2 condition-full">
+            <select class="form-control edit-conjunction">{{{genericStringOptions conditionOptions.conjunctions condition.conjunction}}}</select>
+        </div>
+    </div>
+</script>

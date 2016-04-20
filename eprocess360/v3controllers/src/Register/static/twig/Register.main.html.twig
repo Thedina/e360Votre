@@ -1,0 +1,251 @@
+{% extends 'SystemController.splash.html.twig' %}
+
+{% block hbData %}
+    <script language="JavaScript">
+        /**
+         * Function to get JSON data embedded in the page
+         * @returns {Object}
+         */
+        function hbInitData() {
+            /* Initialization Data */
+            return {{ Response|json_encode()|raw }};
+        }
+
+        /**
+         * Function to compile Handlebars templates. Really should be (more)
+         * global. *Really* really should really precompile the real way.
+         * @param {string} selector
+         * @param {string} name
+         * @returns {function}
+         */
+        function hbCompileTemplate(selector, name) {
+            if(!_.isObject(Handlebars.templates)) {
+                Handlebars.templates = {};
+            }
+            Handlebars.templates[name] = Handlebars.compile($(selector).html());
+        }
+    </script>
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row" style="padding-top:25px">
+            <div class="col-md-offset-2 col-md-8 col-sm-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        New User Registration
+                    </div>
+                    <form class="form-horizontal" method="POST" action="{{ pool.SysVar.get('siteUrl') }}/register" id="formreg">
+                    <div class="panel-body">
+                        <p>Please complete fields marked with an exclamation point.</p>
+
+                        {% if Response.data.errors %}
+                            <div class="alert alert-danger" role="alert">
+                                <p>There were problems with your submission:</p>
+                                <ul>{% for error in Response.data.errors %}
+                                        <li>{{ error.getMessage }}</li>
+                                    {% endfor %}</ul>
+                            </div>
+                        {% endif %}
+
+                            <input type="hidden" name="submitform" value="true"/>
+                            {% for Field in Response.data.form.Keydict.Fields  %}
+                                {{ Macro.input(Field) }}
+                            {% endfor %}
+
+                    </div>
+                        <div class="panel-footer clearfix">
+                            <div class="btn-group pull-right">
+                                <a href="{{ SysVar.get('siteUrl') }}/" class="btn btn-default">Cancel</a>
+                                <button type="submit" id="btn-register" class="btn btn-primary">Register</button>
+                            </div>
+
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    <script language='javascript'>
+        function validatePassword(pwd) {
+            var minLength, maxLength, requiresLetter, requiresNumber, hasLetter, hasNum;
+
+            minLength = {{ SysVar.get('passwordMinLength') }};
+            maxLength = {{ SysVar.get('passwordMaxLength') }};
+            requiresLetter = {{ SysVar.get('passwordRequiresLetter') }};
+            requiresNumber = {{ SysVar.get('passwordRequiresNumber') }};
+
+            hasLetter = /[a-zA-Z]/;
+            hasNum = /[0-9]/;
+
+            if(pwd.length < minLength) return false;
+            if(pwd.length > maxLength) return false;
+            if(requiresLetter && !hasLetter.test(pwd)) return false;
+            if(requiresNumber && !hasNum.test(pwd)) return false;
+
+            return true;
+        }
+        $(document).ready(function () {
+
+            check = "glyphicon glyphicon-ok form-control-feedback";
+            notice = "glyphicon glyphicon-exclamation-sign form-control-feedback";
+            successcolor = "form-group has-success has-feedback";
+            noticecolor = "form-group has-notice has-feedback";
+            errorcolor = "form-group has-error has-feedback";
+
+            $("input.helper")
+                    .focus(function () {
+                        if ($(this).next("span").hasClass('helperlower')) {
+                            direction = 'n';
+                            $(this).next("span").css('margin-left', $(this).position().left);
+                        } else {
+                            direction = 'w';
+                        }
+                        $(this).next("span").append('<span class="ui-icon ui-icon-triangle-1-' + direction + '"></span>');
+                        $(this).next("span").fadeIn(200);
+                    })
+                    .blur(function () {
+                        $("input.helper span").remove();
+                        $(this).next("span").fadeOut(200);
+                    });
+
+            $('#form-password2').keyup(passwordfunc = function () {
+                if ($('#form-password2').val() === $('#form-password').val() && validatePassword($('#form-password').val())) {
+                    $('#indicator-form-password2-status').attr('class', check);
+                    $('#indicator-form-password2-color').attr('class', successcolor);
+                } else {
+                    $('#indicator-form-password2-status').attr('class', notice);
+                    $('#indicator-form-password2-color').attr('class', noticecolor);
+                }
+                if (validatePassword($('#form-password').val())) {
+                    $('#indicator-form-password-status').attr('class', check);
+                    $('#indicator-form-password-color').attr('class', successcolor);
+                } else {
+                    $('#indicator-form-password-status').attr('class', notice);
+                    $('#indicator-form-password-color').attr('class', noticecolor);
+                }
+            });
+            $('#form-password').keyup(passwordfunc);
+
+            $('#form-phone').keyup(phone = function () {
+                if ($('#form-phone').val().replace(/[^0-9]/g, '').length > 9) {
+                    $('#indicator-form-phone-status').attr('class', check);
+                    $('#indicator-form-phone-color').attr('class', successcolor);
+                } else {
+                    $('#indicator-form-phone-status').attr('class', notice);
+                    $('#indicator-form-phone-color').attr('class', noticecolor);
+                }
+            });
+            $('#form-email').keyup(email = function () {
+                if ($().validateEmail($('#form-email').val())) {
+                    $('#indicator-form-email-status').attr('class', check);
+                    $('#indicator-form-email-color').attr('class', successcolor);
+                } else {
+                    $('#indicator-form-email-status').attr('class', notice);
+                    $('#indicator-form-email-color').attr('class', noticecolor);
+                }
+            });
+            $('#form-email2').keyup(email2 = function () {
+                if ($('#form-email2').val() == $('#form-email').val() && $().validateEmail($('#form-email2').val())) {
+                    $('#indicator-form-email2-status').attr('class', check);
+                    $('#indicator-form-email2-color').attr('class', successcolor);
+                } else {
+                    $('#indicator-form-email2-status').attr('class', notice);
+                    $('#indicator-form-email2-color').attr('class', noticecolor);
+                }
+            });
+            $('#form-firstName').keyup(firstName = function () {
+                if ($('#form-firstName').val().length > 2) {
+                    $('#indicator-form-firstName-status').attr('class', check);
+                    $('#indicator-form-firstName-color').attr('class', successcolor);
+                } else {
+                    $('#indicator-form-firstName-status').attr('class', notice);
+                    $('#indicator-form-firstName-color').attr('class', noticecolor);
+                }
+            });
+            $('#form-lastName').keyup(lastName = function () {
+                if ($('#form-lastName').val().length > 2) {
+                    $('#indicator-form-lastName-status').attr('class', check);
+                    $('#indicator-form-lastName-color').attr('class', successcolor);
+                } else {
+                    $('#indicator-form-lastName-status').attr('class', notice);
+                    $('#indicator-form-lastName-color').attr('class', noticecolor);
+                }
+            });
+            $('#form-email').blur(email);
+            $('#form-email2').blur(email2);
+            $('#form-phone').blur(phone);
+            $('#form-firstName').blur(firstName);
+            $('#form-lastName').blur(lastName);
+
+            $('#form-phone').popover();
+            $('#form-password1').popover();
+
+            $('#signup-submit').click(function () {
+                $('#formreg').submit();
+            });
+            $.fn.disable = function () {
+                return $(this).each(function () {
+                    $(this).attr('disabled', 'disabled');
+                });
+            };
+            $.fn.enable = function () {
+                return $(this).each(function () {
+                    $(this).removeAttr('disabled');
+                });
+            };
+
+            setTimeout(email, 0);
+            setTimeout(phone, 0);
+            setTimeout(firstName, 0);
+            setTimeout(lastName, 0);
+            setTimeout(passwordfunc, 0);
+            setTimeout(email2, 0);
+        });
+
+//        $('#btn-register').click(function(e) {
+//            e.preventDefault();
+//            e.stopPropagation();
+//            $.ajax(hbInitData().meta.Register.apiPath + '/', {
+//                type: 'POST',
+//                contentType: 'application/json; charset=UTF-8',
+//                dataType: 'json',
+//                data: JSON.stringify({
+//                    firstName : $('#form-firstName').val(),
+//                    lastName: $('#form-lastName').val(),
+//                    email: $('#form-email').val(),
+//                    email2: $('#form-email2').val(),
+//                    phone: $('#form-phone').val(),
+//                    password: $('#form-password').val(),
+//                    password2: $('#form-password2').val()
+//                })
+//            }).success(function(data) {
+//                $('#passwordChangeMessage').html('').hide();
+//                $('#changePasswordModal').modal('hide');
+//                bootbox.dialog({
+//                    message: "<div class='alert alert-success' style='margin:0; margin-top:15px'>Your password has been changed successfully!</div>",
+//                    buttons: {
+//                        main: {
+//                            label: "Return to Profile",
+//                            className: "btn-default"
+//                        }
+//                    }
+//                });
+//            }).fail(function(response) {
+//                console.log(response);
+//                var errors = [];
+//                $.each(response.responseJSON.errors, function (index, value) {
+//                    errors.push(value.message);
+//                });
+//                $('#registrationErrorNotice').show();
+//                $('#registrationErrorNotice').find('ul').empty().append('<li>' + errors.join('</li><li>') + '</li>');
+//            });
+//        });
+
+    </script>
+
+{% endblock %}

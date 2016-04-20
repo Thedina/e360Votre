@@ -1,0 +1,64 @@
+{% extends 'SystemController.plain.html.twig' %}
+
+{% block body %}
+
+    <div class="row">
+        <div class="col-xs-12">
+                <h2>Application for Building Permit</h2>
+
+        {% if Response.data.Keydict.hasException %}
+            <div class="alert alert-danger" role="alert">There were problems with your submission and the form was not saved.  Please review the form and try again.</div>
+        {% elseif Response.data.Keydict.Saved %}
+            <div class="alert alert-success" role="alert">Your changes were saved.</div>
+        {% endif %}
+
+        <form class="form-horizontal" method="POST" action="{{ Response.data.Handler }}" id="{{ Response.data.Name }}">
+            <input type="hidden" name="submitform" value="true">
+
+            <div class="page-header">
+                <h3>Applicant Information</h3>
+            </div>
+
+            {{ Macro.input(Response.data.Keydict.Field('applicantName')) }}
+            {{ Macro.input(Response.data.Keydict.Field('contactAddress')) }}
+            {{ Macro.input(Response.data.Keydict.Field('phoneNumber')) }}
+            {{ Macro.input(Response.data.Keydict.Field('contactEmail')) }}
+
+            <div class="page-header">
+                <h3>Project Details</h3>
+            </div>
+
+            {{ Macro.input(Response.data.Keydict.Field('siteAddress')) }}
+            {{ Macro.input(Response.data.Keydict.Field('projectName')) }}
+            {{ Macro.input(Response.data.Keydict.Field('projectValuation')) }}
+
+
+            {{ Macro.textarea(Response.data.Keydict.Field('detailedDescription')) }}
+
+            <div class="page-header">
+                <h3>Property Owner Information</h3>
+            </div>
+
+            {{ Macro.input(Response.data.Keydict.Field('propertyOwnerName')) }}
+            {{ Macro.input(Response.data.Keydict.Field('propertyOwnerAddress')) }}
+            {{ Macro.input(Response.data.Keydict.Field('propertyOwnerPhone')) }}
+            {{ Macro.input(Response.data.Keydict.Field('propertyOwnerEmail')) }}
+
+            <div class="page-header">
+                <h3>Contractor Information</h3>
+            </div>
+
+            {{ Macro.input(Response.data.Keydict.Field('contractorName')) }}
+            {{ Macro.input(Response.data.Keydict.Field('contractorAddress')) }}
+            {{ Macro.input(Response.data.Keydict.Field('contractorPhone')) }}
+            {{ Macro.input(Response.data.Keydict.Field('contractorEmail')) }}
+            {{ Macro.input(Response.data.Keydict.Field('contractorLicenseNo')) }}
+
+            <div class="form-group" style="margin-top:25px">
+                    <button type="submit" class="btn btn-primary pull-right">Submit</button>
+            </div>
+        </form>
+</div>
+    </div>
+
+{% endblock %}

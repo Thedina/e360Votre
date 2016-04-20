@@ -1,0 +1,40 @@
+{% set navbar = [] %}
+
+{% if User.isIdentified() %}{% set navbar = navbar|merge([ ['dashboard', 'Dashboard']]) %}{% endif %}
+{% if User.isIdentified() %}{% set navbar = navbar|merge([ ['projects', 'Projects']]) %}{% endif %}
+{% if User.isAdmin() %}{% set navbar = navbar|merge([['admin','Admin']]) %}{% endif %}
+{% set active = active|default('') %}
+
+<nav class="navbar navbar-default navbar-static-top" style="margin-bottom: 0px;">
+    <div class="container">
+        <div class="navbar-header" style="height:50px; border-bottom:0">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            {% if Response.meta.User.idUser != 0 %}
+            <a class="navbar-brand" rel="home" href="{{ SysVar.get('siteUrl') }}" style="width: 50px; padding: 0 15px 15px; margin-right: 15px;">
+                <img src="{% if SysVar.has('productSmallLogo') %}{{ SysVar.get('productSmallLogo') }}{% else %}{{ Response.meta.SystemController.static }}/img/eprocess_logo.png{% endif %}" style="height: 46px; padding-top: 2px;">
+            </a>
+            {% endif %}
+        </div>
+        <div id="navbar" class="navbar-collapse collapse" style="border-top:0">
+                <ul class="nav navbar-nav">
+                    {% for item in navbar %}
+                        <li{% if item[0] == active %} class="active"{% endif %}><a href="{{ SysVar.get('siteUrl') }}/{{ item[0] }}">{{ item[1] }}</a></li>
+                    {% endfor %}
+                    {% if User.isIdentified() %}<li><a href="{{ SysVar.get('siteUrl') }}/tasks">Tasks&nbsp;<span class="badge">{{ Response.meta.taskCount }}</span></a></li>{% endif %}
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    {% if not User.isValid() %}<li><a href="{{ SysVar.get('siteUrl') }}/login">Login</a></li>
+                    {% else %}
+                    <li><a style="text-decoration: none; color: inherit">{{ User.getFullName() }}</a></li>
+                    <li><a href="{{ SysVar.get('siteUrl') }}/profile">My Profile</a></li>
+                    <li><a href="{{ SysVar.get('siteUrl') }}/logout">Log Out</a></li>
+                    {% endif %}
+                </ul>
+        </div><!--/.nav-collapse -->
+    </div>
+</nav>

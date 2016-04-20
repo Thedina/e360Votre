@@ -1,0 +1,74 @@
+{
+  "row": {
+    "2": {
+      "blocks": [
+        1,
+        2
+      ]
+    }
+  },
+  "block": {
+    "1": {
+      "elements": [
+        12,
+        14,
+        15
+      ],
+      "width": 12
+    },
+    "2": {
+      "elements": [
+        12,
+        14,
+        15
+      ],
+      "width": 12
+    }
+  },
+  "element": {
+    "12": {
+      "type": "input",
+      "entry": "Name.space",
+      "label": "Description Override",
+      "help": "Help Text"
+    },
+    "14": {
+      "type": "select",
+      "entry": "Name.space2",
+      "source": {
+        "options": [
+          "Default String",
+          "Special String"
+        ]
+      }
+    },
+    "15": {
+      "type": "header",
+      "text": "Header Text"
+    }
+  },
+  "library": {
+    "bookName":{
+        "variableName": {
+          "name": "keydictName",
+          "label": "Label Describing Keydict",
+          "default": "Default Value",
+          "value": "Current Value",
+          "type": "text",
+          "required": true,
+          "class": "String",
+          "validate": true
+        },
+        "variableName2": {
+          "name": "keydictName",
+          "label": "Label Describing Keydict",
+          "default": "Default Value",
+          "value": "Current Value",
+          "type": "text",
+          "required": true,
+          "class": "String",
+          "validate": true
+        }
+      }
+  }
+}

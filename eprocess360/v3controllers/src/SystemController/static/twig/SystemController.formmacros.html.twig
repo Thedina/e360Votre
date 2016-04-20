@@ -1,0 +1,79 @@
+
+
+{% macro input(Field) %}
+    <div class="form-group{% if Field.hasMeta('required') %} {% if Field.hasException %}has-warning{% endif %} has-feedback" id="indicator-{{ Field.FormName }}-color{% endif %}">
+        <label for="{{ Field.FormName }}" class="col-sm-3 control-label">{{ Field.Label }}</label>
+        <div class="col-sm-9">
+            <input type="{{ Field.FormType }}" class="form-control" id="{{ Field.FormName }}" name="{{ Field.FormName }}" value="{% if Field.hasMeta('ignore') %}{% else %}{% if Field.hasException %}{{ Field.AttemptedValue }}{% else %}{{ Field.Value }}{% endif %}{% endif %}" placeholder="{{ Field.Label }}">
+            {% if Field.hasMeta('required')  %}<span class="glyphicon glyphicon-exclamation-sign form-control-feedback" id="indicator-{{ Field.FormName }}-status" aria-hidden="true"></span>{% endif %}
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro customInput(Field) %}
+    <input type="{{ Field.FormType }}" class="form-control" id="{{ Field.FormName }}" name="{{ Field.FormName }}" value="{% if Field.hasException %}{{ Field.AttemptedValue }}{% else %}{{ Field.Value }}{% endif %}" placeholder="{{ Field.Label }}">
+    {% if Field.hasMeta('required')  %}<span class="glyphicon glyphicon-exclamation-sign form-control-feedback" id="indicator-{{ Field.FormName }}-status" aria-hidden="true"></span>{% endif %}
+{% endmacro %}
+
+{% macro userSetting(Field, value) %}
+    <div class="form-group">
+        <label for="{{ Field.FormName }}" class="col-md-3 col-sm-3 control-label">{{ Field.Label }}</label>
+        <div class="col-md-9 col-sm-9">
+            <input type="{{ Field.FormType }}" class="form-control" id="{{ Field.FormName }}" name="{{ Field.FormName }}" value="{{ value }}">
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro address(Address) %}
+    {% import _self as Macro %}
+    {{ Macro.input(Address.Keydict.line1) }}
+    {{ Macro.input(Address.Keydict.line2) }}
+
+    <div class="visible-sm visible-xs">
+        {{ Macro.input(Address.Keydict.city) }}
+        {{ Macro.input(Address.Keydict.state) }}
+        {{ Macro.input(Address.Keydict.zip) }}
+    </div>
+
+    <div class="form-group hidden-sm hidden-xs">
+    <div class="col-md-offset-3">
+            <div class="col-md-6 col-sm-9{% if Address.Keydict.city.hasMeta('required') %} {% if Address.Keydict.city.hasException %}has-warning{% endif %} has-feedback" id="indicator-{{ Address.Keydict.city.FormName }}-color{% endif %}">
+                {{ Macro.customInput(Address.Keydict.city) }}
+            </div>
+            <div class="col-md-3 col-sm-3{% if Address.Keydict.state.hasMeta('required') %} {% if Address.Keydict.state.hasException %}has-warning{% endif %} has-feedback" id="indicator-{{ Address.Keydict.state.FormName }}-color{% endif %}" style="padding-left:5px;padding-right:5px">
+                <input type="{{ Address.Keydict.state.FormType }}" class="form-control" id="{{ Address.Keydict.state.FormName }}" name="{{ Address.Keydict.state.FormName }}" value="{% if Address.Keydict.state.hasException %}{{ Address.Keydict.state.AttemptedValue }}{% else %}{{ Address.Keydict.state.Value }}{% endif %}" placeholder="{{ Address.Keydict.state.Label }}">
+                {% if Address.Keydict.state.hasMeta('required')  %}<span class="glyphicon glyphicon-exclamation-sign form-control-feedback" id="indicator-{{ Address.Keydict.state.FormName }}-status" aria-hidden="true" style="right:5px"></span>{% endif %}
+            </div>
+            <div class="col-md-3 col-sm-4{% if Address.Keydict.zip.hasMeta('required') %} {% if Address.Keydict.zip.hasException %}has-warning{% endif %} has-feedback" id="indicator-{{ Address.Keydict.zip.FormName }}-color{% endif %}">
+                {{ Macro.customInput(Address.Keydict.zip) }}
+            </div>
+
+        </div>
+    </div>
+
+
+{% endmacro %}
+
+{% macro textarea(Field) %}
+    <div class="form-group{% if Field.hasMeta('required') %} {% if Field.hasException %}has-warning{% endif %} has-feedback" id="indicator-{{ Field.FormName }}-color{% endif %}">
+        <label for="{{ Field.FormName }}" class="col-sm-3 control-label">{{ Field.Label }}</label>
+        <div class="col-sm-9">
+            <textarea class="form-control" id="{{ Field.FormName }}" name="{{ Field.FormName }}" rows="5">{% if Field.hasException %}{{ Field.AttemptedValue }}{% else %}{{ Field.Value }}{% endif %}</textarea>
+            {% if Field.hasMeta('required')  %}<span class="glyphicon glyphicon-exclamation-sign form-control-feedback" id="indicator-{{ Field.FormName }}-status" aria-hidden="true"></span>{% endif %}
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro checkbox(Field) %}
+    <div class="checkbox col-lg-12">
+        <label>
+            <input type="hidden" class="checkdefault-hack" name="{{ Field.FormName }}" value="0">
+            <input type="checkbox" name="{{ Field.FormName }}" value="1" {% if Field.Value %} checked="checked" {% endif %}>
+            {{ Field.Label }}
+        </label>
+    </div>
+{%  endmacro %}
+
+{% macro date(Field) %}
+
+{% endmacro %}

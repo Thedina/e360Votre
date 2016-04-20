@@ -1,0 +1,390 @@
+<?php
+
+namespace eprocess360\v3core\Mail;
+use eprocess360\v3core\Model\MailLog;
+use eprocess360\v3core\DB;
+use eprocess360\v3core\File;
+use eprocess360\v3core\User;
+use eprocess360\v3core\Keydict\Table;
+
+class Email
+{
+    const MAIL_DEBUG_FILE = 'mail';
+
+    /**
+     * @var Table $data
+     */
+    protected $data;
+
+    /**
+     * @var Template $template
+     */
+    protected $template;
+    protected $subject = NULL;
+    protected $bodyHTML = NULL;
+    protected $bodyText = NULL;
+    protected $emailTo = NULL;
+    protected $filesToLink = NULL;
+    protected $recipientsChanged = false;
+    protected $filesChanged = false;
+
+    /**
+     * Interface with PHPMailer to send mail via SMTP. $to is an array of
+     * ['email'=>'blah@blah', 'name'=>'blah blah']
+     * @param array $to
+     * @param MailConfig $cfg
+     * @throws MailException
+     */
+    protected function sendRaw(array $to, MailConfig $cfg) {
+        try {
+            $mail = new \PHPMailer();
+
+            $mail->isSMTP();
+            $mail->SMTPAuth = true;
+            $mail->SMTPSecure = 'tls';
+            $mail->Timeout = $cfg->getTimeout();
+
+            $mail->Host = $cfg->getHost();
+            $mail->Port = $cfg->getPort();
+            $mail->Username = $cfg->getUsr();
+            $mail->Password = $cfg->getPwd();
+
+            $mail->Debugoutput = function($str, $level) {
+                ///var_dump($str);
+                //\_debug($str, true, self::MAIL_DEBUG_FILE.'-'.date('Y-m-d'));
+            };
+            $mail->SMTPDebug = 4;
+
+            /*$mail->From = $cfg->getFromEmail();
+            $mail->FromName = $cfg->getFromName();*/
+            $mail->setFrom($cfg->getFromEmail(), $cfg->getFromName());
+            $mail->isHTML(true);
+            $mail->CharSet = "text/html; charset=UTF-8;";
+
+            foreach ($to as $recipient) {
+                $mail->addAddress($recipient['email'], $recipient['name']);
+            }
+
+            $mail->Subject = $this->subject;
+            $mail->Body = $this->bodyHTML;
+            $mail->AltBody = $this->bodyText;
+
+            $sent = $mail->send();
+        }
+        catch(\phpmailerException $e) {
+            throw new MailException($e);
+        }
+
+        if(!$sent) {
+            throw new MailException($mail->ErrorInfo);
+        }
+    }
+
+    /**
+     * Return html link section for uploads associated with this email
+     * @return string
+     */
+    protected function linkFiles() {
+        $linksHTML = [];
+        $linksText = [];
+
+        foreach(File::getMultiple($this->data->filesTolink->get()) as $u) {
+            /**
+             * @var File $u
+             */
+            $linksHTML[] = "<a href='".$u->getDownloadUrl()."'>".$u->getFileName()."</a>";
+            $linksText = $u->getFileName().": ".$u->getDownloadUrl();
+        }
+        $this->bodyHTML .= "<br>".implode("<br>", $linksHTML);
+        $this->bodyText .= "\n".implode("\n", $linksText);
+    }
+
+    /**
+     * Insert DB entries for mail recipients join table
+     */
+    protected function saveRecipients() {
+        $sql = "INSERT INTO MailRecipients (idMail, idUser) VALUES ";
+        $vals = [];
+        foreach($this->emailTo as $idUser) {
+            $vals[] = "(".(int)$this->data->idMail->get().",".(int)$idUser.")";
+        }
+
+        $sql .= implode(',', $vals);
+        DB::insert($sql);
+    }
+
+    /**
+     * Clear DB entries for mail recipients join table for this idMail
+     * @throws DB\Exception\MySQLException
+     */
+    protected function deleteRecipients() {
+        DB::sql("DELETE * FROM MailRecipients WHERE idMail = ".(int)$this->data->idMail->get());
+    }
+
+    /**
+     * Insert DB entries for mail files join table
+     */
+    protected function saveFiles() {
+        $sql = "INSERT INTO MailFiles (idMail, idFile) VALUES ";
+        $vals = [];
+        foreach($this->filesToLink as $idFile) {
+            $vals[] = "(".(int)$this->data->idMail->get().",".(int)$idFile.")";
+        }
+
+        $sql .= implode(',', $vals);
+        DB::insert($sql);
+    }
+
+    /**
+     * Clear DB entries for mail files join table for this idMail
+     * @throws DB\Exception\MySQLException
+     */
+    protected function deleteFiles() {
+        DB::sql("DELETE * FROM MailFiles WHERE idMail = ".(int)$this->data->idMail->get());
+    }
+
+    /**
+     * @param array $to
+     * @param Template|null $template
+     * @param array $vars
+     * @param array $filesToLink
+     */
+    public function __construct($to = [], $template = NULL, $vars = [], $idUser = 0, $filesToLink = []) {
+        //$idTemplate = ($template !== NULL ? $template->getIdTemplate() : 0);
+        //$rowData = ['idUser'=>$idUser, 'vars'=>$vars];
+        $this->data = MailLog::keydict();
+        //$this->data->wakeup($rowData);
+        $this->data->idUser->set($idUser);
+        $this->data->vars->set($vars);
+        $this->emailTo = $to;
+        $this->template = $template;
+        $this->filesToLink = $filesToLink;
+    }
+
+    /**
+     * Render subject and body from $this->template
+     */
+    public function fromTemplate() {
+        if(!$this->template) {
+            if($this->data->idTemplate->get()) {
+                $this->template = Template::getByID($this->data->idTemplate->get());
+            }
+            else {
+                throw new MailException("Email->fromTemplate(): template is null");
+            }
+        }
+
+        $render = $this->template->render($this->data->vars->get());
+        $this->subject = $render['subject'];
+        $this->bodyHTML = $render['bodyHTML'];
+        $this->bodyText = $render['bodyText'];
+    }
+
+    /**
+     * Send this email and log it, using configuration from MailConfig $cfg.
+     * Returns the mail log id
+     * @param MailConfig $cfg
+     * @return int
+     */
+    public function send(MailConfig $cfg) {
+        $to = [];
+        foreach($this->emailTo as $iduser) {
+            $u = User::get($iduser);
+            $to[] = ['email'=>$u->getEmail(), 'name'=>$u->getFirstName().' '.$u->getLastName()];
+        }
+
+        if($this->subject === NULL) {
+            $this->fromTemplate();
+        }
+
+        if(!empty($this->filesToLink)) {
+            $this->linkFiles();
+        }
+
+        if($this->data->firstDate->get() === NULL) {
+            $this->data->firstDate->set(date('Y-m-d H:i:s'));
+        }
+
+        $this->data->fakeMail->set($cfg->isMailOff());
+        $sent = false;
+
+        try {
+            $this->sendRaw($to, $cfg);
+            $sent = true;
+        }
+        catch(MailException $e) {
+            echo $e;
+            //log error message
+        }
+
+        if(!$this->data->idMail->get()) {
+            $this->insert();
+        }
+        else {
+            $this->update();
+        }
+
+        return $sent;
+    }
+
+    /**
+     * Set Email member data from a DB row. Optionally include template data,
+     * in which case a Template will be instantiated. If no template data in
+     * $row and $forceLoadTemplate is true, will load the template from the DB
+     * with an additional query.
+     * @param $row
+     */
+    public function loadRaw($row, $emailTo = [], $filesToLink = [], $forceLoadTemplate = true) {
+        $this->data->wakeup($row);
+        $this->emailTo = $emailTo;
+        $this->filesToLink = $filesToLink;
+
+        if(isset($row['templateName'])) {
+            $this->template = new Template($row['templateController'], $row['templateName'], $row['templateDef']);
+        }
+        elseif($forceLoadTemplate && isset($row['idTemplate'])) {
+            $this->template = Template::getByID((int)$row['idTemplate']);
+        }
+        else {
+            $this->template = NULL;
+        }
+        $this->recipientsChanged = false;
+        $this->filesChanged = false;
+    }
+
+    /**
+     * Load an email (with template) from the mail log
+     * @param $id
+     * @throws \eprocess360\v3core\DB\Exception\MySQLException
+     */
+    public function load($id) {
+        $rows = DB::sql("SELECT ml.*, mt.idController AS templateController, mt.templateName AS templateName, mt.template as templateDef, GROUP_CONCAT(mr.idUser) AS recipients FROM mailLog ml INNER JOIN MailTemplates mt ON ml.idTemplate = mt.idTemplate LEFT JOIN MailRecipients mr ON mr.idMail = ml.idMail WHERE ml.idMail = ".(int)$id." GROUP BY ml.idMail");
+        if(!empty($rows)) {
+            $this->loadRaw($rows[0], explode(',', $rows[0]['recipients']));
+        }
+    }
+
+    public function update() {
+        $idTemplate = ($this->template !== NULL ? $this->template->getIdTemplate() : 0);
+        $this->data->idTemplate->set($idTemplate);
+        $this->data->update();
+
+        if(count($this->emailTo)) {
+            if($this->recipientsChanged) {
+                $this->deleteRecipients();
+            }
+            $this->saveRecipients();
+        }
+
+        if(count($this->filesToLink)) {
+            if($this->filesChanged) {
+                $this->deleteFiles();
+            }
+            $this->saveFiles();
+        }
+    }
+
+    public function insert() {
+        $idTemplate = ($this->template !== NULL ? $this->template->getIdTemplate() : 0);
+        $this->data->idTemplate->set($idTemplate);
+        $this->data->insert();
+
+        if(count($this->emailTo)) {
+            $this->saveRecipients();
+        }
+
+        if(count($this->filesToLink)) {
+            $this->saveFiles();
+        }
+
+        return $this->data->idMail->get();
+    }
+
+    /**
+     * Load the email with $id and return it
+     * @param $id
+     * @return Email
+     */
+    public static function getByID($id) {
+        $e = new Email();
+        $e->load($id);
+
+        return $e;
+    }
+
+    /**
+     * Build a new Email and insert it into the DB
+     * @param array $to
+     * @param null $template
+     * @param array $vars
+     * @param array $filesToLink
+     */
+    public static function create($to = [], $template = NULL, $vars = [], $idUser = 0, $filesToLink = []) {
+        $e = new self($to, $template, $vars, $idUser, $filesToLink);
+        $e->insert();
+        return $e;
+    }
+
+    /**
+     * @return int
+     */
+    public function getIDMail()
+    {
+        return (int)$this->data->idMail->get();
+    }
+
+    /**
+     * @return string
+     */
+    public function getFirstDate() {
+        return $this->data->firstDate->get();
+    }
+
+    /**
+     * @return string
+     */
+    public function getSubject()
+    {
+        return $this->subject;
+    }
+
+    /**
+     * @param string $subject
+     */
+    public function setSubject($subject)
+    {
+        $this->subject = $subject;
+    }
+
+    /**
+     * @return string
+     */
+    public function getBodyHTML()
+    {
+        return $this->bodyHTML;
+    }
+
+    /**
+     * @param string $bodyHTML
+     */
+    public function setBodyHTML($bodyHTML)
+    {
+        $this->bodyHTML = $bodyHTML;
+    }
+
+    /**
+     * @return string
+     */
+    public function getBodyText()
+    {
+        return $this->bodyText;
+    }
+
+    /**
+     * @param string $bodyText
+     */
+    public function setBodyText($bodyText)
+    {
+        $this->bodyHTML = $bodyText;
+    }
+}

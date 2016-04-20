@@ -1,0 +1,44 @@
+{% extends 'SystemController.backbone.base.html.twig' %}
+{% block moduleCSS %}
+    <link rel="Stylesheet" type="text/css" href="{{ Response.meta.SystemController.static }}/css/multiview.css"/>
+{% endblock %}
+{% block body %}
+    <div id="content-container"></div>
+{% endblock %}
+{% block moduleJS %}
+    <script src="{{ Response.meta.SystemController.static }}/js/util.js"></script>
+    <script src="{{ Response.meta.SystemController.static }}/js/bizzybone.js"></script>
+    <script src="{{ Response.meta.SystemController.static }}/js/globalHelpers.js"></script>
+    <script src="{{ Response.meta.SystemController.static }}/js/multiview.js"></script>
+    <script src="{{ Response.meta.Project.static }}/js/models/projects.js" type="text/javascript"></script>
+    <script src="{{ Response.meta.Project.static }}/js/views/projects.js" type="text/javascript"></script>
+{% endblock %}
+{% block javascript %}
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var getData, metaData;
+
+            // Precompile all the relevant templates
+            _.each({
+                projectListMain: $('#hb-project-list-main')
+            }, hbCompileTemplate);
+
+            // Compile multiview templates
+            Multiview.compileTemplates(hbCompileTemplate);
+            Multiview.compileExtendedTemplates(hbCompileTemplate);
+
+            getData = hbInitData().data;
+            metaData = hbInitData().meta.Project;
+
+            if(metaData.objectType === 'project') {
+                if(_.isObject(getData) && _.has(getData, 'results')) {
+                    // Project list (multiview) page
+                    baseCollection = new ProjectList();
+                    baseCollection.loadData(getData, {silent: true});
+                    baseView = new ProjectListMainView({collection: baseCollection, el: $('#content-container')});
+                    baseView.render();
+                }
+            }
+        });
+    </script>
+{% endblock %}

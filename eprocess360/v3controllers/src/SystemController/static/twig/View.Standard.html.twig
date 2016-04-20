@@ -1,0 +1,348 @@
+{% extends 'SystemController.plain.html.twig' %}
+{% block body %}
+    <style>
+        .data-header {
+            cursor: pointer;
+        }
+        .data-header .col-sort {
+            top: 2px;
+        }
+        .data-header .col-sort.inactive {
+            opacity: 0.5;
+        }
+        .data-header .col-sort.active {
+            opacity: 1;
+        }
+        .data-header:hover, .data-header:hover .col-sort {
+            color: #337ab7;
+        }
+        .glyphicon-none:before {
+            content: "\e013";
+            color: transparent !important;
+        }
+        .canvas {
+            margin-top: -20px;
+            padding-top: 20px;
+            left: 0;
+            z-index: 2;
+        }
+        /*.offcanvas-in {*/
+            /*position: absolute;*/
+        /*}*/
+
+        @media (min-width: 9992px) {
+            body {
+                padding: 0;
+            }
+            .navbar {
+                right: auto;
+                background: none;
+                border: none;
+            }
+            .canvas {
+                padding: 0;
+            }
+        }
+    </style>
+
+    <div class="bs-example navmenu-offcanvas">
+            <div id="filterCanvas" style="background-color: #fff">
+                <nav id="filter" class="navmenu navmenu-default navmenu-fixed-left offcanvas" role="navigation">
+                    <a class="navmenu-brand" href="#">Brand</a>
+                    <ul class="nav navmenu-nav">
+                        <li class="active"><a href="#">Home</a></li>
+                        <li><a href="#">Link</a></li>
+                        <li><a href="#">Link</a></li>
+                    </ul>
+                </nav>
+
+                <div class="container-fluid view-object" data-api="{{ View.API }}" id="{{ View.SafeName }}" style="padding: 0">
+                    <div id="canvas-{{ View.SafeName }}" class="canvas"> <!-- CANVAS -->
+                        <!-- CONTENT -->
+                        <div class="navbar navbar-default navbar-fixed-top">
+                            <button type="button" class="navbar-toggle" data-toggle="offcanvas" data-target="#filter" data-canvas="#filterCanvas" data-placement="left">
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                            </button>
+                            <h3>{{ View.Label }}</h3>
+                        </div>
+
+                            {#<button type="button" class="btn btn-default pull-right" data-toggle="offcanvas" data-recalc="true"#}
+                                    {#data-target="#menu-{{ View.SafeName }}" data-canvas="#canvas-{{ View.SafeName }}" data-placement="right">#}
+                                {#<span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>#}
+                            {#</button>#}
+                        <div class="btn-toolbar" style="padding-bottom: 8px">
+                            <div class="input-group pull-left"  style="border:0; margin:0; padding:8px 0 0 5px">
+                                <div class="input-group pull-left">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default prev" type="button"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></button>
+                        </span>
+                                    <input type="text" class="form-control current ep-autosize" value="{{ View.Current }}" style="text-align: center;" title="Current Page" />
+                        <span class="input-group-btn">
+                            <button class="btn btn-default next" type="button"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></button>
+                        </span>
+                                </div>
+                            </div>
+                            <div class="input-group pull-right"  style="border:0; margin:0; padding:8px 0 0 5px">
+                                <div class="input-group pull-right">
+                                    <input type="text" class="form-control" name="x" placeholder="Find">
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover view-results">
+                                <tr class="view-header">
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- Always include More/Less/LastPage/Template at the end of the view-object -->
+                    <span class="view-template" style="display: none;">{{ View.ClientSingleTemplate }}</span>
+                    <script language="JavaScript">
+                        $(document).ready(function () {
+                            $('#{{ View.SafeName }}').updateView({{ View.json|raw }});
+                        });
+                    </script>
+                    <input type="hidden" class="lastpage" value="{{ View.LastPage }}">
+                    <input type="hidden" class="more" value="{{ View.More }}">
+                    <input type="hidden" class="less" value="{{ View.Less }}">
+                    <input type="hidden" class="limit" value="{{ View.Limit }}">
+                </div>
+            </div>
+        </div>
+
+
+
+
+{% endblock %}
+{% block javascript %}
+    <script language="JavaScript">
+        /** http://krasimirtsonev.com/blog/article/Javascript-template-engine-in-just-20-line */
+        var TemplateEngine = function(html, options) {
+            var re = /<%([^%>]+)?%>/g, reExp = /(^( )?(if|for|else|switch|case|break|{|}))(.*)?/g, code = 'var r=[];\n', cursor = 0, match;
+            var add = function(line, js) {
+                js? (code += line.match(reExp) ? line + '\n' : 'r.push(' + line + ');\n') :
+                        (code += line != '' ? 'r.push("' + line.replace(/"/g, '\\"') + '");\n' : '');
+                return add;
+            };
+            while(match = re.exec(html)) {
+                add(html.slice(cursor, match.index))(match[1], true);
+                cursor = match.index + match[0].length;
+            }
+            add(html.substr(cursor, html.length - cursor));
+            code += 'return r.join("");';
+            return new Function(code.replace(/[\r\t\n]/g, '')).apply(options);
+        };
+        var decodeEntities = (function() {
+            // this prevents any overhead from creating the object each time
+            var element = document.createElement('div');
+
+            function decodeHTMLEntities (str) {
+                if(str && typeof str === 'string') {
+                    // strip script/html tags
+                    str = str.replace(/<script[^>]*>([\S\s]*?)<\/script>/gmi, '');
+                    str = str.replace(/<\/?\w(?:[^"'>]|"[^"]*"|'[^']*')*>/gmi, '');
+                    element.innerHTML = str;
+                    str = element.textContent;
+                    element.textContent = '';
+                }
+
+                return str;
+            }
+
+            return decodeHTMLEntities;
+        })();
+        var templateHtml = decodeEntities($('.view-template').html());
+        function getParameterByName(name) {
+            name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+            var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+                    results = regex.exec(location.search);
+            return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+        }
+        $.fn.updateView = function (data) {
+            view = this;
+            newData = '';
+            headerData = '';
+            $(data.results).each(function () {
+                newData = newData + TemplateEngine(templateHtml, this);
+            });
+            //console.log(this);
+            $('.view-results td:not(.view-header)', view).remove();
+            $('.view-header', view).after(newData);
+            $('.col-selector-parent', view).html('');
+            jQuery.each(data.columns, function (key, element) {
+                classSort = 'col-sort glyphicon ';
+                if (typeof data.sort[key] !== 'undefined') {
+                    classSort = classSort + (data.sort[key] == 'ASC' ? 'glyphicon-sort-by-attributes col-sort-asc' : 'glyphicon glyphicon-sort-by-attributes-alt col-sort-desc') + ' active';
+                } else {
+                    classSort = classSort + 'glyphicon-sort inactive';
+                }
+                headerData = headerData + '<th class="data-header" data-name="'+key+'" id="datacol-'+key+'" '+(element.enabled==1?'':'style="display: none;"')+'>'+element.label+' <span class="' + classSort + '" aria-hidden="true"></span></th>';
+                if (element.enabled!=1) {
+                    $('.datacol-'+key).hide();
+                }
+                glyph = (element.enabled==1?' glyphicon-ok sel-active':' glyphicon-none');
+                $('.col-selector-parent', view).append('<li><a href="javascript:;" id="col-selector-'+key+'" data-name="'+key+'" class="col-selector"><i class="glyphicon'+glyph+'">&nbsp;</i> '+element.label+'</a></li>');
+            });
+            $('.view-header', view).html(headerData);
+            $('.data-header', view).on('click', function () {
+                sortOrder = 'A';
+                if ($('.col-sort-asc', this).length) {
+                    sortOrder = 'D';
+                }
+                $(view).fetchView(1, $(this).attr('data-name')+sortOrder);
+            });
+            $('.col-selector', view).on('click', function () {
+                var i = $('i', this);
+                if (i.hasClass('sel-active')) {
+                    i.removeClass('sel-active').addClass('glyphicon-none').removeClass('glyphicon-ok');
+                    $('.datacol-'+$(this).attr('data-name')).hide();
+                    $('#datacol-'+$(this).attr('data-name')).hide();
+                } else {
+                    i.addClass('sel-active').removeClass('glyphicon-none').addClass('glyphicon-ok');
+                    $('.datacol-'+$(this).attr('data-name')).show();
+                    $('#datacol-'+$(this).attr('data-name')).show();
+                }
+
+            });
+            $('.more', view).val(data.more);
+            $('.less', view).val(data.less);
+            $('.limit', view).val(data.limit);
+            if (parseInt(data.more)) {
+                $('.next', view).prop('disabled', false);
+            } else {
+                $('.next', view).prop('disabled', true);
+            }
+            if (parseInt(data.less)) {
+                $('.prev', view).prop('disabled', false);
+            } else {
+                $('.prev', view).prop('disabled', true);
+            }
+
+            $('.current', view).val(data.current).trigger('change');
+        };
+        $.fn.serializeView = function (page, sort) {
+
+            var result = {};
+            result.serial = {};
+            result.query = '';
+            var view = this;
+            // page
+            result.serial.page = page ? page : $('.current', view).val();
+            result.query = 'page$'+result.serial.page;
+            // limit
+            result.serial.limit = $('.limit', view).val();
+            result.query = result.query + ';limit$'+result.serial.limit;
+            // columns
+            result.serial.columns = {};
+            result.serial.sort = {};
+            result.query = result.query + ';columns$';
+            var first = false;
+            $('.data-header', view).each(function () {
+                result.serial.columns[$(this).attr('data-name')] = ($(this).is(':visible')?1:0);
+                if (first===true) {
+                    result.query = result.query + ':';
+                }
+                if ($('.col-sort', this).hasClass('active') && typeof sort === 'undefined') {
+                    res = ($('.col-sort', this).hasClass('col-sort-asc')?'ASC':'DESC');
+                    result.serial['sort'][$(this).attr('data-name')] = res;
+                }
+                result.query = result.query + $(this).attr('data-name') + ($(this).is(':visible')?'1':'0');
+                first = true;
+            });
+            result.query = result.query + ';sort$';
+            first = false;
+            if (typeof sort !== 'undefined') {
+                delete result.serial['sort'][sort.substr(0,sort.length-1)];
+                result.serial['sort'][sort.substr(0,sort.length-1)] = sort.substr(sort.length-1,1)=='A'?'ASC':'DESC';
+                result.query = result.query + sort;
+                first = true;
+            }
+
+            /** UI only supports one sort right now */
+            k = Object.keys(result.serial['sort'])[0];
+            v = result.serial['sort'][k];
+            delete result.serial['sort'];
+            result.serial['sort'] = {};
+            result.serial['sort'][k] = v;
+
+            jQuery.each(result.serial['sort'], function (key, element) {
+                if (first===true) {
+                    result.query = result.query + ':';
+                }
+                result.query = result.query + key + element.substr(0,1);
+                first = true;
+            });
+
+            return result;
+        };
+        $.fn.fetchView = function (page, sort) {
+            var view = this;
+            var serial = $(view).serializeView(page, sort);
+            $.ajax({
+                url: $(this).attr("data-api"),
+                type: 'POST',
+                processData: false,
+                contentType: 'application/json',
+                data: JSON.stringify(serial.serial)
+            }).done(function (data) {
+                data = JSON.parse(data);
+                $(view).updateView(data);
+                viewId = 'view-'+$(view).attr('id');
+                page = getParameterByName(viewId);
+                var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?'+viewId+'=' + $(view).serializeView().query;
+                window.history.pushState({path:newurl},'',newurl);
+            });
+        };
+        $(document).ready(function () {
+//                window.onpopstate = function(event) {
+//                    viewId = 'view-'+$(view).attr('data-id');
+//                    $(view).changePage(parseInt(getParameterByName('page')));
+//                };
+            $('.ep-autosize').on('keypress', f=function () {
+                $(this).css('width',(2.5+$(this).val().length*0.565)+'em');
+            }).each(f).on('change', f);
+            $('.less').each(function () {
+                if (parseInt($(this).val())==0) {
+                    $('.prev', $(this).closest('.view-object')).prop('disabled', true);
+                } else {
+                    $('.prev', $(this).closest('.view-object')).prop('disabled', false);
+                }
+            });
+            $('.more').each(function () {
+                if (parseInt($(this).val())==0) {
+                    $('.next', $(this).closest('.view-object')).prop('disabled', true);
+                } else {
+                    $('.next', $(this).closest('.view-object')).prop('disabled', false);
+                }
+            });
+            $( ".next" ).on('click', function() {
+                view = $(this).closest('.view-object');
+                page = parseInt($('.current', view).val())+1;
+                console.log(view, page);
+                $(view).fetchView(page);
+            });
+            $( ".prev" ).on('click', function() {
+                view = $(this).closest('.view-object');
+                page = parseInt($('.current', view).val())-1;
+                $(view).fetchView(page);
+            });
+            $( ".current" ).keypress(function(e) {
+                if(e.keyCode == 13) {
+                    view = $(this).closest('.view-object');
+                    page = parseInt($('.current', view).val());
+                    if (page > 0 && page < parseInt($('.lastpage', view).val())) {
+                        $(view).fetchView(page);
+                    } else {
+                        $(view).fetchView(parseInt($('.lastpage', view).val()));
+                    }
+                    console.log(page, parseInt($('.lastpage', view).val()));
+
+                }
+
+            });
+        });
+    </script>
+{% endblock %}

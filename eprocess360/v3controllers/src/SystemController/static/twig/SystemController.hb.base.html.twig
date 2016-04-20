@@ -1,0 +1,40 @@
+{#
+  HandlebarsJS Base
+  This is the default when designing modules that use client-side templating through HandlebarsJS.
+
+  * Includes the Response JSON
+  *
+#}
+{% extends 'SystemController.base.html.twig' %}
+{% block body %}
+<div id="hbContainer"></div>
+{% endblock %}
+{% block hbData %}{# HandlebarsJS Data #}
+<script language="JavaScript">
+    function hbInitData() {
+        /* Initialization Data */
+        return {{ Response|json_encode()|raw }};
+    }
+</script>
+{% endblock %}
+{% block hbTemplates %}{# HandlebarsJS Templates #}
+{{ Template|raw }}
+{% endblock %}
+{% block hbRuntime %}{# HandlebarsJS Runtime Scripts #}
+    <script language="JavaScript">
+        $.fn.hbRuntime = function () {
+
+        }
+    </script>
+{% endblock %}
+{% block hbInit %}{# HandlebarsJS Init Scripts #}
+<script language="JavaScript">
+    $(document).ready(function () {
+        var container = $('#hbContainer');
+        var template = Handlebars.compile( $("#hb-main-template").html() );
+        container.html(template(hbInitData()));
+        container.data(hbInitData());
+        container.hbRuntime();
+    });
+</script>
+{% endblock %}

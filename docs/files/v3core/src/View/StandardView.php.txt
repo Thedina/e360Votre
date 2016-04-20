@@ -1,0 +1,479 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: Kira
+ * Date: 9/15/2015
+ * Time: 11:11 AM
+ */
+
+namespace eprocess360\v3core\View;
+
+
+use eprocess360\v3core\Keydict\Entry;
+use eprocess360\v3core\Keydict\Entry\SystemName;
+use eprocess360\v3core\Keydict\Field;
+use eprocess360\v3core\Keydict\StorageStrategy\SingleColumn;
+use eprocess360\v3core\Keydict\Table;
+use eprocess360\v3core\Model;
+use eprocess360\v3core\View;
+
+/**
+ * Class StandardView
+ * @package eprocess360\v3core\View
+ * @deprecated
+ */
+class StandardView
+{
+
+    /** @var Column[] */
+    protected $columns = [];
+    protected $name;
+    /** @var Table|Model */
+    protected $keydict;
+    protected $columnSummary = [];
+    protected $responseType = 'html';
+    protected $label;
+
+    /**
+     * @param $name
+     * @param $label
+     * @throws \eprocess360\v3core\Keydict\Exception\InvalidValueException
+     */
+    public function __construct($name, $label)
+    {
+        $this->name = SystemName::validate($name);
+        $this->label = $label;
+    }
+
+    /**
+     * @param $name
+     * @param $label
+     * @param Table|Model $keydict
+     * @return static
+     */
+    public static function build($name, $label, Table $keydict)
+    {
+        $view = new static($name, $label);
+        $view->setKeydict($keydict);
+        $view->add(Column::import($keydict->getPrimaryKey())->setEnabled(false));
+        return $view;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSafeName()
+    {
+        return str_replace('.', '-', $this->getName());
+    }
+
+    /**
+     * @param Column ...$column
+     * @return $this
+     */
+    public function add(Column ...$column)
+    {
+        foreach ($column as $c) {
+            /** @var Column $c */
+            if (!in_array($c, $this->columns)) {
+                $this->columns[$c->getName()] = $c;
+                $c->setView($this);
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * @param Field $fields
+     * @return \Generator
+     */
+    public function streamOut(Field ...$fields)
+    {
+        // and fetch
+        if (!sizeof($fields)) {
+            foreach ($this->keydict->fetch() as $out) {
+                yield $out;
+            }
+        } else {
+            foreach ($this->keydict->fetchOnly(...$fields) as $out) {
+                yield $out;
+            }
+        }
+    }
+
+    /**
+     * @return string
+     */
+    public function render()
+    {
+        global $pool, $twig;
+        $pool->add($this, 'View');
+        return $twig->render($this->template, $pool->asArray());
+    }
+
+    /**
+     * @return string
+     */
+    public function response()
+    {
+        // read in parameters
+        $this->columnSummary();
+        $parameters = $this->parseRequest();
+        $this->keydict->setPage(isset($parameters['page']['specified']) ? $parameters['page']['specified'] : $parameters['page']['default']);
+        $this->keydict->setLimit(isset($parameters['limit']['specified']) ? $parameters['limit']['specified'] : $parameters['limit']['default']);
+        $this->columnSummary['sort'] = [];
+        foreach ( isset($parameters['sort']['specified']) ? $parameters['sort']['specified'] : $parameters['sort']['default'] as $sortColumn=>$sortOrder ) {
+            $this->columnSummary['sort'][$sortColumn] = $sortOrder;
+            $sortColumn = $this->columns[$sortColumn];
+            foreach ($sortColumn->getFields() as $field) {
+                $this->keydict->setSort($field, $sortOrder);
+                //echo "{$field->getName()} sort {$sortOrder}";
+            }
+        }
+        foreach (isset($parameters['columns']['specified'])? $parameters['columns']['specified'] : $parameters['columns']['default'] as $column=>$value) {
+            $this->columnSummary['columns'][$column]['enabled'] = $value;
+        }
+        if ($this->responseType == 'html') {
+            global $pool, $twig;
+            $pool->add($this, 'View');
+            $response = $pool->asArray();
+            $response = array_merge($response, ['Response'=>['meta'=>['SystemController'=>['static'=>$pool->SysVar->siteUrl().'/eprocess360/v3controllers/src/SystemController/static']]]]);
+            return $twig->render('View.Standard.html.twig', $response);
+        } else {
+            return $this->json();
+        }
+
+    }
+
+    /**
+     * Receives the request from client and parses the settings into a usable format.  Validates data.  In the future
+     * will be extended to store the settings as defaults per user.
+     * @param null $jsonBody
+     * @return array
+     */
+    public function parseRequest($jsonBody = null)
+    {
+        $cols = $this->columnSummary();
+        reset($this->columns);
+        $firstCol = current($this->columns);
+        $base = [
+            'limit'=>[          // limitations and default for page length
+                'default'=>20,
+                'min'=>1,
+                'max'=>100
+            ],
+            'page'=>[           // limitations and default for page number
+                'default'=>1,
+                'min'=>1,
+                'max'=>(int)$this->getLastPage()+1
+            ],
+            'columns'=>[        // default columns enabled
+                'default'=>$cols['defaultCols']
+            ],
+            'sort'=>[           // default sort on columns
+                'default'=>[
+                    $firstCol->getName()=>$firstCol->getSort()
+                ]
+            ],
+            'matching'=>[       // default text search
+                'default'=>''
+            ]
+        ];
+        $requestName = 'view-'.$this->getSafeName();
+        if (!$jsonBody) {
+            $jsonBody = json_decode(file_get_contents('php://input'), true);
+        }
+        if (sizeof($jsonBody)) {
+            $this->responseType = 'json';
+            if (isset($jsonBody['limit'])) {
+                $limit = $jsonBody['limit'];
+                unset($jsonBody['limit']);
+                $jsonBody = ['limit'=>$limit] + $jsonBody;
+            }
+            /**
+             * [body]
+             *      [page]      => 1+
+             *      [limit]     => 1+
+             *      [columns] ** this doesn't prevent data from being sent, only displayed in the results
+             *              [columnName] => 0/1
+             *              ...
+             *      [sort]
+             *              [fieldName] => 'ASC'|'DESC'
+             *              ...
+             *      [matching]  => (string)
+             */
+            foreach ($jsonBody as $key=>$fullValue) {
+                if (isset($base[$key])) {
+                    if (isset($base[$key]['min']) && $fullValue < $base[$key]['min']) {
+                        $base[$key]['specified'] = $base[$key]['min'];
+                    } elseif (isset($base[$key]['max']) && $fullValue > $base[$key]['max']) {
+                        $base[$key]['specified'] = $base[$key]['max'];
+                    } elseif ($key == 'columns') {
+                        foreach ($fullValue as $colKey=>$colValue) {
+                            if (isset($base['columns']['default'][$colKey])) {
+                                $base['columns']['specified'][$colKey] = ($colValue == 1?true:false);
+                            }
+                        }
+                    } elseif ($key == 'sort') {
+                        $out = [];
+                        foreach ($fullValue as $colKey=>$colValue) {
+                            if (isset($base['columns']['default'][$colKey])) {
+                                if (!isset($out[$colKey])) {
+                                    $out[$colKey] = ($colValue=='ASC'?'ASC':'DESC');
+                                }
+                            }
+                        }
+                        if (sizeof($out)) {
+                            $base['sort']['specified'] = $out;
+                        }
+                        //var_dump($base['sort']['specified']);
+                    } else {
+                        $base[$key]['specified'] = $fullValue;
+                    }
+
+                    if ($key=='limit') {
+                        $this->keydict->setLimit($base[$key]['specified']);
+                        $base['page']['max'] = (int)$this->getLastPage()+1;
+                    }
+                }
+            }
+            //var_dump($base); die();
+        }
+        // GET querystring handler
+        elseif (isset($_GET[$requestName])) {
+
+            $raw = $_GET[$requestName];
+            $raw = explode(';', $raw, 128);
+            foreach ($raw as $k=>$r) {
+                if (substr($r,0,5) == 'limit') {
+                    $limit = $r;
+                    unset($raw[$k]);
+                }
+            }
+            if (isset($limit)) {
+                array_unshift($raw, $limit);
+            }
+            foreach ($raw as $fullValue) {
+                $value = explode('$', $fullValue, 128);
+
+                if (isset($base[$value[0]])) {
+                    if (isset($base[$value[0]]['min']) && $value[1] < $base[$value[0]]['min']) {
+                        $base[$value[0]]['specified'] = $base[$value[0]]['min'];
+                    } elseif (isset($base[$value[0]]['max']) && $value[1] > $base[$value[0]]['max']) {
+                        $base[$value[0]]['specified'] = $base[$value[0]]['max'];
+                    } elseif ($value[0] == 'columns') {
+                        $colsIn = explode(':', $value[1], 128);
+                        foreach ($colsIn as $col) {
+                            $colClean = substr($col, 0, -1);
+                            if (isset($base['columns']['default'][$colClean])) {
+                                $base['columns']['specified'][$colClean] = (substr($col,-1) == 1?true:false);
+                            }
+                        }
+                    } elseif ($value[0] == 'sort') {
+                        $colSort = explode(':', $value[1], 128);
+                        foreach ($colSort as $col) {
+                            $colClean = substr($col, 0, -1);
+                            if (isset($base['columns']['default'][$colClean])) {
+                                $base['sort']['specified'][$colClean] = (substr($col,-1) == 'D'?'DESC':'ASC');
+                            }
+                        }
+                    } else {
+                        $base[$value[0]]['specified'] = $value[1];
+                    }
+                    if ($value[0]=='limit') {
+                        $this->keydict->setLimit($base[$value[0]]['specified']);
+                        $base['page']['max'] = (int)$this->getLastPage()+1;
+                    }
+                }
+            }
+        }
+        //var_dump($base); die();
+        return $base;
+    }
+
+    /**
+     * @return array
+     */
+    public function columnSummary()
+    {
+        if ($this->columnSummary) return $this->columnSummary;
+        $fields = [];
+        $columns = [];
+        $defaultCols = [];
+        $fieldsIndexed = [];
+        $sort = [];
+        foreach ($this->columns as $column) {
+            foreach ($column->getFields() as $field) {
+                if (!in_array($field, $fields)) {
+                    $fields[] = $field;
+                    $fieldsIndexed[$field->getName()] = $field;
+                }
+            }
+            $columns[$column->getName()] = [
+                'label'=>$column->getLabel(),
+                'enabled'=>$column->isEnabled()
+            ];
+            $defaultCols[$column->getName()] = $column->isEnabled();
+            if ($column->getSort()) {
+                $sort[$column->getName()] = $column->getSort();
+            }
+        }
+        return $this->columnSummary = [
+            'fields'=>$fields,
+            'columns'=>$columns,
+            'sort'=>$sort,
+            'defaultCols'=>$defaultCols,
+            'fieldsIndexed'=>$fieldsIndexed
+        ];
+    }
+
+    /**
+     * @return string
+     */
+    public function json()
+    {
+        $cols = $this->columnSummary();
+        $buffer = [];
+        /**
+         * @var Entry $row
+         */
+        foreach ($this->streamOut(...$cols['fields']) as $row) {
+            $row->setStorageStrategy(new SingleColumn());
+            $rowData = json_decode(current($row->sleep()));
+            // need to handle flags
+            $buffer[] = $rowData;
+        }
+        return json_encode([
+            'results'=>$buffer,             // Row as array output
+            'api'=>$this->getName(),        // ID of this View provider
+            'more'=>$this->getMore(),       // More pages?
+            'less'=>$this->getLess(),       // Less pages?
+            'current'=>$this->getCurrent(), // Current page number
+            'last'=>$this->getLastPage(),   // Last page number
+            'limit'=>$this->getLimit(),     // Results per page
+            'columns'=>$cols['columns'],    // Column summary name=>[]
+            'sort'=>$cols['sort']           // Column sort information
+        ]);
+    }
+
+    /**
+     * @return mixed|string
+     */
+    public function getSingleTemplate()
+    {
+        $raw = '<tr>';
+        foreach ($this->columns as $column) {
+            $raw .= '<td class="datacol-'.$column->getName().'">'.$column->getTemplate().'</td>';
+        }
+        $raw .= '</tr>';
+        return $raw;
+    }
+
+    /**
+     * @return mixed|string
+     */
+    public function getClientSingleTemplate()
+    {
+        $raw = $this->getSingleTemplate();
+        /* This performs the substitution replacements */
+        $raw = preg_replace("/{% .*? %}{# (.*?) #}/", "$1", $raw);
+
+        /* This does automatic substitution for variables */
+        $raw = preg_replace_callback("/{{ (.*?) }}/", function ($match) {
+            $match = $match[1];
+            if (substr($match,0,6) == 'SysVar') {
+                // SysVar, we'll just insert the value
+                global $pool;
+                return $pool->SysVar->get(substr($match,strpos($match,'(')+2,-2));
+            } else {
+                // We will expect the object in the JSON
+                $match = substr_replace($match, 'this', 0, strpos($match,'.'));
+                $match = substr($match,0,strpos($match, '.get()'));
+                return "<%{$match}%>";
+            }
+        }, $raw);
+        return $raw;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMore()
+    {
+        return $this->keydict->getMore();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLess()
+    {
+        return $this->keydict->getLess();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCurrent()
+    {
+        return $this->keydict->getCurrent();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLastPage()
+    {
+        return $this->keydict->getLastPage();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getNext()
+    {
+        return $this->keydict->getLastField();
+    }
+
+    /**
+     * @return mixed|string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLimit()
+    {
+        return $this->keydict->getLimit();
+    }
+
+    /**
+     * @return Table|Model
+     */
+    public function getKeydict()
+    {
+        return $this->keydict;
+    }
+
+    /**
+     * @param Table|Model $keydict
+     * @return StandardView
+     */
+    public function setKeydict($keydict)
+    {
+        $this->keydict = $keydict;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLabel()
+    {
+        return $this->label;
+    }
+}

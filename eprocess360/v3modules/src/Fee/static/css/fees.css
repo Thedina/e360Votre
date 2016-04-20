@@ -1,0 +1,41 @@
+.table>tbody+thead>tr>th {
+     border-bottom: 0;
+     border-top: 2px solid #ddd;
+ }
+@media screen and (min-width: 769px) {
+    .payment-content {
+        padding-top: 15px;
+    }
+}
+table.table-input tbody tr td.text {
+    padding-top: 0.95em;
+}
+table.table-input tbody tr td input[type=checkbox] {
+    margin-top: 9px;
+}
+input.input-amount {
+    width: 7em;
+    min-width: 80px;
+}
+td.input-amount, th.input-amount {
+    width: 25%;
+}
+.form-group code.control {
+    display: block;
+    padding: 8px 15px;
+}
+
+.form-horizontal > .col-xs-6 {
+    padding-left: 0;
+    padding-right: 0
+}
+
+@media (min-width: 769px) {
+    .form-first-half {
+        margin-left: -7px;
+    }
+}
+
+.form-second-half {
+    margin-left: 7px;
+}

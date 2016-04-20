@@ -1,0 +1,137 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: Winston
+ * Date: 9/10/2015
+ * Time: 9:30 AM
+ */
+
+namespace eprocess360\v3core\Model;
+use eprocess360\v3core\Keydict;
+use eprocess360\v3core\Keydict\Entry\Bit;
+use eprocess360\v3core\Keydict\Entry\Bits8;
+use eprocess360\v3core\Keydict\Entry\Datetime;
+use eprocess360\v3core\Keydict\Entry\FixedString128;
+use eprocess360\v3core\Keydict\Entry\FixedString256;
+use eprocess360\v3core\Keydict\Entry\FixedString32;
+use eprocess360\v3core\Keydict\Entry\Flag;
+use eprocess360\v3core\Keydict\Entry\IdInteger;
+use eprocess360\v3core\Keydict\Entry\IdTinyInt;
+use eprocess360\v3core\Keydict\Entry\JSONArrayFixed128;
+use eprocess360\v3core\Keydict\Entry\PrimaryKeyInt;
+use eprocess360\v3core\Keydict\Entry\TinyInteger;
+use eprocess360\v3core\Keydict\Table;
+use eprocess360\v3core\Model;
+
+/**
+ * @package eprocess360\v3core\Model
+ */
+/*class Fees extends Model
+{
+    public static function keydict()
+    {
+        return Table::build(
+            PrimaryKeyInt::build('idFee', 'Fee ID'),
+            IdInteger::build('idFeeMaster', 'Origin Fee ID')->joinsOn(Fees::model()),
+            String64::build('name', 'Fee Name'),
+            String64::build('description', 'Fee Description'),
+            IdInteger::build('idFeeYear', 'Fee Schedule Year')->joinsOn(FeeYears::model()),
+            IdInteger::build('idFeeDept', 'Department')->joinsOn(FeeDepts::model()),
+            IdInteger::build('idFeeCode', 'Finance Code')->joinsOn(FeeCodes::model()),
+            IdTinyInt::build('idFeeType', 'Type of Fee')->joinsOn(FeeTypes::model()),
+            IdInteger::build('idFeeCalcFunc', 'Calculation Function Category')->joinsOn(FeeCalcFunc::model()),
+            String1028::build('formula', 'Formula'),
+            IdTinyInt::build('isDeposit', 'Is Deposit'),
+            IdTinyInt::build('useQty', 'Use User Input Value'),
+            IdTinyInt::build('min', 'Minimum'),
+            Bits8::make('status',
+                Bit::build(0, 'isCompleted', 'Completed Task'),
+                Bit::build(1, 'isRead', 'Read Task')
+            )
+        );
+    }
+}
+
+class FeeYears extends Model
+{
+    public static function keydict()
+    {
+        return Table::build(
+            PrimaryKeyInt::build('idFeeYear', 'Fee Schedule Year ID'),
+            String64::build('name', 'Fee Year Name'),
+            Datetime::build('effDate', 'Effective Date'),
+            IdInteger::build('order', 'Order'),
+            Bits8::make('status',
+                Bit::build(0, 'isCompleted', 'Completed Task'),
+                Bit::build(1, 'isRead', 'Read Task')
+            )
+        );
+    }
+}
+
+class FeeDepts extends Model
+{
+    public static function keydict()
+    {
+        return Table::build(
+            PrimaryKeyInt::build('idFeeDept', 'Fee Department ID'),
+            String64::build('name', 'Fee Department Name'),
+            String64::build('subName', 'Fee Sub Department Name'),
+            IdInteger::build('order', 'Order'),
+            Bits8::make('status',
+                Bit::build(0, 'isCompleted', 'Completed Task'),
+                Bit::build(1, 'isRead', 'Read Task')
+            )
+        );
+    }
+}
+
+class FeeCodes extends Model
+{
+    public static function keydict()
+    {
+        return Table::build(
+            PrimaryKeyInt::build('idFeeCode', 'Fee Code ID'),
+            String64::build('name', 'Fee Code Name'),
+            String64::build('code', 'Fee Code'),
+            IdInteger::build('idFeeDept', 'Department')->joinsOn(FeeDepts::model()),
+            IdInteger::build('order', 'Order'),
+            Bits8::make('status',
+                Bit::build(0, 'isCompleted', 'Completed Task'),
+                Bit::build(1, 'isRead', 'Read Task')
+            )
+        );
+    }
+}
+
+class FeeTypes extends Model
+{
+    public static function keydict()
+    {
+        return Table::build(
+            PrimaryKeyInt::build('idFeeType', 'Fee Type ID'),
+            String64::build('name', 'Fee Type Name'),
+            Bits8::make('status',
+                Bit::build(0, 'isCompleted', 'Completed Task'),
+                Bit::build(1, 'isRead', 'Read Task')
+            )
+        );
+    }
+}
+
+class FeeCalcFunc extends Model
+{
+    public static function keydict()
+    {
+        return Table::build(
+            PrimaryKeyInt::build('idFeeCalcFunc', 'Calculation Function Category ID'),
+            String64::build('name', 'Calculation Function Category Name'),
+            String1028::build('formula', 'Formula'),
+            IdTinyInt::build('isTab', 'Is Tab'),
+            Bits8::make('status',
+                Bit::build(0, 'isCompleted', 'Completed Task'),
+                Bit::build(1, 'isRead', 'Read Task')
+            )
+        );
+    }
+}*/

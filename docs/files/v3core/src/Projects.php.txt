@@ -1,0 +1,83 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: kira
+ * Date: 8/5/2015
+ * Time: 10:43 AM
+ */
+
+namespace eprocess360\v3core;
+
+
+use eprocess360\v3core\Controller\Controller;
+use eprocess360\v3core\Controller\Project;
+use eprocess360\v3core\Keydict\Entry\Integer;
+use eprocess360\v3core\Keydict\Table;
+use eprocess360\v3core\Model\Controllers;
+
+/**
+ * Class Projects
+ * @package eprocess360\v3core
+ * @deprecated Needs to be moved to Projects
+ */
+class Projects
+{
+
+    /**
+     * Returns the Projects that a User has access to, order by Task Count and then most recently created
+     * @param int $offset
+     * @param int $length
+     * @return Table
+     * @throws \Exception
+     */
+    public static function getMyProjects($offset = 0, $length = 30)
+    {
+        global $pool;
+        $keydict = Model\Projects::keydict();
+        //$keydict->add(Integer::build('taskCount', 'Task Count'));
+        $offset = (int)$offset;
+        $length = (int)$length;
+        $sql = "SELECT Projects.*, COUNT(Tasks.idTask) as totalCount FROM UserRoles
+                LEFT JOIN Projects ON Projects.idProject = UserRoles.idProject
+                LEFT JOIN Tasks ON Projects.idProject = Tasks.idProject
+                WHERE UserRoles.idUser = {$pool->User->getIdUser()} AND UserRoles.idProject > 0
+                GROUP BY UserRoles.idProject
+                ORDER BY COUNT(Tasks.idTask) DESC, Projects.idProject DESC
+                LIMIT 0,30";
+        $keydict->setSqlOverride($sql);
+        $keydict->fetch();
+        return $keydict;
+    }
+
+    /**
+     * @param $idController
+     * @param int $offset
+     * @param int $length
+     * @return Table
+     * @throws \Exception
+     */
+    public static function getMyProjectsByControllerId($idController, $offset = 0, $length = 30)
+    {
+        global $pool;
+        $keydict = Project::getProjectControllerByIdController($idController)->keydict();
+        $controller = Controllers::sqlFetch($idController);
+        $class = $controller->class->get();
+        //$keydict->add(Integer::build('taskCount', 'Task Count'));
+        $offset = (int)$offset;
+        $length = (int)$length;
+        /** @var Controller|Project $controller */
+        $tableName = Project::constructTableName($class, $idController);
+        $sql = "SELECT {$tableName}.*, COUNT(Tasks.idTask) as totalCount FROM UserRoles
+                LEFT JOIN Projects ON Projects.idProject = UserRoles.idProject
+                LEFT JOIN Tasks ON Projects.idProject = Tasks.idProject
+                LEFT JOIN {$tableName} ON {$tableName}.idProject = Projects.idProject
+                WHERE UserRoles.idUser = {$pool->User->getIdUser()} AND UserRoles.idProject > 0
+                GROUP BY UserRoles.idProject
+                ORDER BY COUNT(Tasks.idTask) DESC, Projects.idProject DESC
+                LIMIT 0,30";
+        $keydict->setSqlOverride($sql);
+        $keydict->fetch();
+        return $keydict;
+    }
+
+}

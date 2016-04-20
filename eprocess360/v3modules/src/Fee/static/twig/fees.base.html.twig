@@ -1,0 +1,100 @@
+{% extends 'SystemController.backbone.base.html.twig' %}
+{% block moduleCSS %}
+    <link rel="Stylesheet" type="text/css" href="{{ Response.meta.SystemController.static }}/css/typeahead.css"/>
+    <link rel="Stylesheet" type="text/css" href="{{ Response.meta.Fee.static }}/css/fees.css"/>
+{% endblock %}
+{% block body %}
+    <div id="content-container"></div>
+{% endblock %}
+{% block moduleJS %}
+    <script src="{{ Response.meta.SystemController.static }}/js/util.js"></script>
+    <script src="{{ Response.meta.SystemController.static }}/js/bizzybone.js"></script>
+    <script src="{{ Response.meta.SystemController.static }}/js/globalHelpers.js"></script>
+    <script src="{{ Response.meta.SystemController.static }}/js/multiview.js"></script>
+    <script src="{{ Response.meta.SystemController.static }}/js/bignumber.min.js"></script>
+    <script src="{{ Response.meta.SystemController.static }}/js/accounting.min.js"></script>
+    <script src="{{ Response.meta.SystemController.static }}/js/typeahead.bundle.min.js"></script>
+    <script src="{{ Response.meta.Fee.static }}/js/helpers/feeHelpers.js" type="text/javascript"></script>
+    <script src="{{ Response.meta.Fee.static }}/js/models/fees.js" type="text/javascript"></script>
+    <script src="{{ Response.meta.Fee.static }}/js/views/fees.js" type="text/javascript"></script>
+{% endblock %}
+{% block javascript %}
+    <script type="text/javascript">
+        var currencyOptions = hbInitData().meta.Fee.currencyOptions;
+
+        accounting.settings.currency = {
+            symbol : currencyOptions.symbol,
+            format: "%s%v",
+            decimal: currencyOptions.decimalSeparator,
+            thousand: currencyOptions.digitSeparator,
+            precision : 2
+        };
+
+        /**
+         * Helper to format money with format specified in metadata
+         * @param {number} value
+         * @param {boolean} showSymbol
+         * @param {number} places
+         * @returns {string}
+         */
+        function feesFormatMoney(value, showSymbol, places) {
+            showSymbol = (typeof showSymbol !== 'undefined' ? showSymbol : true);
+            places = _.isNumber(places) ? places : accounting.settings.currency.precision;
+
+            if(showSymbol) return accounting.formatMoney(value, accounting.settings.currency.symbol, places);
+            else return accounting.formatMoney(value, '', places);
+        }
+
+        $(document).ready(function() {
+            var getData, metaData;
+
+            // Precompile all the relevant templates
+            _.each({
+                feesMain: $('#hb-fees-main'),
+                feeListBalanceMain: $('#hb-fee-list-balance-main'),
+                feeListBalanceItem: $('#hb-fee-list-balance-item'),
+                feeListTotalMain: $('#hb-fee-list-total-main'),
+                feeListTotalItem: $('#hb-fee-list-total-item'),
+                feeReceiptListMain: $('#hb-fee-receipt-list-main'),
+                feeReceiptListItem: $('#hb-fee-receipt-list-item'),
+                feeModalEdit: $('#hb-fee-modal-edit'),
+                feeModalEditFields: $('#hb-fee-modal-edit-fields'),
+                feeModalFormulaFunction: $('#hb-fee-modal-formula-function'),
+                feeModalFormulaVariable: $('#hb-fee-modal-formula-variable'),
+                feeModalPay: $('#hb-fee-modal-pay'),
+                feeModalPayItem: $('#hb-fee-modal-pay-item'),
+                feeModalFeeSchedule: $('#hb-fee-modal-feeschedule')
+            }, hbCompileTemplate);
+
+            getData = hbInitData().data;
+            metaData = hbInitData().meta.Fee;
+
+            feeTypeList = new FeeTypeList();
+            feeTypeList.reset(_.toArray(metaData.feeTypes), {silent: true});
+
+            baseCollection = new FeeList(null, {feeTypeList: feeTypeList});
+            baseCollection.reset(getData, {silent: true});
+
+            baseReceiptList = new ReceiptList();
+
+            feeScheduleList = new FeeTagList();
+            feeScheduleList.reset(_.toArray(metaData.feeScheduleOptions), {silent: true});
+
+            // Initialize modals
+            modalPayFees = new FeePaymentModalView();
+            modalEditFees = new FeeEditModalView();
+            modalFeeSchedule = new FeeScheduleModalView({collection: feeScheduleList});
+
+            baseView = new FeesMainView({
+                collection: baseCollection,
+                feeTypeList: feeTypeList,
+                receiptList: baseReceiptList,
+                feeScheduleList: feeScheduleList,
+                el: $('#content-container')
+            });
+
+            baseView.render();
+            baseView.refreshReceipts();
+        });
+    </script>
+{% endblock %}

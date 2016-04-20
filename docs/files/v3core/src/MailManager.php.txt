@@ -1,0 +1,105 @@
+<?php
+
+namespace eprocess360\v3core;
+use eprocess360\v3core\Mail\MailConfig;
+use eprocess360\v3core\Mail\MailQueue;
+use eprocess360\v3core\Mail\Email;
+use eprocess360\v3core\Mail\Template;
+
+/**
+ * Class MailManager
+ * Provides access to email services
+ * @package eprocess360\v3core
+ */
+class MailManager
+{
+    /**
+     * @var MailConfig $config
+     */
+    private static $config;
+
+    /**
+     * @return MailConfig
+     */
+    public static function getConfig()
+    {
+        return self::$config;
+    }
+
+    /**
+     * Make a MailConfig from config settings in array format
+     * @param $settings
+     */
+    public static function initConfig($settings)
+    {
+        self::$config = new MailConfig($settings);
+    }
+
+    /**
+     * Set up MailManager::$config from sysvar options
+     * @throws SysVar\Exception\SysVarException
+     */
+    public static function initConfigFromSysvar() {
+        global $pool;
+        self::initConfig([
+            'host'=>$pool->SysVar->get('mailServerHost'),
+            'port'=>$pool->SysVar->get('mailServerPort'),
+            'user'=>$pool->SysVar->get('mailServerUser'),
+            'password'=>$pool->SysVar->get('mailServerPassword'),
+            'fromEmail'=>$pool->SysVar->get('mailFromAddress'),
+            'fromName'=>$pool->SysVar->get('mailFromName'),
+            'mailOff'=>$pool->SysVar->get('mailOff')
+        ]);
+    }
+
+    /**
+     * Send an email from a template. $to is an array of user IDs.
+     * @param array $to
+     * @param $templateController
+     * @param $templateName
+     * @param array $vars
+     * @param array $filesToLink
+     */
+    public static function sendMail(array $to, $templateController, $templateName, array $vars = [], array $filesToLink = []) {
+        if(!is_object(self::$config)) {
+            self::initConfigFromSysvar();
+        }
+
+        $template = Template::getByName($templateController, $templateName);
+        $email = new Email($to, $template, $vars);
+        $email->send(self::$config);
+    }
+
+    /**
+     * Add an email (from template) to the DB and enqueue it to be sent at the
+     * next opportunity
+     * @param array $to
+     * @param $templateController
+     * @param $templateName
+     * @param array $vars
+     * @param array $filesToLink
+     */
+    public static function mail(array $to, $templateController, $templateName, array $vars = [], array $filesToLink = []) {
+        $template = new Template($templateController, $templateName);
+        $e = Email::create($to, $template, $vars, $filesToLink);
+        MailQueue::addMail($e);
+    }
+
+    public static function retryQueueUnsent() {
+        if(!is_object(self::$config)) {
+            self::initConfigFromSysvar();
+        }
+
+        $queue = MailQueue::getUnsentQueued();
+        foreach($queue as $q) {
+            /**
+             * @var MailQueue $q
+             */
+            if($q->canRetry()) {
+                $e = $q->getEmail();
+                $sent = $e->send(self::$config);
+                $q->tried($sent);
+            }
+        }
+    }
+}

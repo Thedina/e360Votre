@@ -1,0 +1,38 @@
+{#
+    Base template for modules using backbone.js
+#}
+{% extends 'SystemController.base.html.twig' %}
+{% block body %}
+{% endblock %}
+{% block includeJS %}
+    <script src="{{ Response.meta.SystemController.static }}/js/backbone-min.js" type="text/javascript"></script>
+{% endblock %}
+{% block hbData %}
+    <script language="JavaScript">
+        /**
+         * Function to get JSON data embedded in the page
+         * @returns {Object}
+         */
+        function hbInitData() {
+            /* Initialization Data */
+            return {{ Response|json_encode()|raw }};
+        }
+
+        /**
+         * Function to compile Handlebars templates. Really should be (more)
+         * global. *Really* really should really precompile the real way.
+         * @param {string} selector
+         * @param {string} name
+         * @returns {function}
+         */
+        function hbCompileTemplate(selector, name) {
+            if(!_.isObject(Handlebars.templates)) {
+                Handlebars.templates = {};
+            }
+            Handlebars.templates[name] = Handlebars.compile($(selector).html());
+        }
+    </script>
+{% endblock %}
+{% block hbTemplates %}{# HandlebarsJS Templates #}
+    {{ Template|raw }}
+{% endblock %}

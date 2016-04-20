@@ -1,0 +1,30 @@
+{% extends 'SystemController.plain.html.twig' %}
+
+{% set active = 'dashboard' %}
+
+{% block body %}
+   
+    
+    <div class="col-md12">
+        Test
+    </div>
+{% endblock %}
+{% block javascript %}
+    <script type="text/javascript">
+        {#$(document).ready(function(){
+            $('#make-project').click(function() {
+                var controller = this;
+
+                $.ajax({
+                    url: $(controller).attr('data-SiteUrl')+'/api/v1/controllers/'+$(controller).attr('data-idController')+'/projects',
+                    type: 'POST',
+                    data: null,
+                    async: false,
+                    dataType: 'json'
+                }).done(function (data) {
+                    window.location = $(controller).attr('data-SiteUrl')+'/controllers/'+$(controller).attr('data-idController')+'/projects/'+data.data.idProject;
+                });
+            });
+        });#}
+    </script>
+{% endblock %}

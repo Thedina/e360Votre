@@ -1,0 +1,164 @@
+<script id="hb-review-type-list-main" type="text/x-handlebars-template">
+    <div class="row">
+        <div class="col-sm-6">
+            <h3>Review Settings: Types</h3>
+        </div>
+        <div class="col-sm-6">
+            <h3 class="pull-right">
+                <span class="btn-group" role="group" aria-label="Review Settings: Types">
+                    <button type="button" class="reviews-btn-new btn btn-info" id="btn-add-review-type">New Type</button>
+                </span>
+            </h3>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12">
+            <form role="form">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead><tr><th>Name</th><th>Default Group</th><th></th></tr></thead>
+                        <tbody id="review-type-list"></tbody>
+                    </table>
+                </div>
+            </form>
+        </div>
+    </div>
+</script>
+
+<script id="hb-review-type-list-item" type="text/x-handlebars-template">
+    <tr>
+        <td>{{reviewType.title}}</td>
+        <td>{{reviewType.groupTitle}}</td>
+        <td>
+            <div class="btn-group reviews-btngrp-editdel">
+                <button class="btn btn-default btn-xs btn-edit">Edit</button>
+                <button class="btn btn-default btn-xs btn-delete">Delete</button>
+            </div>
+        </td>
+    </tr>
+</script>
+
+<script id="hb-review-type-edit-modal" type="text/x-handlebars-template">
+    <div class="modal fade" id="review-type-edit-modal" tabindex="-1" role="dialog" aria-labelledby="review-type-edit-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    <h4 class="modal-title">Add/Edit Type</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                            <label for="review-type-edit-name" class="col-sm-4 control-label">Name</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="review-type-edit-name" placeholder="Name" value="{{reviewType.title}}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="review-type-edit-group" class="col-sm-4 control-label">Default Group</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" id="review-type-edit-group">{{{groupOptions groupTable reviewType.idGroup}}}</select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script id="hb-review-rule-list-main" type="text/x-handlebars-template">
+    <div class="row">
+        <div class="col-sm-6">
+            <h3>Review Settings: Rules</h3>
+        </div>
+        <div class="col-sm-6">
+            <h3 class="pull-right">
+                <span class="btn-group" role="group" aria-label="Review Settings: Rules">
+                    <button type="button" class="reviews-btn-new btn btn-info" id="btn-add-review-rule">New Rule</button>
+                </span>
+            </h3>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12">
+            <form role="form">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead><tr><th>Order</th><th>Expression</th><th>Action</th><th></th></tr></thead>
+                        <tbody id="review-rule-list"></tbody>
+                    </table>
+                </div>
+            </form>
+        </div>
+    </div>
+</script>
+
+<script id="hb-review-rule-list-item" type="text/x-handlebars-template">
+    <tr>
+        <td>{{reviewRule.order}}</td>
+        <td><code>{{reviewRule.expression}}</code></td>
+        <td>{{reviewRule.reviewType}} {{reviewRule.actionTarget}}</td>
+        <td>
+            <div class="btn-group reviews-btngrp-editdel">
+            <button class="btn btn-default btn-xs btn-edit">Edit</button>
+            <button class="btn btn-default btn-xs btn-delete">Delete</button>
+            </div>
+        </td>
+    </tr>
+</script>
+
+<script id="hb-review-rule-edit-modal" type="text/x-handlebars-template">
+    <div class="modal fade" id="review-rule-edit-modal" tabindex="-1" role="dialog" aria-labelledby="review-rule-edit-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    <h4 class="modal-title">Add/Edit Rule</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal">
+                        <label class="col-sm-12">Expression</label>
+                        <div id="rule-form-condition-list"></div>
+                        <div class="form-group">
+                            <label for="review-rule-edit-action-type" class="col-sm-2 control-label">Action</label>
+                            <div class="col-sm-4">
+                                <select class="form-control" id="review-rule-edit-action-type">{{{ruleActionTypeOptions reviewRule.actionType}}}</select>
+                            </div>
+                            <div class="col-sm-6">
+                                <select class="form-control" id="review-rule-edit-action-target">{{{reviewTypeOptions reviewTypes reviewRule.idReviewType}}}</select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script id="hb-review-rule-edit-modal-condition" type="text/x-handlebars-template">
+    <div class="form-group review-rule-condition" data-num="{{conditionNum}}">
+        <div class="col-sm-5 col-nopad-right condition-stub">
+            <select class="form-control edit-variable">{{{genericStringOptions conditionOptions.variables condition.variable}}}</select>
+        </div>
+        <div class="col-sm-2 col-nopad-right condition-full">
+            <select class="form-control edit-comparator">{{{genericStringOptions conditionOptions.comparators condition.comparator}}}</select>
+        </div>
+        <div class="col-sm-3 col-nopad-right condition-full">
+            <input type="text" class="form-control edit-value" placeholder="Value" value="{{condition.value}}">
+        </div>
+        <div class="col-sm-2 condition-full">
+            <select class="form-control edit-conjunction">{{{genericStringOptions conditionOptions.conjunctions condition.conjunction}}}</select>
+        </div>
+    </div>
+</script>

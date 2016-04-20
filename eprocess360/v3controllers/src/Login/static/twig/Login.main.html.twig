@@ -1,0 +1,68 @@
+{% extends 'SystemController.splash.html.twig' %}
+
+{% block body %}
+    <div class="row" style="padding-top:25px">
+        {% if SysVar.has('productLogo') %}
+        <div class="col-md-6 text-center">
+            <img src="{{ SysVar.get('productLogo') }}" class="img img-responsive" style="width: 370px; height: 370px; margin-right: auto; margin-left: auto;">
+        </div>
+        {% endif %}
+        <div class="col-md-6{% if SysVar.has('productLogo') == false %} col-md-offset-3{% endif %}" style="min-height: 370px;">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h2>{% if SysVar.has('productTitle') %}{{ SysVar.get('productTitle') }}{% else %}eProcess360 Portal{% endif %}</h2>
+                    <p class="lead">{% if SysVar.has('productDescription') %}{{ SysVar.get('productDescription') }}{% endif %}</p>
+                </div>
+
+                <div class="panel-body">
+                    <h4>Login</h4>
+                    <form class="form-horizontal" method="POST" action="{{ SysVar.get('siteUrl') }}/login" id="formlogin">
+                        <input type="hidden" name="submitform" value="true"/>
+                        {% for Field in Response.data.form.Keydict.Fields  %}
+                            {{ Macro.input(Field) }}
+                        {% endfor %}
+                        {#temporarily holds error message#}
+                        {% if User.isFailed() or Response.data.errors %}
+                            <div class="alert alert-danger" role="alert">
+                                <p><span class="label label-danger"></span>The information you supplied was incorrect.</p>
+                            </div>{% endif %}
+                    <a href="{{ SysVar.get('siteUrl') }}/register" class="btn btn-link pull-left">Register</a>
+                    <a href="{{ SysVar.get('siteUrl') }}/login/reset" class="btn btn-link pull-left">Lost Password?</a>
+
+                    <button type="submit" class="btn btn-default pull-right">Login</button>
+                </form>
+                </div>
+
+            </div>
+        </div>
+
+        {#<div class="col-md-6 col-md-pull-6">#}
+        {#<div class="panel panel-default">#}
+        {#<div class="panel-heading">#}
+        {#First Time Users#}
+        {#</div>#}
+
+        {#<div class="panel-body">#}
+        {#<div class="row">#}
+        {#<div class="col-sm-3">#}
+        {#<img src="{{ SysVar.get('siteUrl') }}/theme/etc/slco-infobox.png">#}
+        {#</div>#}
+        {#<div class="col-sm-9">#}
+        {#<ul>#}
+        {#<li>Create Permit Applications</li>#}
+        {#<li>Submit Plans and Documents</li>#}
+        {#<li>View Application Statuses</li>#}
+        {#<li>Request Inspections</li>#}
+        {#</ul>#}
+        {#<p><a href="{{ SysVar.get('siteUrl') }}/register" class="btn btn-primary" role="button">Sign-Up and Apply for Permit</a></p>#}
+        {#</div>#}
+
+        {#</div>#}
+        {#</div>#}
+        {#</div>#}
+        {#</div>#}
+
+    </div>
+
+
+{% endblock %}

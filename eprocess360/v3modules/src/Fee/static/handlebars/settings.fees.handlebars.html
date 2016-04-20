@@ -1,0 +1,499 @@
+
+<script id="hb-fee-settings-main" type="text/x-handlebars-template">
+    <div class="row">
+        <div class="col-sm-8">
+            <h3>Edit Fee</h3>
+        </div>
+        <div class="col-sm-4">
+            <h3 class="pull-right">
+                <div class="btn-group" role="group" aria-label="Edit Fee Options">
+                    <a type="button" class="btn btn-info btn-save-template" role="button">Save</a>
+                </div>
+            </h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <form class="form-horizontal" id="fee-settings-form" role="form">
+                <div class="form-group">
+                    <label for="fee-template-edit-name" class="col-sm-2 control-label">Name</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="fee-template-edit-name" placeholder="Fee Template Name" value="{{feeTemplate.title}}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="fee-edit-schedule" class="col-sm-2 control-label">Fee Schedule</label>
+                    <div class="col-sm-4">
+                        <select class="form-control" id="fee-edit-schedule">{{{feeScheduleOptions meta.feeScheduleOptions feeTemplate.feeSchedule}}}</select>
+                    </div>
+                    <label for="fee-template-edit-type" class="col-sm-2 control-label">Type</label>
+                    <div class="col-sm-4">
+                        <select class="form-control" id="fee-template-edit-type">{{{feeTypeOptions meta.feeTypeOptions feeTemplate.idFeeType}}}</select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="fee-template-edit-description" class="col-sm-2 control-label">Description</label>
+                    <div class="col-sm-10">
+                        <textarea class="form-control" id="fee-template-edit-description">{{feeTemplate.description}}</textarea>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="fee-template-edit-isactive" class="col-xs-4 col-sm-2 control-label">Status</label>
+                    <div class="col-xs-4 col-sm-2">
+                    <span class="button-checkbox">
+                        <button type="button" class="btn" data-color="success">Active</button>
+                        <input type="checkbox" class="hidden" id="fee-template-edit-isactive" {{#if feeTemplate.status.isActive}}checked="checked"{{/if}}>
+                    </span>
+                    </div>
+                    <div class="col-xs-4 col-sm-3">
+                        <div class="btn btn-link">Used by {{feeTemplate.projectCount}} Projects</div>
+                    </div>
+                    <label class="col-xs-6 col-sm-2 control-label">Version</label>
+                    <div class="col-xs-6 col-sm-3">
+                        <div class="btn btn-link">{{dateFormatDisplay feeTemplate.dateCreated}} {{timeFormatDisplay feeTemplate.dateCreated}}</div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <h3>Values, Formula</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <form class="form-horizontal" role="form">
+                <div class="form-group">
+                    <label for="fee-edit-basis" class="col-sm-2 control-label"><code>Basis()</code></label>
+                    <div class="col-sm-4">
+                        <label class="sr-only" for="fee-edit-basis">Amount (in dollars)</label>
+                        <div class="input-group">
+                            <div class="input-group-addon">$</div>
+                            <input type="text" class="form-control" id="fee-edit-basis" placeholder="Amount" value="{{formatMoney feeTemplate.fixedAmount false}}">
+                        </div>
+                    </div>
+                    <label for="fee-edit-minimum-value" class="col-sm-2 control-label">Minimum</label>
+                    <div class="col-sm-4">
+                        <label class="sr-only" for="fee-edit-minimum-value">Amount (in dollars)</label>
+                        <div class="input-group">
+                            <div class="input-group-addon">$</div>
+                            <input type="text" class="form-control" id="fee-edit-minimum-value" placeholder="Amount" value="{{feeTemplate.minimumValue}}">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="fee-edit-formula" class="col-sm-2 control-label">Formula</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="fee-edit-formula" placeholder="Fee Name" value="{{feeTemplate.formula}}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">Calculation Method</label>
+                    <div class="col-sm-10">
+                    <span class="button-checkbox">
+                        <button type="button" class="btn" data-color="success">Fixed</button>
+                        <input type="checkbox" class="hidden" id="fee-template-edit-isfixed" {{#if feeTemplate.calculationMethod.isFixed}}checked="checked"{{/if}}>
+                    </span>
+                    <span class="button-checkbox">
+                        <button type="button" class="btn" data-color="success">Unit</button>
+                        <input type="checkbox" class="hidden" id="fee-template-edit-isunit" {{#if feeTemplate.calculationMethod.isUnit}}checked="checked"{{/if}}>
+                    </span>
+                    <span class="button-checkbox">
+                        <button type="button" class="btn" data-color="success">Formula</button>
+                        <input type="checkbox" class="hidden" id="fee-template-edit-isformula" {{#if feeTemplate.calculationMethod.isFormula}}checked="checked"{{/if}}>
+                    </span>
+                    <span class="button-checkbox">
+                        <button type="button" class="btn" data-color="success">Matrix</button>
+                        <input type="checkbox" class="hidden" id="fee-template-edit-ismatrix" {{#if feeTemplate.calculationMethod.isMatrix}}checked="checked"{{/if}}>
+                    </span>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <h3>Tags</h3>
+            <p>Tags provide a way for the system to identify, group, and apply fees to projects.</p>
+        </div>
+    </div>
+    <div class="row" id="fee-tag-settings">
+        <div class="col-xs-12">
+            <form class="form-inline">
+                <div class="form-group">
+                    <label class="sr-only" for="fee-tag-search">Add Tag</label>
+                    <input type="text" class="form-control" id="fee-tag-search" placeholder="Search Tags">
+                </div>
+                <button class="btn btn-info" id="btn-add-tag">Add Tag</button>
+                <a class="btn btn-default" id="btn-view-tags" href="{{meta.path}}/tags">View All Tags</a>
+            </form>
+        </div>
+        <div class="col-xs-12">
+            <div id="fee-tags-list"></div>
+            <div class="alert alert-danger" id="tag-warning">
+                <span>There are changes to Tags.  Click Save to update the Fee.</span>
+                <div class="btn-group" role="group" aria-label="Edit Fee Options">
+                    <a type="button" class="btn btn-info btn-save-template" role="button">Save</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row matrix-edit">
+        <div class="col-xs-12">
+            <h3>Matrix</h3>
+            <p>Matrices help to accommodate fees with a tiered pricing structure.</p>
+            <div class="alert alert-danger" id="matrix-warning"><code>Matrix()</code> is being used in the primary Fee formula, but the Input and/or Matrix doesn't appear valid.</div>
+            <form class="form-horizontal" role="form">
+                <div class="form-group">
+                    <label for="matrix-edit-input" class="col-sm-2 control-label">Input</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="matrix-edit-formula" placeholder="Variable or Function" value="{{feeTemplate.matrixFormula}}">
+                    </div>
+                    <label for="matrix-show-output" class="col-sm-2 control-label">Result</label>
+                    <div class="col-sm-4">
+                        <code class="control" id="matrix-show-output">Matrix()</code>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-10 col-sm-offset-2">
+                        <span class="help-block">Input defines what the input value into the matrix will be.  Use a variable reference or even a formula.  Use the <strong>Result</strong> function in any formula to get and use the result of the matrix.</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="matrix-test-input" class="col-sm-2 control-label">Test Input</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="matrix-test-input" placeholder="Number" value="">
+                    </div>
+                    <label for="matrix-test-output" class="col-sm-2 control-label">Test Output</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="matrix-test-output" placeholder="Number" value="{{matrix.testResult}}" disabled="">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-10 col-sm-offset-2">
+                        <span class="help-block">Use Test Input to try sending different numbers through the matrix function to verify it is working correctly.</span>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-xs-12">
+            <div class="pull-right">
+                <div class="btn-group" role="group" aria-label="Clear Matrix">
+                    <a type="button" class="btn btn-info" id="btn-clear-matrix" role="button">Clear Matrix</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row matrix-edit">
+        <div class="col-xs-12">
+            <table class="table table-hover">
+                <thead><tr><th width="20%">Start</th><th width="20%">Base Fee</th><th width="20%">Increment</th><th width="20%">Incremental Fee</th><th width="20%"></th></tr></thead>
+                <tbody id="fee-matrix"></tbody>
+            </table>
+        </div>
+    </div>
+</script>
+
+<script id="hb-fee-settings-tag-category" type="text/x-handlebars-template">
+    <div class="h4">
+        {{tagCategory.title}} &nbsp; <span class="category-tags-list"></span>
+    </div>
+</script>
+
+<script id="hb-fee-settings-tag-item" type="text/x-handlebars-template">
+    <span class="button-checkbox">
+			<button type="button" class="btn" data-color="success">{{feeTag.feeTagValue}}</button>
+			<input type="checkbox" class="hidden" id="tag-item-{{feeTag.idFeeTag}}" data-idfeetag="{{feeTag.idFeeTag}}" checked="checked">
+	  </span>
+</script>
+
+<script id="hb-fee-settings-matrix" type="text/x-handlebars-template">
+    <div class="form-group">
+        <label for="matrix-edit-input" class="col-sm-2 control-label">Input</label>
+        <div class="col-sm-4">
+            <input type="text" class="form-control" id="matrix-edit-input" placeholder="Variable or Function" value="{{matrix.input}}">
+        </div>
+        <label for="matrix-show-output" class="col-sm-2 control-label">Result</label>
+        <div class="col-sm-4">
+            <code class="control" id="matrix-show-output">{matrix.output}}</code>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-10 col-sm-offset-2">
+            <span class="help-block">Input defines what the input value into the matrix will be.  Use a variable reference or even a formula.  Use the <strong>Result</strong> function in any formula to get and use the result of the matrix.</span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="matrix-test-input" class="col-sm-2 control-label">Test Input</label>
+        <div class="col-sm-4">
+            <input type="text" class="form-control" id="matrix-test-input" placeholder="Number" value="">
+        </div>
+        <label for="matrix-test-output" class="col-sm-2 control-label">Test Output</label>
+        <div class="col-sm-4">
+            <input type="text" class="form-control" id="matrix-test-output" placeholder="Number" value="{{matrix.testResult}}" disabled="">
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-10 col-sm-offset-2">
+            <span class="help-block">Use Test Input to try sending different numbers through the matrix function to verify it is working correctly.</span>
+        </div>
+    </div>
+</script>
+
+<script id="hb-fee-matrix-row" type="text/x-handlebars-template">
+    <tr>
+        <td>
+            <label class="sr-only">Starting Value</label>
+                <input type="text" class="form-control matrix-input matrix-starting-value" value="{{formatMoney row.startingValue false 3}}">
+        </td>
+        <td>
+            <label class="sr-only">Base Fee (in dollars)</label>
+            <div class="input-group">
+                <div class="input-group-addon hidden-xs">$</div>
+                <input type="text" class="form-control matrix-input matrix-base-fee" placeholder="Amount" value="{{formatMoney row.baseFee false 3}}">
+            </div>
+        </td>
+        <td>
+            <label class="sr-only">Increment Value</label>
+                <input type="text" class="form-control matrix-input matrix-increment" value="{{formatMoney row.increment false 3}}">
+        </td>
+        <td>
+            <label class="sr-only">Incremental Fee Amount (in dollars)</label>
+            <div class="input-group">
+                <div class="input-group-addon hidden-xs">$</div>
+                <input type="text" class="form-control matrix-input matrix-increment-fee" placeholder="Amount" value="{{formatMoney row.incrementFee false 3}}">
+            </div>
+        </td>
+        <td>
+            <div class="btn-group" style="width: 80px; float: right;" role="group" aria-label="Matrix Line Options">
+                <button type="button" class="btn btn-default btn-matrix-add" title="Add New Line (after)"><i class="glyphicon glyphicon-plus"></i></button>
+                <button type="button" class="btn btn-default btn-matrix-remove" title="Remove Line"><i class="glyphicon glyphicon-remove"></i></button>
+            </div>
+        </td>
+    </tr>
+</script>
+
+<script id="hb-fee-modal-save" type="text/x-handlebars-template">
+    <div class="modal fade" id="feeSaveModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    <h4 class="modal-title">Save</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="panel-group" id="panel-save-method">
+                        <div class="panel panel-default">
+                            <div class="panel-heading" data-parent="#panel-save-method" data-toggle="collapse" href="#panel-template-copy">
+						<span class="panel-title">
+							<label for="fee-template-copy">
+                                <input type="radio" checked="checked" name="save-method" id="fee-template-copy" value="copy"> {{#if isNew}}New{{else}}Copy{{/if}}
+                            </label>
+						</span>
+                            </div>
+                            <div id="panel-template-copy" class="panel-collapse collapse in" data-savemethod="copy">
+                                <div class="panel-body">
+                                    {{#if isNew}}
+                                        This is a new fee.
+                                    {{else}}
+                                        This is not retroactive and will not affect projects currently using this fee.  The new copy will be {{{activeInactive newActive}}} and the original will be {{{activeInactive feeTemplate.status.isActive}}}.  This setting can be adjusted in the 'Edit Fee' top section before saving, if necessary.
+                                    {{/if}}
+                                </div>
+                            </div>
+                        </div>
+                        {{#unless isNew}}
+                            <div class="panel panel-default">
+                                <div class="panel-heading" data-toggle="collapse" data-parent="#panel-save-method" href="#panel-template-overwrite">
+                            <span class="panel-title">
+                                <label for="fee-template-overwrite">
+                                    <input type="radio" name="save-method" id="fee-template-overwrite" value="overwrite"> Overwrite
+                                </label>
+                            </span>
+                                </div>
+                                <div id="panel-template-overwrite" class="panel-collapse collapse"  data-savemethod="overwrite">
+                                    <div class="panel-body">
+                                        <div class="alert alert-danger">This will change the fees for <strong>{{feeTemplate.projectCount}} projects</strong>.</div>
+                                        Save the fee by overwriting the existing data.  The updated fee will be {{{activeInactive newActive}}}.
+                                    </div>
+                                </div>
+                            </div>
+                        {{/unless}}
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default btn-cancel" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary btn-save">Save</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+</script>
+
+<script id="hb-fee-template-list-main" type="text/x-handlebars-template">
+    <div class="row">
+        <div class="col-sm-6">
+            <h3>Fees</h3>
+        </div>
+        <div class="col-sm-6 clearfix">
+            <div class="btn-group pull-right h3" role="group" aria-label="Options">
+                <a href="{{meta.path}}/new"><button type="button" class="btn btn-info" id="btn-new-template">New Fee</button></a>
+            </div>
+        </div>
+    </div>
+    <div id="multiview"></div>
+</script>
+
+<script id="hb-fee-tag-list-main" type="text/x-handlebars-template">
+    <div class="row">
+        <div class="col-sm-6">
+            <h3>Fee Tags</h3>
+        </div>
+        <div class="col-sm-6 clearfix">
+            <div class="btn-group pull-right h3" role="group" aria-label="Options">
+                <button type="button" class="btn btn-info" id="btn-new-tag">New Tag</button>
+            </div>
+        </div>
+    </div>
+    <div id="multiview"></div>
+</script>
+
+<script id="hb-fee-tag-edit-modal" type="text/x-handlebars-template">
+    <div class="modal fade" id="fee-tag-edit-modal" tabindex="-1" role="dialog" aria-labelledby="fee-tag-edit-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    <h4 class="modal-title">Add/Edit Tag</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                            <label for="tag-edit-value" class="col-sm-2 control-label">Title</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="tag-edit-value" value="{{feeTag.feeTagValue}}" placeholder="Title">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="tag-edit-category" class="col-sm-2 control-label">Category</label>
+                            <div class="col-sm-10">
+                                <select class="form-control" id="tag-edit-category">{{{feeTagCategoryOptions meta.feeTagCategories feeTag.idFeeTagCategory}}}</select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default btn-cancel" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary btn-save">Save</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+</script>
+
+<script id="hb-fee-tag-category-list-main" type="text/x-handlebars-template">
+    <div class="row">
+        <div class="col-sm-6">
+            <h3>Fee Tag Categories</h3>
+        </div>
+        <div class="col-sm-6 clearfix">
+            <div class="btn-group pull-right h3" role="group" aria-label="Options">
+                <button type="button" class="btn btn-info" id="btn-new-category">New Tag Category</button>
+            </div>
+        </div>
+    </div>
+    <div id="multiview"></div>
+</script>
+
+<script id="hb-fee-tag-category-edit-modal" type="text/x-handlebars-template">
+    <div class="modal fade" id="fee-tag-category-edit-modal" tabindex="-1" role="dialog" aria-labelledby="fee-tag-category-edit-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    <h4 class="modal-title">Add/Edit Category</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                            <label for="category-edit-title" class="col-sm-2 control-label">Title</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="category-edit-title" value="{{feeTagCategory.title}}" placeholder="Title">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="category-edit-isfeeschedule" class="col-sm-2 control-label">Is Fee Schedule</label>
+                            <div class="col-sm-10">
+                                <input type="checkbox" id="category-edit-isfeeschedule" {{#if feeTagCategory.status.isFeeSchedule}}checked="checked"{{/if}}>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default btn-cancel" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary btn-save">Save</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+</script>
+
+<script id="hb-fee-type-list-main" type="text/x-handlebars-template">
+    <div class="row">
+        <div class="col-sm-6">
+            <h3>Fee Types</h3>
+        </div>
+        <div class="col-sm-6 clearfix">
+            <div class="btn-group pull-right h3" role="group" aria-label="Options">
+                <button type="button" class="btn btn-info" id="btn-new-type">New Type</button>
+            </div>
+        </div>
+    </div>
+    <div id="multiview"></div>
+</script>
+
+<script id="hb-fee-type-edit-modal" type="text/x-handlebars-template">
+    <div class="modal fade" id="fee-type-edit-modal" tabindex="-1" role="dialog" aria-labelledby="fee-type-edit-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    <h4 class="modal-title">Add/Edit Fee Type</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                            <label for="type-edit-title" class="col-sm-2 control-label">Title</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="type-edit-title" value="{{feeType.feeTypeTitle}}" placeholder="Title">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="type-edit-ispayable" class="col-sm-2 control-label">Payable</label>
+                            <div class="col-sm-10">
+                                <input type="checkbox" id="type-edit-ispayable" {{#if feeType.feeTypeFlags.isPayable}}checked="checked"{{/if}}>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="type-edit-isopen" class="col-sm-2 control-label">Open</label>
+                            <div class="col-sm-10">
+                                <input type="checkbox" id="type-edit-isopen" {{#if feeType.feeTypeFlags.isOpen}}checked="checked"{{/if}}>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="type-edit-isdeposit" class="col-sm-2 control-label">Deposit</label>
+                            <div class="col-sm-10">
+                                <input type="checkbox" id="type-edit-isdeposit" {{#if feeType.feeTypeFlags.isDeposit}}checked="checked"{{/if}}>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default btn-cancel" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary btn-save">Save</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+</script>

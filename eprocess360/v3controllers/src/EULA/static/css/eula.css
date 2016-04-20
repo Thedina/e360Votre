@@ -1,0 +1,25 @@
+#eula-title {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+#eula-panel {
+    margin-top: 25px
+}
+
+.eula p {
+    margin-bottom: 15px;
+}
+
+.eula ol, .eula ul {
+    padding-left: 15px
+}
+
+.eula ol li {
+    padding-left: 10px
+}
+
+.eula .container-fluid {
+    height: 500px;
+    overflow-y: scroll;
+}

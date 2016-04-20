@@ -1,0 +1,13 @@
+<h3>Create</h3>
+<div class="list-group">
+    {% for controller in Response.data.controllers %}
+        <a id= "make-project{{ controller.idController }}" data-SiteUrl="{{ SysVar.get('siteUrl') }}" data-idController= "{{ controller.idController }}" class="list-group-item make-project">
+            <h4 class="list-group-item-heading">New {{ controller.title }}</h4>
+            <p class="list-group-item-text">{{ controller.description }}</p>
+        </a>
+    {% else %}
+        <div class="list-group-item"><h4 class="list-group-item-heading">No available workflows</h4>
+            <p class="list-group-item-text">You either don't have permission to start a new project, or there are no workflows configured.</p>
+        </div>
+    {% endfor %}
+</div>

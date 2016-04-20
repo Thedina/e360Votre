@@ -1,0 +1,58 @@
+{% extends 'SystemController.backbone.base.html.twig' %}
+{% block moduleCSS %}
+    <link rel="Stylesheet" type="text/css" href="{{ Response.meta.Task.static }}/css/tasks.css"/>
+{% endblock %}
+{% block body %}
+    <div id="content-container"></div>
+{% endblock %}
+{% block moduleJS %}
+    <script src="{{ Response.meta.SystemController.static }}/js/util.js"></script>
+    <script src="{{ Response.meta.SystemController.static }}/js/bizzybone.js"></script>
+    <script src="{{ Response.meta.SystemController.static }}/js/globalHelpers.js"></script>
+    <script src="{{ Response.meta.Group.static }}/js/models/groups.js"></script>
+    <script src="{{ Response.meta.Task.static }}/js/helpers/taskHelpers.js"></script>
+    <script src="{{ Response.meta.Task.static }}/js/routers/tasks.js"></script>
+    <script src="{{ Response.meta.Task.static }}/js/models/tasks.js"></script>
+    <script src="{{ Response.meta.Task.static }}/js/views/tasks.js"></script>
+{% endblock %}
+{% block javascript %}
+    <script type="text/javascript">
+        var countUpdateTimer, countUpdateWait;
+        countUpdateWait = 30000;
+
+        $(document).ready(function () {
+            var getData;
+            //var baseCollection, baseView;
+
+            // Precompile all the relevant templates
+            _.each({
+                taskListMain: '#hb-task-list-main',
+                taskGroupSelectItem: '#hb-task-group-select-item',
+                taskGroupSelectLoading: '#hb-task-group-select-loading',
+                taskListSection: '#hb-task-list-section',
+                taskListItem: '#hb-task-list-item',
+                taskModalEdit: '#hb-tasks-modal-edit'
+            }, hbCompileTemplate);
+
+            // Retrieve the JSON data included in the page
+            getData = hbInitData().data;
+            modalEditTask = new ModalEditTaskView();
+
+            if(_.isArray(getData)) {
+                baseCollection = new TaskList();
+                baseCollection.reset(getData, {silent: true});
+
+
+                baseView = new TaskListMainView({collection: baseCollection, el: $('#content-container')});
+                baseView.render();
+                baseView.groupSelectView.update(true);
+                countUpdateTimer = window.setInterval(function() {
+                    baseView.groupSelectView.update();
+                }, countUpdateWait);
+            }
+
+            tasksRouter = new TaskListRouter({taskListView: baseView});
+            Backbone.history.start();
+        });
+    </script>
+{% endblock %}

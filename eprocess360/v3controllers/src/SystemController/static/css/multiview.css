@@ -1,0 +1,75 @@
+/** Multiview Styles**/
+
+#filter-controls.collapsing, #filter-controls.collapse.in {}
+#filter-controls > * {
+    margin: 0 0 8px;
+    display: inline-block;
+}
+.full-view #filter-controls {
+    display: inline-block;
+}
+.full-view .option-btn { display: none;}
+
+@media screen and (max-width: 769px) {
+    #filter-controls {
+        display: block!important;
+        height: auto!important;
+        margin-top: 8px;
+    }
+
+}
+@media screen and (min-width: 769px) {
+    #multiview-navbar .navbar-header {
+        height: 20px;
+    }
+
+    .multiview-nav {
+        width: 100%;
+        z-index: 1000;
+        top: 0;
+    }
+
+    #filter-controls > * {
+        margin-top: 8px;
+    }
+
+    .full-view #option-toggle {
+        display: none;
+    }
+
+    .full-view #filter-controls > * {
+        margin: 0;
+    }
+
+    .full-view form {
+        display: block;
+    }
+}
+
+.navbar-margin {
+    margin: 10px 0 4px;
+}
+
+.top-margin {
+    margin-top: 8px;
+}
+
+.pagination-margin {
+    margin: 8px 0;
+}
+
+.bg-primary > p.lead {
+    margin: 0;
+    color: #fff;
+}
+
+.option-padding {
+    padding: 6px;
+}
+
+.dropdown-menu > .bucket-option, .dropdown-menu > .bucket-order {
+    display: block;
+    white-space: nowrap;
+    padding: 3px 20px;
+    cursor: pointer;
+}

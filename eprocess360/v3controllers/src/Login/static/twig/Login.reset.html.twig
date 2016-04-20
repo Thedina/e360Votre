@@ -1,0 +1,37 @@
+{% extends 'SystemController.splash.html.twig' %}
+
+{% block body %}
+
+    <div class="row" style="padding-top:25px">
+        <div class="col-md-offset-2 col-md-8">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Reset Password
+                </div>
+                <div class="panel-body">
+                    {% if Response.data.errors %}
+                        <div class="alert alert-danger" role="alert">
+                            <p>There were problems with your submission:</p>
+                            <ul>{% for error in Response.data.errors %}
+                                    <li>{{ error.getMessage }}</li>
+                                {% endfor %}</ul>
+                        </div>
+                    {% endif %}
+
+                    <form class="form-horizontal" method="POST" action="/login/reset" id="formreset">
+                        <input type="hidden" name="submitform" value="true"/>
+                        {% for Field in Response.data.form.Keydict.Fields  %}
+                            {{ Macro.input(Field) }}
+                        {% endfor %}
+                        <div class="btn-group pull-right">
+                            <a href="{{ SysVar.get('siteUrl') }}" class="btn btn-default">Cancel</a>
+                            <button type="submit" class="btn btn-primary">Reset Password</button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

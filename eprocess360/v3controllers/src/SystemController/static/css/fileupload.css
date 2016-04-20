@@ -1,0 +1,77 @@
+.filedrop-target {
+    background: #f9f1b7;
+    opacity: 0.8;
+}
+
+.btn-file {
+    position: relative;
+    overflow: hidden;
+}
+.btn-file input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    font-size: 100px;
+    text-align: right;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    outline: none;
+    background: white;
+    cursor: inherit;
+    display: block;
+}
+.btn-new-file-delete {
+    position: absolute;
+    right: 0px;
+    z-index: 11;
+    top: 4px;
+    background-color: transparent;
+}
+.h4-with-delete {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    position: relative;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-right: 2em;
+}
+.p-follows-btn {
+    margin-top: 1.25em;
+    margin-bottom: 1.25em;
+}
+
+.form-control-progress {
+    width: 3em;
+    text-align: center;
+}
+
+@media (min-width:481px){
+    .form-control-progress {
+        width: 8em;
+        text-align: center;
+    }
+}
+.form-control-progress-default {
+    color: #333;
+    background-color: #fff !important;
+    border-color: #ccc;
+}
+.form-control-progress-success {
+    color: #fff;
+    background-color: #5cb85c !important;
+    border-color: #4cae4c;
+}
+.form-control-progress-primary {
+    color: #fff;
+    background-color: #337ab7 !important;
+    border-color: #2e6da4;
+}
+.form-control-progress-danger {
+    color: #fff;
+    background-color: #d9534f !important;
+    border-color: #d43f3a;
+}

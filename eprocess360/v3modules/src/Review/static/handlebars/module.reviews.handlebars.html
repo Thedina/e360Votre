@@ -1,0 +1,203 @@
+<script id="hb-review-list-main" type="text/x-handlebars-template">
+    <div class="row">
+        <div class="col-sm-6">
+            <h3>Reviews <small id="status-summary">{{completionStatus.numComplete}}/{{completionStatus.numReviews}} Complete</small></h3>
+        </div>
+        <div class="col-sm-6 clearfix use-perm" data-ifperm="Review:create">
+                <div class="btn-group pull-right h3" role="group" aria-label="Add Review">
+                    <button type="button" class="btn btn-info use-perm" id="btn-add-review" data-ifperm="Review:create">Add Review</button>
+                </div>
+        </div>
+        <div class="col-sm-12">
+            <ol class="breadcrumb">{{{ breadcrumbLinks links }}}</ol>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <!-- Default panel contents -->
+        <table class="table">
+            <thead><tr><th>Review</th><th>Reviewer</th><th>Status</th><th>In</th><th>Due</th><th>Out</th><th></th></tr></thead>
+            <tbody id="review-list"></tbody>
+        </table>
+    </div>
+</script>
+
+<script id="hb-review-list-item" type="text/x-handlebars-template">
+    <tr>
+        <td>
+            <a href="{{meta.path}}/{{review.idReview}}">{{reviewTypeName review.idReviewType reviewTypes}}</a></td><td>{{reviewerName review.idUser reviewerTable}}
+        </td>
+        <td>{{{makeStatusLabels review.status review.idUser review.dateDue reviewerTable}}}</td>
+        <td>{{dateFormatDisplay review.dateCreated}}</td>
+        <td>{{dateFormatDisplay review.dateDue}}</td>
+        <td>{{dateFormatDisplay review.dateCompleted}}</td>
+        <td>
+            <div class="dropdown pull-right use-perm" data-ifperm="Review:write || Review:delete">
+                <button class="btn btn-default btn-xs" style="padding-left: 2px; padding-right: 2px; margin-left: 1em;" id="dLabel" data-target="#" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                    <span class="glyphicon glyphicon-option-vertical" aria-hidden="true"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right review-menu" aria-labelledby="dLabel">
+                    <li><a href="#" class="use-perm" data-action="edit" data-ifperm="Review:write">Edit/Reassign</a></li>
+                    {{#if (notAssignedToMe review.idUser user.idUser) }}
+                    <li><a href="#" class="use-perm" data-action="assignme" data-ifperm="Review:write">Assign Self</a></li>
+                    {{/if}}
+                    <li><a href="#" class="use-perm" data-action="delete" data-ifperm="Review:delete">Delete</a></li>
+                    {{#if review.status.isComplete}}
+                    <li><a href="#" class="use-perm" data-action="reopen" data-ifperm="Review:write">Reopen Review</a></li>
+                    {{/if}}
+                </ul>
+            </div>
+        </td>
+    </tr>
+</script>
+
+<script id="hb-review-inside-main" type="text/x-handlebars-template">
+    <div id="review-inside-main">
+        <div class="row">
+            <div class="col-sm-6">
+                <h3>{{reviewTypeName review.idReviewType review.reviewTypes}} {{{makeStatusLabels review.status review.idUser review.dateDue reviewerTable}}}</h3>
+            </div>
+            <div class="col-sm-6 clearfix use-perm" data-ifperm="Review:write || Review:delete">
+                    <div class="btn-group pull-right h3" role="group" aria-label="Review Actions">
+                            <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Action <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-right" id="review-menu">
+                                <li><a href="#" class="use-perm" data-action="edit" data-ifperm="Review:write">Edit/Reassign</a></li>
+                                {{#if (notAssignedToMe review.idUser user.idUser) }}
+                                <li><a href="#" class="use-perm" data-action="assignme" data-ifperm="Review:write">Assign Self</a></li>
+                                {{/if}}
+                                <li><a href="#" class="use-perm" data-action="delete" data-ifperm="Review:delete">Delete</a></li>
+                                {{#if review.status.isComplete}}
+                                <li><a href="#" class="use-perm" data-action="reopen" data-ifperm="Review:write">Reopen Review</a></li>
+                                {{/if}}
+                            </ul>
+                    </div>
+            </div>
+            <div class="col-sm-12">
+                <ol class="breadcrumb">{{{ breadcrumbLinks review.links }}}</ol>
+            </div>
+        </div>
+        <div class="row" id="review-info">
+            <div class="col-sm-6">
+                <div class="list-group">
+                    <a href="#" class="list-group-item clearfix">
+                        <strong>Assigned To</strong> <span class="pull-right">{{assignedTo review.idGroup review.idUser groupTable reviewerTable}}</span>
+                    </a>
+                </div></div>
+            <div class="col-sm-2">
+                <div class="list-group">
+                    <div class="list-group-item clearfix"><strong>In</strong><span class="pull-right">{{dateFormatDisplay review.dateCreated}}</span>
+                    </div>
+                </div></div>
+            <div class="col-sm-2">
+                <div class="list-group">
+                    <div class="list-group-item clearfix">
+                        <strong>Out</strong><span class="pull-right">{{dateFormatDisplay review.dateCompleted}}</span>
+                    </div>
+                </div></div>
+            <div class="col-sm-2">
+                <div class="list-group">
+                    <a href="#" class="list-group-item list-group-item-warning clearfix">
+                        <strong>Due</strong><span class="pull-right">{{dateFormatDisplay review.dateDue}}</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="alert alert-danger" role="alert" id="review-incomplete-banner"><strong>Incomplete Review</strong> This review is incomplete and can only be viewed by users with the ability to modify it.</div>
+    </div>
+</script>
+
+<script id="hb-review-submittal-contents" type="text/x-handlebars-template">
+    <div class="panel panel-default">
+        <div class="panel-heading clearfix"><strong>Documents Under Review</strong></div>
+        <div class="panel-body" id="incomplete-submittal-warning">{{review.objectTitle}} is not complete.  The documents are not ready for review.</div>
+        <div class="panel-body" id="no-documents-under-review">There were no documents submitted for review.</div>
+    </div>
+</script>
+
+<script id="hb-review-comments-main" type="text/x-handlebars-template">
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <strong>Comments/Acceptance</strong>
+        </div>
+        <div class="panel-body" id="no-documents-for-comment">There were no documents submitted as comments.</div>
+    </div>
+</script>
+
+<script id="hb-review-file-upload" type="text/x-handlebars-template">
+    <div class="review-contents">
+        <div class="panel-body">
+            <form class="form-horizontal">
+
+                <div class="col-sm-6 col-sm-push-6 clearfix">
+                    <div class="btn-group pull-right" role="group" aria-label="Attach Files">
+                        <button type="button" class="btn btn-default btn-add-file">Add File</button>
+                        <button class="btn btn-danger" id="btn-complete-review">Complete Review</button>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-sm-pull-6">
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" id="checkbox-accepted"> Meets Acceptance Criteria
+                        </label>
+                    </div>
+                </div>
+
+                <div class="clearfix"></div>
+                <p class="p-follows-btn">Drag and drop files here, or use 'Add File', to add files to this review. The files are not uploaded until 'Upload', 'Not Accepted', or 'Accepted' are clicked.  Completing the review prevents further file additions.  <strong>1 Transmittal Letter</strong> is required before completing the review.</p>
+            </form>
+        </div>
+    </div>
+</script>
+
+<script id="hb-review-modal-addedit" type="text/x-handlebars-template">
+    <div class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    <h4 class="modal-title">Add/Edit Review</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                            <label for="review-addedit-type" class="col-sm-2 control-label">Type</label>
+                            <div class="col-sm-10">
+                                <select class="form-control" id="review-addedit-type">{{{reviewTypeOptions reviewTypes review.idReviewType}}}</select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="review-addedit-description" class="col-sm-2 control-label">Description</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="review-addedit-description" placeholder="Description" value="{{review.description}}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="review-addedit-idgroup" class="col-sm-2 control-label">Group</label>
+                            <div class="col-sm-10">
+                                <select class="form-control" id="review-addedit-idgroup">{{{groupOptions groupTable review.idGroup}}}</select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="review-addedit-idreviewer" class="col-sm-2 control-label">Reviewer</label>
+                            <div class="col-sm-10">
+                                <select class="form-control" id="review-addedit-idreviewer">{{{reviewerOptions groupTable reviewerTable review.idUser}}}</select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="review-addedit-datedue" class="col-sm-2 control-label">Date Due</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="review-addedit-datedue" placeholder="Date Due" data-provide="datepicker" value="{{dateFormatDisplay review.dateDue}}">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>

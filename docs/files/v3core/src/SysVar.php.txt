@@ -1,0 +1,144 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: kira
+ * Date: 7/30/2015
+ * Time: 11:13 AM
+ */
+
+namespace eprocess360\v3core;
+
+
+use Exception;
+
+class SysVar
+{
+    private $ini = [];
+    private $data = [];
+    private $valid = false;
+    private static $instance;
+    private $json = [];
+
+    /**
+     * @return SysVar
+     */
+    public static function getInstance()
+    {
+        if (null === static::$instance) {
+            static::$instance = new static();
+        }
+
+        return static::$instance;
+    }
+
+    protected function __construct() {
+        $this->load();
+    }
+
+    public function isValid()
+    {
+        return $this->valid;
+    }
+
+    public function invalidate() {
+        $this->valid = false;
+    }
+
+    private function load()
+    {
+        $results = DB::sql('SELECT * FROM SystemVariables');
+        foreach ($results as $result) {
+            if ($result['ini']) {
+                $this->ini[$result['syskey']] = $result['value'];
+            } else {
+                $this->data[$result['syskey']] = $result['value'];
+            }
+            $this->json[$result['syskey']] = $result['json'];
+        }
+        $this->valid = true;
+    }
+
+    public function has($key, $forceLoad = false)
+    {
+        if (!$this->isValid() || $forceLoad) {
+            $this->load();
+        }
+        return array_key_exists($key, $this->data);
+    }
+
+    public function get($key) {
+        if ($this->has($key)) {
+            if ($this->json[$key]) return json_decode($this->data[$key], true);
+            return $this->data[$key];
+        }
+        throw new Exception("Invalid key {$key}.");
+    }
+
+    public function siteUrl($subDirectorySysKey = null)
+    {
+        return $this->get('siteUrl');
+        global $siteUrl;
+        if (!$siteUrl) {
+
+            $siteUrl = $this->get('SITE_SSL') ? 'https://' : 'http://';
+            $siteUrl .= $this->get('siteHostname');
+            if (!isset($_SERVER['HTTPS']) && $this->get('SITE_SSL')) {
+                header("Location: {$siteUrl}{$_SERVER['REQUEST_URI']}");
+            }
+        }
+        return $siteUrl.$subDirectorySysKey?$this->get($subDirectorySysKey):'';
+    }
+
+    public function getAll() {
+        foreach ($this->data as $key=>$value) {
+            if ($this->json[$key]) yield json_decode($this->data[$key], true);
+            yield $key => $value;
+        }
+    }
+
+    public function hasIni($key)
+    {
+        if (!$this->isValid()) {
+            $this->load();
+        }
+        return array_key_exists($this->ini, $key);
+    }
+
+    public function getIni($key) {
+        if ($this->hasIni($key)) {
+            return $this->data[$key];
+        }
+        throw new Exception("Invalid key {$key}.");
+    }
+
+    public function getAllIni() {
+        foreach ($this->ini as $key=>$value) {
+            yield $key => $value;
+        }
+    }
+
+    public function update($key, $value) {
+        $key = DB::cleanse($key);
+        $value = DB::cleanse($value);
+        $sql = "UPDATE SystemVariables SET `value` = '{$value}' WHERE `syskey` = '{$key}'";
+        DB::sql($sql);
+        $this->valid = false;
+    }
+
+    public function add($key, $value, $ini = 0) {
+        $key = DB::cleanse($key);
+        $value = DB::cleanse($value);
+        $ini = $ini ? 1 : 0;
+        $sql = "INSERT INTO SystemVariables (`syskey`, `value`, `ini`)  VALUES ('{$key}','{$value}','{$ini}') ON DUPLICATE KEY UPDATE `value` = '{$value}', `ini` = 'ini'";
+        DB::sql($sql);
+        $this->valid = false;
+    }
+
+    private function __clone()
+    {
+    }
+
+    private function __wakeup()
+    {
+    }
+}

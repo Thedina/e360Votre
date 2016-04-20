@@ -1,0 +1,38 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: kira
+ * Date: 8/5/2015
+ * Time: 11:30 AM
+ */
+
+namespace eprocess360\v3core\Keydict\Entry;
+
+
+use eprocess360\v3core\Keydict\Entry;
+use eprocess360\v3core\Keydict\Exception\InvalidValueException;
+use eprocess360\v3core\Keydict\InterfaceEntry;
+use eprocess360\v3core\DB;
+
+class TinyInteger extends Entry
+{
+    public function __construct($name, $label, $default = null)
+    {
+        parent::__construct($name, $label, $default);
+        $this->specification = [
+            'type'=>DB::TINYINT,
+            'length'=>3
+        ];
+    }
+
+    public static function validate($value)
+    {
+        $value = preg_replace('/[^0-9]/', '', $value);
+        return substr($value,0,10);
+    }
+
+    public static function hasValidate()
+    {
+        return true;
+    }
+}
