@@ -50,8 +50,49 @@ class Inspection extends Controller
             $this->getInspectionCatAPI();
         });
         
+        $this->routes->map('GET', '/types', function () {
+            $this->getInspectionTypesAPI();
+        });
+        
     }
 
+     public function getInspectionTypesAPI()
+    {
+     
+                $data = array(
+                array(
+                  'idType' =>01,
+                  'title'=> 'Inspection Type 1',
+                  'category'=>'cat-1',
+                  'status' => 1   
+                ),
+                array(
+                  'idType' =>02,
+                  'title'=> 'Inspection Type 2',
+                  'category'=>'cat-2',
+                  'status' => 1   
+                ),
+                array(
+                  'idType' =>03,
+                  'title'=> 'Inspection Type 3',
+                  'category'=>'cat-3',
+                  'status' => 1   
+                )
+                
+                );
+        
+//          print_r($data);
+//          echo "</pre>";
+        
+        $responseData= ['data' => $data];
+        
+        $response = $this->getResponseHandler();
+        
+        $response->setResponse($responseData);
+        $response->setTemplate('Inspection.types.html.twig', 'server');
+        $response->setTemplate('module.inspection.types.handlebars.html', 'client', $this);
+    }
+    
     public function getInspectionAPI()
     {
         
