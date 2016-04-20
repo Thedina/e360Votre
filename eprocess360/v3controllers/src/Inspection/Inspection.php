@@ -77,6 +77,12 @@ class Inspection extends Controller
                   'title'=> 'Inspection Type 3',
                   'category'=>'cat-3',
                   'status' => 1   
+                ),
+                array(
+                  'idType' =>04,
+                  'title'=> 'Inspection Type 4',
+                  'category'=>'cat-3',
+                  'status' => 1   
                 )
                 
                 );
