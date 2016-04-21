@@ -21,6 +21,7 @@ use eprocess360\v3core\Controller\Controller;
 use eprocess360\v3core\Controller\Router;
 use eprocess360\v3core\Controller\Warden;
 use eprocess360\v3core\Controller\Warden\Privilege;
+use eprocess360\v3controllers\Inspection\Model\InspectionType;
 
 use Exception;
 
@@ -61,37 +62,8 @@ class Inspection extends Controller
 
      public function getInspectionTypesAPI()
     {
-     
-                $data = array(
-                array(
-                  'idType' =>01,
-                  'title'=> 'Inspection Type 1',
-                  'category'=>'cat-1',
-                  'status' => 1   
-                ),
-                array(
-                  'idType' =>02,
-                  'title'=> 'Inspection Type 2',
-                  'category'=>'cat-2',
-                  'status' => 1   
-                ),
-                array(
-                  'idType' =>03,
-                  'title'=> 'Inspection Type 3',
-                  'category'=>'cat-3',
-                  'status' => 1   
-                ),
-                array(
-                  'idType' =>04,
-                  'title'=> 'Inspection Type 4',
-                  'category'=>'cat-3',
-                  'status' => 1   
-                )
-                
-                );
-        
-//          print_r($data);
-//          echo "</pre>";
+         
+        $data = InspectionType::allInspectionTypes($this->hasPrivilege(Privilege::ADMIN));
         
         $responseData= ['data' => $data];
         

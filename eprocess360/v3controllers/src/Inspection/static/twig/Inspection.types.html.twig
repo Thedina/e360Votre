@@ -24,7 +24,8 @@
             _.each({
                 typeListMain: '#hb-type-list-main',
                 typeListItem: '#hb-type-list-item',
-                typeModelEdit: '#hb-group-modal-editgroup'
+                typeModelEdit: '#hb-group-modal-editgroup',
+                typeModelAdd: '#hb-group-modal-addgroup'
                 {#groupListItem: '#hb-group-list-item',
                 groupInsideMain: '#hb-group-inside-main',
                 groupInsideUser: '#hb-group-inside-user',
@@ -36,6 +37,7 @@
             
             
              modalEditType = new ModalEditType();
+             modalAddType = new ModalAddType();
             //modalEditUser = new ModalEditGroupUser();
 
             if(_.isArray(getData)) {
