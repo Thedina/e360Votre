@@ -2,6 +2,8 @@
 
 namespace eprocess360\v3controllers\Inspection;
 
+use eprocess360\v3controllers\Inspection\Model\Limitation;
+use eprocess360\v3core\Request\Request;
 //use eprocess360\v3core\Controller\Router;
 //use eprocess360\v3core\Controller\Controller;
 //
@@ -62,6 +64,9 @@ class Inspection extends Controller
         $this->routes->map('GET', '/limitation', function () {
             $this->getLimitationAPI();
         });
+        $this->routes->map('GET', '/inspection', function () {
+            $this->editGroupUserAPI();
+        });
         
     }
 
@@ -95,6 +100,7 @@ class Inspection extends Controller
                 )
                 
                 );
+
         
 //          print_r($data);
 //          echo "</pre>";
@@ -238,31 +244,9 @@ class Inspection extends Controller
     public function getLimitationAPI()
     {
 
-        $data = array(
-            array(
-                'idCategory' => 'leg dis able',
-                'title' => 'Cagtegory 1',
-                'Pcat' => 'construction,piling'
-            ),
-            array(
-                'idCategory' => 'hraring disable',
-                'title' => 'Cagtegory 2',
-                'Pcat' => "piling,slab"
-            )
-        );
+      
 
-        $data2 = array(
-            array(
-                'idcat' => '2',
-                'title' => 'piling',
 
-            ),
-            array(
-                'idCategory' => '1',
-                'title' => 'slab',
-
-            )
-        );
 
 
 
@@ -270,7 +254,7 @@ class Inspection extends Controller
 //        echo "<pre>";
 //        print_r($data);
 //        echo "</pre>";
-
+        $data = Limitation::allLimitation($this->hasPrivilege(Privilege::ADMIN));
         $responseData = [
             'data' => $data
         ];

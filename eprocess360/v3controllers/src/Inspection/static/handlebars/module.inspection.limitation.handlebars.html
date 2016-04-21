@@ -16,7 +16,7 @@
     <div class="panel panel-default">
         <div class="table-responsive">
             <table class="table table-hover">
-                <thead><tr><th>Name</th><th>Description</th><th>Prohibited categorys</th></tr></thead>
+                <thead><tr><th>Name</th><th>Description</th><th>Status</th></tr></thead>
                 <tbody id="category-list"></tbody>
             </table>
         </div>
@@ -25,10 +25,10 @@
 
 <script id="hb-category-list-item" type="text/x-handlebars-template">
     <tr>
-        <td>{{limitation.idCategory}}</td>
-        <td><a href="{{meta.path}}/{{limitation.idCategory}}">{{limitation.title}}</a></td>
+        <td><a href="{{meta.path}}/{{limitation.title}}">{{limitation.title}}</a></td>
+        <td>{{limitation.description}}</td>
         <td>
-            {{limitation.Pcat}}
+            {{ limitation.status}}
             <div class="btn-category pull-right" role="category" aria-label="Category Options">
                 <button type="button" class="btn btn-default btn-xs btn-edit use-perm" data-ifperm="Inspection:write">Edit</button>
                 <button type="button" class="btn btn-default btn-xs btn-remove use-perm" data-ifperm="Inspection:delete">Remove</button>
@@ -52,20 +52,20 @@
                         <div class="form-group">
                             <label for="group-addedit-title" class="col-sm-2 control-label">Name</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control" id="group-addedit-title" placeholder="Title" value="{{group.title}}">
+                                <input type="text" class="form-control" id="group-addedit-title" placeholder="Title" value="{{limitation.title}}">
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="group-addedit-title" class="col-sm-2 control-label">Discription</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control" id="group-addedit-title" placeholder="Title" value="{{group.title}}">
+                                <input type="text" class="form-control" id="group-addedit-title" placeholder="Title" value="{{limitation.description}}">
                             </div>
                         </div>
                         <div class="form-group" id="demo">
                             <div class="col-sm-offset-2 col-sm-10">
                                 <div class="checkbox">
                                     <label>
-                                        <input id="groupuser-addedit-isactive" type="checkbox" >{{group.Pcat}}
+                                        <input id="groupuser-addedit-isactive" type="checkbox" >{{group.idGroup}}
                                     </label>
                                 </div>
                             </div>
@@ -96,7 +96,7 @@
                             <label for="groupuser-addedit-username" class="col-sm-2 control-label">User</label>
                             <div class="col-sm-10">
                                 <input type="text" class="form-control" id="groupuser-addedit-username" placeholder="Find user..." value="{{#if groupUser.firstName}}{{groupUser.firstName}} {{groupUser.lastName}}{{/if}}">
-                                <input type="hidden" id="groupuser-addedit-iduser" value="{{groupUser.idUser}}">
+                                <input type="hidden" id="groupuser-addedit-iduser" value="{{limitation.title}}">
                             </div>
                         </div>
 

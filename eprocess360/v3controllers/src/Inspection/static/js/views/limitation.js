@@ -58,8 +58,8 @@ var LimitationListMainView = BizzyBone.BaseView.extend({
      * @param {Object} e
      */
     eventButtonNewGroup: function(e) {
-        var newGroup = new GroupModel();
-        modalEditGroup.show(newGroup, this.collection);
+        var newGroup = new LimitationModel();
+        modalEditLimitation.show(newGroup, this.collection);
     },
     /**
      * Event hander for collection add group
@@ -93,7 +93,7 @@ var LimitationListItemView = BizzyBone.BaseView.extend({
      */
     render: function() {
         var template;
-        document.getElementById("demo").innerHTML
+        
         template = Handlebars.templates.limitationListItem;
         console.log("exiiiit", this.model.attributes);
 
@@ -198,7 +198,7 @@ var ModalEditLimitation = BizzyBone.BaseView.extend({
 
         var template;
         template = Handlebars.templates.limitationEditView;//------------ds
-        this.$el.html(template({group: this.model.attributes, meta: hbInitData().meta.Group}));
+        this.$el.html(template({limitation: this.model.attributes, meta: hbInitData().meta.Group}));
 
         // If never rendered before, insert the modal div at the top of the page
         if(!this.rendered) {
