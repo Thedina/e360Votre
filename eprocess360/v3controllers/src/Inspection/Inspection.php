@@ -53,6 +53,9 @@ class Inspection extends Controller
         $this->routes->map('GET', '/types', function () {
             $this->getInspectionTypesAPI();
         });
+        $this->routes->map('GET', '/limitation', function () {
+            $this->getLimitationAPI();
+        });
         
     }
 
@@ -175,4 +178,47 @@ class Inspection extends Controller
 //        $response->setTemplate('Inspection.main.html.twig');
 //        $response->setResponse($responseData);
 //    }
+    public function getLimitationAPI()
+    {
+
+        $data = array(
+            array(
+                'idCategory' => 'leg dis able',
+                'title' => 'Cagtegory 1',
+                'Pcat' => 'construction,piling'
+            ),
+            array(
+                'idCategory' => 'hraring disable',
+                'title' => 'Cagtegory 2',
+                'Pcat' => "piling,slab"
+            )
+        );
+
+
+
+//        $data = InspectionCategories::allCategories();
+//        echo "<pre>";
+//        print_r($data);
+//        echo "</pre>";
+
+        $responseData = [
+            'data' => $data
+        ];
+
+//        $this->hasPrivilege(Privilege::ADMIN);
+
+        $response = $this->getResponseHandler();
+
+        $response->setResponse($responseData);
+        $response->setTemplate('Inspection.limitation.html.twig', 'server');
+        $response->setTemplate('module.inspection.limitation.handlebars.html', 'client', $this);
+
+
+
+
+    }
+    
+
+
+
 }
