@@ -186,7 +186,7 @@ class Inspection extends Controller
 //        echo "</pre>";
 
         $responseData = [
-            'data' => $data
+            'data' => $data,$data2
         ];
 
 //        $this->hasPrivilege(Privilege::ADMIN);
@@ -251,6 +251,19 @@ class Inspection extends Controller
             )
         );
 
+        $data2 = array(
+            array(
+                'idcat' => '2',
+                'title' => 'piling',
+
+            ),
+            array(
+                'idCategory' => '1',
+                'title' => 'slab',
+
+            )
+        );
+
 
 
 //        $data = InspectionCategories::allCategories();
@@ -267,14 +280,14 @@ class Inspection extends Controller
         $response = $this->getResponseHandler();
 
         $response->setResponse($responseData);
-        $response->setTemplate('Inspection.limitation.html.twig', 'server');
+        $response->setTemplate('Inspection.lim.html.twig', 'server');
         $response->setTemplate('module.inspection.limitation.handlebars.html', 'client', $this);
 
 
 
 
     }
-    
+
 
 
 

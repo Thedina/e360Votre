@@ -6,6 +6,8 @@
  * Backbone view for category list
  * @typedef {Object} CategoryListMainView
  */
+
+
 var LimitationListMainView = BizzyBone.BaseView.extend({
     /**
      * @param options
@@ -91,8 +93,10 @@ var LimitationListItemView = BizzyBone.BaseView.extend({
      */
     render: function() {
         var template;
+        document.getElementById("demo").innerHTML
         template = Handlebars.templates.limitationListItem;
         console.log("exiiiit", this.model.attributes);
+
 //        console.log(template);
 //        return false;
         // If this is the first render, fill $el from the template. Otherwise replace it.
@@ -103,6 +107,7 @@ var LimitationListItemView = BizzyBone.BaseView.extend({
             // div and point whatever is the outermost container from the template
             if(this.defaultElement) {
                 this.setElement(this.$el.children().first());
+
             }
         }
         else {
@@ -137,7 +142,7 @@ var LimitationListItemView = BizzyBone.BaseView.extend({
      * @param {Object} e
      */
     eventButtonEditGroup: function(e) {
-        modalEditGroup.show(this.model);
+        modalEditLimitation.show(this.model);
     },
     /**
      * Event hander for click remove group button
@@ -175,7 +180,7 @@ var LimitationListItemView = BizzyBone.BaseView.extend({
  * Backbone view for edit group modal
  * @typedef {Object} ModalEditGroup
  */
-var ModalEditGroup = BizzyBone.BaseView.extend({
+var ModalEditLimitation = BizzyBone.BaseView.extend({
     /**
      * @param {Object} options
      * @returns {ModalEditGroup}
@@ -200,6 +205,10 @@ var ModalEditGroup = BizzyBone.BaseView.extend({
             $(document.body).prepend(this.$el);
             this.rendered = true;
         }
+
+
+
+
 
         return this;
     },
