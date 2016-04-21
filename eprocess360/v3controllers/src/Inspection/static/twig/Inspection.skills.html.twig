@@ -1,0 +1,65 @@
+{% extends 'SystemController.backbone.base.html.twig' %}
+
+{% block moduleCSS %}
+    <link rel="Stylesheet" type="text/css" href="{{ Response.meta.SystemController.static }}/css/typeahead.css"/>
+{% endblock %}
+{% block body %}
+    <div id="modal-node"></div>
+    <div id="content-container"></div>
+{% endblock %}
+{% block moduleJS %}
+    <script src="{{ Response.meta.SystemController.static }}/js/typeahead.bundle.min.js"></script>
+    <script src="{{ Response.meta.SystemController.static }}/js/util.js"></script>
+    <script src="{{ Response.meta.SystemController.static }}/js/bizzybone.js"></script>
+{#    <script src="{{ Response.meta.Inspection.static }}/js/helpers/groupHelpers.js"></script>#}
+    <script src="{{ Response.meta.Inspection.static }}/js/models/skills.js"></script>
+    <script src="{{ Response.meta.Inspection.static }}/js/views/skills.js"></script>
+{% endblock %}
+{% block javascript %}
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var getData, meta, baseModel, baseCollection, baseView;
+
+            // Precompile all the relevant templates
+            _.each({
+                skillListMain: '#hb-skill-list-main',
+                skillListItem: '#hb-skill-list-item',
+                EditSkill:'#hb-group-modal-edituser',
+                AddSkill: '#hb-group-modal-adduser',
+                {#groupListItem: '#hb-group-list-item',
+                groupInsideMain: '#hb-group-inside-main',
+                groupInsideUser: '#hb-group-inside-user',
+                groupModalEditGroup: '#hb-group-modal-editgroup',
+                groupModalEditUser: '#hb-group-modal-edituser'#}
+            }, hbCompileTemplate);
+            
+            getData = hbInitData().data;
+            
+            
+            modalEditSkill = new ModalEditGroup();
+            modalAddSkill = new ModalAddGroup();
+            //modalEditUser = new ModalEditGroupUser();
+
+            if(_.isArray(getData)) {
+
+                console.log("ssss");
+
+
+                baseCollection = new SkillList(_.map(getData, function(skillData) {
+                    return new SkillModel(skillData);
+                }));
+                
+                baseView = new SkillListMainView({collection: baseCollection, el: $('#content-container')});
+                baseView.render();
+                
+                return;
+
+            }
+            else if(_.isObject(getData)) {
+                baseModel = new GroupModel(getData);
+                baseView = new GroupView({el: $('#content-container'), model: baseModel});
+                baseView.render();
+            }
+        });
+    </script>
+{% endblock %}
