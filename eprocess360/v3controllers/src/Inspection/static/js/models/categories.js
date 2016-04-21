@@ -8,15 +8,11 @@
  */
 var CategoryModel = BizzyBone.BaseModel.extend({
     urlRoot: hbInitData().meta.Inspection.apiPath,
-    idAttribute: 'idCategory',
+    idAttribute: 'idInspCategory',
     defaults: {
-        idController: 0,
+        idInspController: 0,
         title: '',
-        status: {
-            isActive: true
-        },
-        users: [],
-        roles: []
+        description: '',
     },
     dontSave: [
         'users',

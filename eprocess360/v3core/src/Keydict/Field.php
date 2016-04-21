@@ -728,8 +728,8 @@ abstract class Field
             if ($field->isContainer())
                 $out[$field->getName()] = $field->visualize();
             else
-                $out[$field->getName()] = $field->sleep();
-        }
+                $out[$field->getName()] = $field->sleep();  
+        } 
         return $out;
     }
 

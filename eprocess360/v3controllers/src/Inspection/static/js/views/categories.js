@@ -20,7 +20,9 @@ var CategoryListMainView = BizzyBone.BaseView.extend({
         _.each(this.collection.models, function(categoryModel) {
             thisView.categoryViews.push(new CategoryListItemView({model: categoryModel}));
         });
-
+        
+        console.log(this.collection);
+        
         this.listenTo(this.collection, 'add', this.eventCategoryAdded);
 
         return Backbone.View.prototype.initialize.call(this, options);
@@ -30,7 +32,6 @@ var CategoryListMainView = BizzyBone.BaseView.extend({
      */
     render: function() {
         
-        console.log("CHECKKK");
         var template, categoryList;
         
         template = Handlebars.templates.categoryListMain;
@@ -49,15 +50,15 @@ var CategoryListMainView = BizzyBone.BaseView.extend({
         Inspection: 'meta'
     },
     events: {
-        "click #btn-new-group": "eventButtonNewGroup"
+        "click #btn-new-category": "eventButtonNewGroup"
     },
     /**
      * Event handler for click "New Group" button
      * @param {Object} e
      */
     eventButtonNewGroup: function(e) {
-        var newGroup = new GroupModel();
-        modalEditGroup.show(newGroup, this.collection);
+        var newCategory = new CategoryModel();
+        modalEditCategory.show(newCategory, this.collection);
     },
     /**
      * Event hander for collection add group
@@ -92,9 +93,7 @@ var CategoryListItemView = BizzyBone.BaseView.extend({
     render: function() {
         var template;
         template = Handlebars.templates.categoryListItem;
-        console.log("exiiiit", this.model.attributes);
-//        console.log(template);
-//        return false; 
+
         // If this is the first render, fill $el from the template. Otherwise replace it.
         if(this.$el.is(':empty')) {
             this.$el.html(template({category: this.model.attributes, meta: hbInitData().meta.Inspection}));
@@ -137,7 +136,7 @@ var CategoryListItemView = BizzyBone.BaseView.extend({
      * @param {Object} e
      */
     eventButtonEditGroup: function(e) {
-        modalEditGroup.show(this.model);
+        modalEditCategory.show(this.model);
     },
     /**
      * Event hander for click remove group button
@@ -172,16 +171,15 @@ var CategoryListItemView = BizzyBone.BaseView.extend({
 });
 
 /**
- * Backbone view for edit group modal
- * @typedef {Object} ModalEditGroup
+ * Backbone view for edit category modal
+ * @typedef {Object} ModalEditCategory
  */
-var ModalEditGroup = BizzyBone.BaseView.extend({
+var ModalEditCategory = BizzyBone.BaseView.extend({
     /**
      * @param {Object} options
      * @returns {ModalEditGroup}
      */
     initialize: function(options) {
-        
         this.rendered = false;
         this.userIDs = {};
         return Backbone.View.prototype.initialize.call(this, options);
@@ -192,9 +190,10 @@ var ModalEditGroup = BizzyBone.BaseView.extend({
     render: function() {
         
         var template;
-        template = Handlebars.templates.groupModalEditGroup;
-        this.$el.html(template({group: this.model.attributes, meta: hbInitData().meta.Group}));
-
+        template = Handlebars.templates.categoryModalEditCategory;
+        
+        this.$el.html(template({category: this.model.attributes, meta: hbInitData().meta.Inspection}));
+        
         // If never rendered before, insert the modal div at the top of the page
         if(!this.rendered) {
             $(document.body).prepend(this.$el);
@@ -215,9 +214,10 @@ var ModalEditGroup = BizzyBone.BaseView.extend({
      * @param {GroupList} groupCollection
      * @returns {ModalEditGroup}
      */
-    show: function(groupModal, groupCollection) {
-        this.model = groupModal;
-        this.collection = groupCollection;
+    show: function(categoryModal, categoryCollection) {
+        
+        this.model = categoryModal;
+        this.collection = categoryCollection;
 
         this.render();
 
@@ -238,15 +238,20 @@ var ModalEditGroup = BizzyBone.BaseView.extend({
      * @param {Object} e
      */
     eventSave: function(e) {
+        
         var thisView, toSave, newStatus, wasNew;
         thisView = this;
-        toSave = {};
+        toSave   = {};
 
-        wasNew = this.model.isNew();
-        newStatus = _.clone(this.model.get('status'));
-        newStatus.isActive = $('#group-addedit-isactive').prop('checked');
-        toSave.status = newStatus;
-        toSave.title = $('#group-addedit-title').val();
+        wasNew          = this.model.isNew();
+//        newStatus       = _.clone(this.model.get('status'));
+//        
+//        console.log(newStatus);
+//        return;
+//        toSave.status   = newStatus;
+        toSave.title        = $('#category-addedit-title').val();
+        toSave.description  = $('#category-addedit-desc').val();
+        
         thisView.model.save(toSave, {
             wait: true,
             success: function(model, response, options) {
@@ -273,7 +278,7 @@ var ModalEditGroup = BizzyBone.BaseView.extend({
  * Backbone view for group with user list
  * @typedef {Object} GroupView
  */
-var GroupView = BizzyBone.BaseView.extend({
+var CategoryView = BizzyBone.BaseView.extend({
     /**
      * @param {Object} [options]
      * @returns {GroupView}
@@ -331,7 +336,7 @@ var GroupView = BizzyBone.BaseView.extend({
      * @param e
      */
     eventButtonEditGroup: function(e) {
-        modalEditGroup.show(this.model);
+        modalEditCategory.show(this.model);
     },
     /**
      * Event handler for collection add user
@@ -441,176 +446,5 @@ var GroupUserView = BizzyBone.BaseView.extend({
      */
     eventUserUpdated: function(model) {
         this.render();
-    }
-});
-
-/**
- * Backbone view for edit user modal
- * @typedef {Object} ModalEditGroupUser
- */
-var ModalEditGroupUser = BizzyBone.BaseView.extend({
-    /**
-     * @param {Object} options
-     * @returns {ModalEditGroupUser}
-     */
-    initialize: function(options) {
-        this.rendered = false;
-        this.userIDs = {};
-        return Backbone.View.prototype.initialize.call(this, options);
-    },
-    /**
-     * If render() is called while user model.isNew(), set up and display the
-     * user search box. Otherwise remove all traces of it.
-     * @returns {ModalEditGroupUser}
-     */
-    render: function() {
-        var thisView, template, userSearch;
-        thisView = this;
-        template = Handlebars.templates.groupModalEditUser;
-        this.$el.html(template({groupUser: this.model.attributes, group: this.model.group, meta: hbInitData().meta.Group}));
-
-        // If never rendered before, insert the modal div at the top of the page
-        if(!this.rendered) {
-            $(document.body).prepend(this.$el);
-            this.rendered = true;
-        }
-
-        // If not working with a new user, don't show the user select portion
-        // of the form
-        if(!this.model.isNew()) {
-            $('#edituser-modal-user-subform').remove();
-        }
-        else {
-            userSearch = new Bloodhound({
-                datumTokenizer: Bloodhound.tokenizers.whitespace,
-                queryTokenizer: Bloodhound.tokenizers.whitespace,
-                remote: {
-                    wildcard: '%QUERY',
-                    url: hbInitData().meta.User.apiPath + '/find?name=%QUERY'
-                }
-            });
-            $('#groupuser-addedit-username').typeahead(
-                null,
-                {
-                    name: 'user-api',
-                    /**
-                     * Custom source function pulls user ID out of data from
-                     * user search and separates from names.
-                     * @param {Array} query
-                     * @param {function} sync
-                     * @param {function} async
-                     * @returns {Number|*}
-                     */
-                    source: function(query, sync, async) {
-                        var userNames = [];
-                        return userSearch.search(
-                            query,
-                            function(data) {
-                                //sync
-                                sync(data[0]);
-                            },
-                            function(data) {
-                                //async
-                                // data[0] is still a fat hack, because for some reason we see the
-                                // incoming object with errors, data, meta as an array without names :(
-                                _.each(data[0], function(d) {
-                                    thisView.userIDs[d.name] = d.id;
-                                    userNames.push(d.name);
-                                });
-                                async(userNames);
-                            }
-                        );
-                    }
-                }
-            );
-        }
-
-        return this;
-    },
-    events: {
-        "click .btn-primary": "eventSave",
-        "click .btn-default": "eventCancel",
-        "typeahead:select": "eventTypeaheadSelect"
-    },
-    /**
-     * Show the group add/edit user modal. To set up save callbacks, takes a
-     * new or existing group user model and (for adding) a collection to add
-     * to.
-     * @param {GroupUserModel} userModel
-     * @param {GroupUserList} userCollection
-     * @returns {ModalEditGroupUser}
-     */
-    show: function(userModel, userCollection) {
-        this.model = userModel;
-        this.collection = userCollection;
-
-        this.render();
-
-        this.$el.children().first().modal('show');
-
-        return this;
-    },
-    /**
-     * Just hide the modal
-     * @returns {ModalEditGroupUser}
-     */
-    hide: function() {
-        this.$el.children().first().modal('hide');
-        return this;
-    },
-    /**
-     * Event handler for "Save" button. Saves new or existing group user model.
-     * @param {Object} e
-     */
-    eventSave: function(e) {
-        var thisView, toSave, newStatus, wasNew, type, url;
-        thisView = this;
-        toSave = {};
-
-        wasNew = this.model.isNew();
-        newStatus = _.clone(this.model.get('status'));
-        newStatus.isActive = $('#groupuser-addedit-isactive').prop('checked');
-        toSave.status = newStatus;
-        toSave.idRole = parseInt($('#groupuser-addedit-idrole').val());
-        if(wasNew) {
-            toSave.idUser = parseInt($('#groupuser-addedit-iduser').val());
-            type = 'POST';
-            url = this.model.urlRoot();
-        }
-        else {
-            type = 'PUT';
-            url = this.model.urlRoot() + '/' + this.model.get('idUser');
-        }
-
-        this.model.save(toSave, {
-            type: type,
-            url: url,
-            wait: true,
-            success: function(model, response, options) {
-                if(wasNew) {
-                    thisView.collection.add(model);
-                }
-                thisView.hide();
-            },
-            error: function (model, response, options) {
-                Util.showError(response.responseJSON);
-            }
-        });
-    },
-    /**
-     * Even handler for "Cancel" button
-     * @param {Object} e
-     */
-    eventCancel: function(e) {
-        this.hide();
-    },
-    /**
-     * Event handler for selecting option from typeahead. Sets corresponding
-     * user ID for selected user into hidden field.
-     * @param {Object} e
-     * @param name
-     */
-    eventTypeaheadSelect: function(e, name) {
-        $('#groupuser-addedit-iduser').val(this.userIDs[name]);
     }
 });

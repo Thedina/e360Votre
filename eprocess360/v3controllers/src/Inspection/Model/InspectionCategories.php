@@ -15,6 +15,7 @@ use eprocess360\v3core\Keydict\Entry\JSONArrayFixed128;
 use eprocess360\v3core\Keydict\Entry\PrimaryKeyInt;
 use eprocess360\v3core\Keydict\Entry\String;
 use eprocess360\v3core\Keydict\Entry\TinyInteger;
+use eprocess360\v3core\Keydict\Entry\Datetime;
 use eprocess360\v3core\Keydict\Table;
 use eprocess360\v3core\Model;
 use eprocess360\v3core\Model\Roles;
@@ -36,13 +37,17 @@ class InspectionCategories extends Model
     public static function keydict()
     {
         return Table::build(
-            PrimaryKeyInt::build('id', 'Category ID'),
+            PrimaryKeyInt::build('idInspCategory', 'Category ID'),
             String::build('title', 'Category Name'),
             String::build('description', 'Category Description')
-        )->setName('GroupCategories')->setLabel('GroupCategories');
+        )->setName('InspCategories')->setLabel('InspCategories');
     }
     
-    
+    public function create($title, $description){
+        
+    }
+
+
     public static function allCategories($readable = false)
     {
         global $pool;
@@ -60,17 +65,16 @@ class InspectionCategories extends Model
         $new = array();
         foreach (self::each($sql)
                  as $sqlResult){
-//            
+            
             $resultArray = $sqlResult->toArray();
 //
-            if(isset($resultArray['id'])) {
+            if(isset($resultArray['idInspCategory'])) {
                 $new[] = $resultArray;
             }
         }
-//        echo "<pre>";
-//        print_r($new);
         return $new;
     }
+
 
     /**
      * @param int $idGroup

@@ -34,10 +34,6 @@ var GroupListMainView = BizzyBone.BaseView.extend({
 
         template = Handlebars.templates.groupListMain;
 
-         console.log(hbInitData().meta.Group);
-         
-//         return false;
-
         this.$el.html(template({meta: hbInitData().meta.Group}));
         this.applyPermissions();
 
@@ -181,7 +177,6 @@ var ModalEditGroup = BizzyBone.BaseView.extend({
      * @returns {ModalEditGroup}
      */
     initialize: function(options) {
-        console.log("ddd dads");
         this.rendered = false;
         this.userIDs = {};
         return Backbone.View.prototype.initialize.call(this, options);

@@ -2,28 +2,17 @@
 
 namespace eprocess360\v3controllers\Inspection;
 
-use eprocess360\v3controllers\Inspection\Model\Limitation;
-use eprocess360\v3core\Request\Request;
-//use eprocess360\v3core\Controller\Router;
-//use eprocess360\v3core\Controller\Controller;
-//
-//use eprocess360\v3core\Controller\Dashboard;
-//
-//use eprocess360\v3core\Form;
-//
-//use eprocess360\v3core\Keydict\Entry\Email;
-//use eprocess360\v3core\Keydict\Entry\Password;
-//use eprocess360\v3core\Keydict\Entry\PhoneNumber;
-//use eprocess360\v3core\Keydict\Entry\String;
-
-//use eprocess360\v3controllers\Inspection\Model\InspectionCategories;
 
 use eprocess360\v3core\Controller\Auth;
 use eprocess360\v3core\Controller\Controller;
 use eprocess360\v3core\Controller\Router;
 use eprocess360\v3core\Controller\Warden;
 use eprocess360\v3core\Controller\Warden\Privilege;
+use eprocess360\v3core\Request\Request;
+
 use eprocess360\v3controllers\Inspection\Model\InspectionType;
+use eprocess360\v3controllers\Inspection\Model\Limitation;
+use eprocess360\v3controllers\Inspection\Model\InspectionCategories;
 
 use Exception;
 
@@ -49,16 +38,18 @@ class Inspection extends Controller
         $this->routes->map('GET', '', function () {
             $this->getInspectionAPI();
         });
-
-
         $this->routes->map('GET', '/categories', function () {
-            $this->getInspectionCatAPI();
+            $this->getInspectionCategoryAPI();
         });
         $this->routes->map('GET', '/skills', function () {
             $this->getInspectionSkillAPI();
         });
-
-        
+        $this->routes->map('POST', '/categories', function () {
+            $this->createInspectionCategoryAPI();
+        });
+        $this->routes->map('PUT', '/categories/[i:idInspCategory]', function ($idInspCategory) {
+            $this->editInspectionCategoryAPI($idInspCategory);
+        });
         $this->routes->map('GET', '/types', function () {
             $this->getInspectionTypesAPI();
         });
@@ -92,39 +83,31 @@ class Inspection extends Controller
     {
 
     }
-
-    public function getInspectionCatAPI()
+    
+    public function getInspectionCategoryAPI()
     {
-
-        $data = array(
-            array(
-                'idCategory' => 8,
-                'title' => 'Cagtegory 1',
-                'status' => 1
-            ),
-            array(
-                'idCategory' => 18,
-                'title' => 'Cagtegory 2',
-                'status' => 1
-            )
-        );
-
-//        $data = InspectionCategories::allCategories();
-//        echo "<pre>";
-//        print_r($data);
-//        echo "</pre>";
-
+        $data = InspectionCategories::allCategories();
+        
         $responseData = [
             'data' => $data
         ];
+        
+        $response       = $this->getResponseHandler();
+        $responseMeta   = $response->getResponseMeta();
+        $currentApi     = $responseMeta["Inspection"]["api"];
+        $newApi         = $currentApi . '/categories';
+        
+        $currentApiPath = $responseMeta["Inspection"]["apiPath"];
+        $newApiPath     = $currentApiPath . '/categories';
 
-//        $this->hasPrivilege(Privilege::ADMIN);
-
-        $response = $this->getResponseHandler();
+        $response->extendResponseMeta('Inspection', array('api' => $newApi));
+        $response->extendResponseMeta('Inspection', array('apiPath' => $newApiPath));
 
         $response->setResponse($responseData);
+        
         $response->setTemplate('Inspection.category.html.twig', 'server');
         $response->setTemplate('module.inspection.categories.handlebars.html', 'client', $this);
+
 
 
 //        $response->setResponse($responseData);
@@ -193,6 +176,38 @@ class Inspection extends Controller
 //        if($error)
 //            $response->setErrorResponse(new Exception($error));
 
+    }
+
+
+    
+    public function editInspectionCategoryAPI($idInspCategory){
+        
+        $this->verifyPrivilege(Privilege::WRITE);
+        
+        $category    = InspectionCategories::sqlFetch($idInspCategory);
+        $data        = Request::get()->getRequestBody();
+        $title       = $data['title'];
+        $description = $data['description'];
+        
+        if($title !== null)
+            $category->title->set($title);
+        if($description !== null)
+            $category->description->set($description);
+
+        $category->update();
+        $data = $category->toArray();        
+        
+    }
+    
+    public function createInspectionCategoryAPI(){
+        
+        $this->verifyPrivilege(Privilege::CREATE);
+
+        $data = Request::get()->getRequestBody();
+        $title = $data['title'];
+        $description = $data['description'];
+
+        $data = InspectionCategories::create($title, $description);
     }
 
 //    public function testFunc(){

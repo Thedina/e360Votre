@@ -162,7 +162,6 @@ BizzyBone = (function() {
                     pt = permissionTargets[target]
                     
                     if(pt === 'meta') {
-                        console.log('sss', meta[target]);
                         pt = meta[target].permissions;
                     }
 
@@ -176,8 +175,6 @@ BizzyBone = (function() {
             }
 
             thisView.$el.find('.use-perm').each(function(index) {
-                
-                console.log('permm', this);
                 
                 var ifPerm, hasPerm;
                 ifPerm = $(this).data('ifperm');
