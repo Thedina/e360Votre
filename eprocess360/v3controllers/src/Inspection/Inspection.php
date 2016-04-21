@@ -14,7 +14,7 @@ namespace eprocess360\v3controllers\Inspection;
 //use eprocess360\v3core\Keydict\Entry\PhoneNumber;
 //use eprocess360\v3core\Keydict\Entry\String;
 
-use eprocess360\v3controllers\Inspection\Model\InspectionCategories;
+//use eprocess360\v3controllers\Inspection\Model\InspectionCategories;
 
 use eprocess360\v3core\Controller\Auth;
 use eprocess360\v3core\Controller\Controller;
@@ -31,7 +31,7 @@ use Exception;
 class Inspection extends Controller
 {
     use Router, Auth, Warden;
-   
+
 
     /*********************************************   #ROUTING#  **********************************************/
 
@@ -42,24 +42,29 @@ class Inspection extends Controller
      */
     public function routes()
     {
+
         $this->routes->map('GET', '', function () {
             $this->getInspectionAPI();
         });
-        
+
+
         $this->routes->map('GET', '/categories', function () {
             $this->getInspectionCatAPI();
         });
-        
+        $this->routes->map('GET', '/skills', function () {
+            $this->getInspectionSkillAPI();
+        });
+
     }
 
     public function getInspectionAPI()
     {
-        
+
     }
-    
+
     public function getInspectionCatAPI()
     {
-        
+
         $data = array(
             array(
                 'idCategory' => 8,
@@ -72,25 +77,25 @@ class Inspection extends Controller
                 'status' => 1
             )
         );
-       
+
 //        $data = InspectionCategories::allCategories();
 //        echo "<pre>";
 //        print_r($data);
 //        echo "</pre>";
-        
+
         $responseData = [
             'data' => $data
         ];
-        
+
 //        $this->hasPrivilege(Privilege::ADMIN);
-        
+
         $response = $this->getResponseHandler();
-        
+
         $response->setResponse($responseData);
         $response->setTemplate('Inspection.category.html.twig', 'server');
         $response->setTemplate('module.inspection.categories.handlebars.html', 'client', $this);
-        
-        
+
+
 //        $response->setResponse($responseData);
 //        if($error == false)
 //            $error = $this->messages[$responseCode];
@@ -105,9 +110,60 @@ class Inspection extends Controller
 //        $response->setTemplate('module.groups.handlebars.html', 'client', $this);
 //        if($error)
 //            $response->setErrorResponse(new Exception($error));
-        
+
     }
-    
+
+    public function getInspectionSkillAPI()
+    {
+
+        $data = array(
+            array(
+                'idSkill' => 9,
+                'title' => 'skill 1',
+                'status' => 1
+            ),
+            array(
+                'idSkill' => 19,
+                'title' => 'skill 2',
+                'status' => 1
+            ),
+        );
+
+//        $data = InspectionCategories::allCategories();
+//        echo "<pre>";
+//        print_r($data);
+//        echo "</pre>";
+
+        $responseData = [
+            'data' => $data
+        ];
+
+//        $this->hasPrivilege(Privilege::ADMIN);
+
+        $response = $this->getResponseHandler();
+
+        $response->setResponse($responseData);
+        $response->setTemplate('Inspection.skills.html.twig', 'server');
+        $response->setTemplate('module.inspection.skills.handlebars.html', 'client', $this);
+
+
+//        $response->setResponse($responseData);
+//        if($error == false)
+//            $error = $this->messages[$responseCode];
+//
+//        $responseData = [
+//            'data' => $data
+//        ];
+//
+//        $response = $this->getResponseHandler();
+//        $response->setResponse($responseData, $responseCode, false);
+//        $response->setTemplate('inspection.category.html', 'server');
+//        $response->setTemplate('module.groups.handlebars.html', 'client', $this);
+//        if($error)
+//            $response->setErrorResponse(new Exception($error));
+
+    }
+
 //    public function testFunc(){
 //        $form = Form::build(0, 'checkList', 'Check List')->setPublic(true);
 //// Declare what values the form can accept
