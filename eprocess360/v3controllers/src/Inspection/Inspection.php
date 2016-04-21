@@ -2,6 +2,8 @@
 
 namespace eprocess360\v3controllers\Inspection;
 
+use eprocess360\v3controllers\Inspection\Model\Limitation;
+use eprocess360\v3core\Request\Request;
 //use eprocess360\v3core\Controller\Router;
 //use eprocess360\v3core\Controller\Controller;
 //
@@ -14,7 +16,7 @@ namespace eprocess360\v3controllers\Inspection;
 //use eprocess360\v3core\Keydict\Entry\PhoneNumber;
 //use eprocess360\v3core\Keydict\Entry\String;
 
-use eprocess360\v3controllers\Inspection\Model\InspectionCategories;
+//use eprocess360\v3controllers\Inspection\Model\InspectionCategories;
 
 use eprocess360\v3core\Controller\Auth;
 use eprocess360\v3core\Controller\Controller;
@@ -32,7 +34,7 @@ use Exception;
 class Inspection extends Controller
 {
     use Router, Auth, Warden;
-   
+
 
     /*********************************************   #ROUTING#  **********************************************/
 
@@ -43,13 +45,19 @@ class Inspection extends Controller
      */
     public function routes()
     {
+
         $this->routes->map('GET', '', function () {
             $this->getInspectionAPI();
         });
-        
+
+
         $this->routes->map('GET', '/categories', function () {
             $this->getInspectionCatAPI();
         });
+        $this->routes->map('GET', '/skills', function () {
+            $this->getInspectionSkillAPI();
+        });
+
         
         $this->routes->map('GET', '/types', function () {
             $this->getInspectionTypesAPI();
@@ -57,13 +65,19 @@ class Inspection extends Controller
         $this->routes->map('GET', '/limitation', function () {
             $this->getLimitationAPI();
         });
+        $this->routes->map('GET', '/inspection', function () {
+            $this->editGroupUserAPI();
+        });
         
     }
 
      public function getInspectionTypesAPI()
     {
+
          
         $data = InspectionType::allInspectionTypes($this->hasPrivilege(Privilege::ADMIN));
+     
+    
         
         $responseData= ['data' => $data];
         
@@ -76,12 +90,12 @@ class Inspection extends Controller
     
     public function getInspectionAPI()
     {
-        
+
     }
-    
+
     public function getInspectionCatAPI()
     {
-        
+
         $data = array(
             array(
                 'idCategory' => 8,
@@ -94,25 +108,25 @@ class Inspection extends Controller
                 'status' => 1
             )
         );
-       
+
 //        $data = InspectionCategories::allCategories();
 //        echo "<pre>";
 //        print_r($data);
 //        echo "</pre>";
-        
+
         $responseData = [
             'data' => $data
         ];
-        
+
 //        $this->hasPrivilege(Privilege::ADMIN);
-        
+
         $response = $this->getResponseHandler();
-        
+
         $response->setResponse($responseData);
         $response->setTemplate('Inspection.category.html.twig', 'server');
         $response->setTemplate('module.inspection.categories.handlebars.html', 'client', $this);
-        
-        
+
+
 //        $response->setResponse($responseData);
 //        if($error == false)
 //            $error = $this->messages[$responseCode];
@@ -127,9 +141,60 @@ class Inspection extends Controller
 //        $response->setTemplate('module.groups.handlebars.html', 'client', $this);
 //        if($error)
 //            $response->setErrorResponse(new Exception($error));
-        
+
     }
-    
+
+    public function getInspectionSkillAPI()
+    {
+
+        $data = array(
+            array(
+                'idSkill' => 9,
+                'title' => 'skill 1',
+                'status' => 1
+            ),
+            array(
+                'idSkill' => 19,
+                'title' => 'skill 2',
+                'status' => 1
+            ),
+        );
+
+//        $data = InspectionCategories::allCategories();
+//        echo "<pre>";
+//        print_r($data);
+//        echo "</pre>";
+
+        $responseData = [
+            'data' => $data,$data2
+        ];
+
+//        $this->hasPrivilege(Privilege::ADMIN);
+
+        $response = $this->getResponseHandler();
+
+        $response->setResponse($responseData);
+        $response->setTemplate('Inspection.skills.html.twig', 'server');
+        $response->setTemplate('module.inspection.skills.handlebars.html', 'client', $this);
+
+
+//        $response->setResponse($responseData);
+//        if($error == false)
+//            $error = $this->messages[$responseCode];
+//
+//        $responseData = [
+//            'data' => $data
+//        ];
+//
+//        $response = $this->getResponseHandler();
+//        $response->setResponse($responseData, $responseCode, false);
+//        $response->setTemplate('inspection.category.html', 'server');
+//        $response->setTemplate('module.groups.handlebars.html', 'client', $this);
+//        if($error)
+//            $response->setErrorResponse(new Exception($error));
+
+    }
+
 //    public function testFunc(){
 //        $form = Form::build(0, 'checkList', 'Check List')->setPublic(true);
 //// Declare what values the form can accept
@@ -153,18 +218,9 @@ class Inspection extends Controller
     public function getLimitationAPI()
     {
 
-        $data = array(
-            array(
-                'idCategory' => 'leg dis able',
-                'title' => 'Cagtegory 1',
-                'Pcat' => 'construction,piling'
-            ),
-            array(
-                'idCategory' => 'hraring disable',
-                'title' => 'Cagtegory 2',
-                'Pcat' => "piling,slab"
-            )
-        );
+      
+
+
 
 
 
@@ -172,7 +228,7 @@ class Inspection extends Controller
 //        echo "<pre>";
 //        print_r($data);
 //        echo "</pre>";
-
+        $data = Limitation::allLimitation($this->hasPrivilege(Privilege::ADMIN));
         $responseData = [
             'data' => $data
         ];
@@ -182,14 +238,14 @@ class Inspection extends Controller
         $response = $this->getResponseHandler();
 
         $response->setResponse($responseData);
-        $response->setTemplate('Inspection.limitation.html.twig', 'server');
+        $response->setTemplate('Inspection.lim.html.twig', 'server');
         $response->setTemplate('module.inspection.limitation.handlebars.html', 'client', $this);
 
 
 
 
     }
-    
+
 
 
 

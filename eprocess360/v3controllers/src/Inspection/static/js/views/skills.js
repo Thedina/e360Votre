@@ -6,43 +6,41 @@
  * Backbone view for category list
  * @typedef {Object} CategoryListMainView
  */
-
-
-var LimitationListMainView = BizzyBone.BaseView.extend({
+var SkillListMainView = BizzyBone.BaseView.extend({
     /**
      * @param options
-     * @returns {CategoryListMainView}
+     * @returns {SkillListMainView}
      */
     initialize: function(options) {
-
+        
         var thisView = this;
-        this.limitationViews = [];
-
-        // For each CategoryModel in the collection, instantiate a view
-        _.each(this.collection.models, function(limitationModel) {
-            thisView.limitationViews.push(new LimitationListItemView({model: limitationModel}));
+        this.skillViews = [];
+        
+        // For each SkillModel in the collection, instantiate a view
+        _.each(this.collection.models, function(SkillModel) {
+            thisView.skillViews.push(new SkillListItemView({model: SkillModel}));
         });
 
-        this.listenTo(this.collection, 'add', this.eventCategoryAdded);
+        this.listenTo(this.collection, 'add', this.eventSkillAdded);
 
         return Backbone.View.prototype.initialize.call(this, options);
     },
     /**
-     * @returns {CategoryListMainView}
+     * @returns {SkillListMainView}
      */
     render: function() {
-
+        
         console.log("CHECKKK");
-        var template, categoryList;
-
-        template = Handlebars.templates.categoryListMain;
+        var template, skillList;
+        
+        template = Handlebars.templates.skillListMain;
         this.$el.html(template({meta: hbInitData().meta.Inspection}));
         this.applyPermissions();
 
-        categoryList = $('#category-list');
-
-        _.each(this.limitationViews, function(categoryView) {
-            categoryList.append(categoryView.render().$el);
+        skillList = $('#skill-list');
+        
+        _.each(this.skillViews, function(skillView) {
+            skillList.append(skillView.render().$el);
         });
 
         return this;
@@ -51,68 +49,65 @@ var LimitationListMainView = BizzyBone.BaseView.extend({
         Inspection: 'meta'
     },
     events: {
-        "click #btn-new-group": "eventButtonNewGroup"
+        "click #btn-new-skill": "eventButtonNewGroup"
     },
     /**
      * Event handler for click "New Group" button
      * @param {Object} e
      */
     eventButtonNewGroup: function(e) {
-        var newGroup = new LimitationModel();
-        modalEditLimitation.show(newGroup, this.collection);
+        var newGroup = new SkillModel();
+        modalAddSkill.show(newGroup, this.collection);
     },
     /**
      * Event hander for collection add group
      * @param model
      */
-    eventCategoryAdded: function(model) {
-        var newView = new LimitationListItemView({model: model});
-        this.limitationViews.push(newView);
+    eventSkillAdded: function(model) {
+        var newView = new SkillListItemView({model: model});
+        this.skillViews.push(newView);
         newView.render().$el.appendTo($('#group-list')).hide().fadeIn(500);
     }
 });
 
 /**
  * backbone view for group list item
- * @typedef {Object} LimitationListItemView
+ * @typedef {Object} SkillListItemView
  */
-var LimitationListItemView = BizzyBone.BaseView.extend({
+var SkillListItemView = BizzyBone.BaseView.extend({
     /**
      * @param [options]
-     * @returns {LimitationListItemView}
+     * @returns {SkillListItemView}
      */
     initialize: function(options) {
-
+        
         this.defaultElement = _.has(options, 'el') ? false : true;
-        this.listenTo(this.model, 'change', this.eventCategoryUpdated);
-
+        this.listenTo(this.model, 'change', this.eventSkillUpdated);
+        
         return Backbone.View.prototype.initialize.call(this, options);
     },
     /**
-     * @returns {LimitationListItemView}
+     * @returns {SkillListItemView}
      */
     render: function() {
         var template;
-        
-        template = Handlebars.templates.limitationListItem;
+        template = Handlebars.templates.skillListItem;
         console.log("exiiiit", this.model.attributes);
-
 //        console.log(template);
-//        return false;
+//        return false; 
         // If this is the first render, fill $el from the template. Otherwise replace it.
         if(this.$el.is(':empty')) {
-            this.$el.html(template({limitation: this.model.attributes, meta: hbInitData().meta.Inspection}));
+            this.$el.html(template({skills: this.model.attributes, meta: hbInitData().meta.Inspection}));
 
             // If we rendered into the default div (i.e. this.el was never set) lose the outer
             // div and point whatever is the outermost container from the template
             if(this.defaultElement) {
                 this.setElement(this.$el.children().first());
-
             }
         }
         else {
             oldEl = this.$el;
-            this.setElement(template({category: this.model.attributes, meta: hbInitData().meta.Inspection}));
+            this.setElement(template({skills: this.model.attributes, meta: hbInitData().meta.Inspection}));
             oldEl.replaceWith(this.$el);
         }
 
@@ -124,7 +119,7 @@ var LimitationListItemView = BizzyBone.BaseView.extend({
      * setElement is modified to set this.defaultElement to false when first
      * called
      * @param {jQuery} element
-     * @returns {LimitationListItemView}
+     * @returns {SkillListItemView}
      */
     setElement: function(element) {
         this.defaultElement = false;
@@ -142,7 +137,7 @@ var LimitationListItemView = BizzyBone.BaseView.extend({
      * @param {Object} e
      */
     eventButtonEditGroup: function(e) {
-        modalEditLimitation.show(this.model);
+        modalEditSkill.show(this.model);
     },
     /**
      * Event hander for click remove group button
@@ -153,17 +148,17 @@ var LimitationListItemView = BizzyBone.BaseView.extend({
 
         bootbox.confirm("Are you sure you want to delete this group?", function(result) {
             if (result) {
-                thisView.model.destroy({
-                    wait: true,
-                    success: function (model, response, options) {
-                        thisView.$el.fadeOut(500, function () {
-                            thisView.remove();
-                        });
-                    },
-                    error: function (model, response, options) {
-                        Util.showError(response.responseJSON);
-                    }
-                });
+                    thisView.model.destroy({
+                        wait: true,
+                        success: function (model, response, options) {
+                            thisView.$el.fadeOut(500, function () {
+                                thisView.remove();
+                            });
+                        },
+                        error: function (model, response, options) {
+                            Util.showError(response.responseJSON);
+                        }
+                    });
             }
         });
     },
@@ -171,7 +166,7 @@ var LimitationListItemView = BizzyBone.BaseView.extend({
      * Event handler for group model change
      * @param {GroupModel} model
      */
-    eventCategoryUpdated: function(model) {
+    eventSkillUpdated: function(model) {
         this.render();
     }
 });
@@ -180,35 +175,36 @@ var LimitationListItemView = BizzyBone.BaseView.extend({
  * Backbone view for edit group modal
  * @typedef {Object} ModalEditGroup
  */
-var ModalEditLimitation = BizzyBone.BaseView.extend({
+var ModalEditGroup = BizzyBone.BaseView.extend({
     /**
      * @param {Object} options
      * @returns {ModalEditGroup}
      */
     initialize: function(options) {
-
+        
         this.rendered = false;
         this.userIDs = {};
         return Backbone.View.prototype.initialize.call(this, options);
     },
     /**
      * @returns {ModalEditGroupUser}
+     *
      */
-    render: function() {
 
+
+
+
+    render: function() {
+        
         var template;
-        template = Handlebars.templates.limitationEditView;//------------ds
-        this.$el.html(template({limitation: this.model.attributes, meta: hbInitData().meta.Group}));
+        template = Handlebars.templates.EditSkill;
+        this.$el.html(template({group: this.model.attributes, meta: hbInitData().meta.Group}));
 
         // If never rendered before, insert the modal div at the top of the page
         if(!this.rendered) {
             $(document.body).prepend(this.$el);
             this.rendered = true;
         }
-
-
-
-
 
         return this;
     },
@@ -278,6 +274,107 @@ var ModalEditLimitation = BizzyBone.BaseView.extend({
     }
 });
 
+var ModalAddGroup = BizzyBone.BaseView.extend({
+    /**
+     * @param {Object} options
+     * @returns {ModalEditGroup}
+     */
+    initialize: function(options) {
+
+        this.rendered = false;
+        this.userIDs = {};
+        return Backbone.View.prototype.initialize.call(this, options);
+    },
+    /**
+     * @returns {ModalEditGroupUser}
+     *
+     */
+
+
+
+
+    render: function() {
+
+        var template;
+        template = Handlebars.templates.AddSkill;
+        this.$el.html(template({group: this.model.attributes, meta: hbInitData().meta.Group}));
+
+        // If never rendered before, insert the modal div at the top of the page
+        if(!this.rendered) {
+            $(document.body).prepend(this.$el);
+            this.rendered = true;
+        }
+
+        return this;
+    },
+    events: {
+        "click .btn-primary": "eventSave",
+        "click .btn-default": "eventCancel",
+        "submit form": "eventSave"
+    },
+    /**
+     * Show the group add/edit group modal. To set up save callbacks, takes a
+     * new or existing group model and (for adding) a collection to add to.
+     * @param {GroupModel} groupModal
+     * @param {GroupList} groupCollection
+     * @returns {ModalEditGroup}
+     */
+    show: function(groupModal, groupCollection) {
+        this.model = groupModal;
+        this.collection = groupCollection;
+
+        this.render();
+
+        this.$el.children().first().modal('show');
+
+        return this;
+    },
+    /**
+     * Just hide the modal
+     * @returns {ModalEditGroup}
+     */
+    hide: function() {
+        this.$el.children().first().modal('hide');
+        return this;
+    },
+    /**
+     * Even handler for "Save" button. Saves new or existing group model.
+     * @param {Object} e
+     */
+    eventSave: function(e) {
+        var thisView, toSave, newStatus, wasNew;
+        thisView = this;
+        toSave = {};
+
+        wasNew = this.model.isNew();
+        newStatus = _.clone(this.model.get('status'));
+        newStatus.isActive = $('#group-addedit-isactive').prop('checked');
+        toSave.status = newStatus;
+        toSave.title = $('#group-addedit-title').val();
+        thisView.model.save(toSave, {
+            wait: true,
+            success: function(model, response, options) {
+                if(wasNew) {
+                    thisView.collection.add(model);
+                }
+                thisView.hide();
+            },
+            error: function(model, response, options) {
+                Util.showError(response.responseJSON);
+            }
+        });
+    },
+    /**
+     * Even handler for "Cancel" button
+     * @param {Object} e
+     */
+    eventCancel: function(e) {
+        this.hide();
+    }
+});
+
+
+
 /**
  * Backbone view for group with user list
  * @typedef {Object} GroupView
@@ -300,7 +397,7 @@ var GroupView = BizzyBone.BaseView.extend({
             thisView.userViews.push(new GroupUserView({model: userModel}));
         });
 
-        this.listenTo(this.model, 'change', this.eventCategoryUpdated);
+        this.listenTo(this.model, 'change', this.eventSkillUpdated);
         this.listenTo(this.collection, 'add', this.eventUserAdded);
 
         return Backbone.View.prototype.initialize.call(this, options);
@@ -349,9 +446,9 @@ var GroupView = BizzyBone.BaseView.extend({
     eventUserAdded: function(model) {
         var newView = new GroupUserView({model: model});
         this.userViews.push(newView);
-        newView.render().$el.appendTo($('#btn-new-group')).hide().fadeIn(500);
+        newView.render().$el.appendTo($('#user-list')).hide().fadeIn(500);
     },
-    eventCategoryUpdated: function(model) {
+    eventSkillUpdated: function(model) {
         this.render();
     }
 });
@@ -401,7 +498,7 @@ var GroupUserView = BizzyBone.BaseView.extend({
      * setElement is modified to set this.defaultElement to false when first
      * called
      * @param {jQuery} element
-     * @returns {LimitationListItemView}
+     * @returns {SkillListItemView}
      */
     setElement: function(element) {
         this.defaultElement = false;
@@ -428,20 +525,20 @@ var GroupUserView = BizzyBone.BaseView.extend({
     eventRemoveUser: function(e) {
         var thisView = this;
 
-        bootbox.confirm("Are you sure you want to remove this Limitation?", function (result) {
-            if (result) {
-                thisView.model.destroy({
-                    wait: true,
-                    success: function (model, response, options) {
-                        thisView.$el.fadeOut(500, function () {
-                            thisView.remove();
-                        });
-                    },
-                    error: function (model, response, options) {
-                        Util.showError(response.responseJSON);
-                    }
-                });
-            }
+        bootbox.confirm("Are you sure you want to remove this user from the group?", function (result) {
+           if (result) {
+               thisView.model.destroy({
+                   wait: true,
+                   success: function (model, response, options) {
+                       thisView.$el.fadeOut(500, function () {
+                           thisView.remove();
+                       });
+                   },
+                   error: function (model, response, options) {
+                       Util.showError(response.responseJSON);
+                   }
+               });
+           }
         });
     },
     /**
