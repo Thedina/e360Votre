@@ -186,6 +186,25 @@ class Inspection extends Controller
         $data = InspectionCategories::create($title, $description);
     }
     
+    public function editInspectionCategoryAPI($idInspCategory){
+        
+        $this->verifyPrivilege(Privilege::WRITE);
+        
+        $category    = InspectionCategories::sqlFetch($idInspCategory);
+        $data        = Request::get()->getRequestBody();
+        $title       = $data['title'];
+        $description = $data['description'];
+        
+        if($title !== null)
+            $category->title->set($title);
+        if($description !== null)
+            $category->description->set($description);
+
+        $category->update();
+        $data = $category->toArray();        
+        
+    }
+    
     public function deleteInspectionCategoryAPI($idInspCategory){
         
         $this->verifyPrivilege(Privilege::DELETE);
