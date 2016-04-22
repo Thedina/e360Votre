@@ -24,10 +24,11 @@ use eprocess360\v3core\Model\Roles;
 use eprocess360\v3core\Model\UserRoles;
 use eprocess360\v3core\Warden;
 use eprocess360\v3core\Controller\Warden\Privilege;
+use eprocess360\v3controllers\Inspection\Inspection;
 
 /**
- * Class Groups
- * @package eprocess360\v3controllers\Group\Model
+ * Class InspectionType
+ * @package eprocess360\v3controllers\Inspection\Model
  */
 class InspectionType extends Model
 {
@@ -48,7 +49,7 @@ class InspectionType extends Model
         public static function allInspectionTypes($readable = false)
     {
         global $pool;
-        //find all Groups where User has a UserGroup
+
         $sql = "SELECT InspTypes.* FROM InspTypes LEFT JOIN InspCategories"
                 . " ON InspTypes.idInspCategory = InspCategories.idInspCategory "
                 . "ORDER BY InspTypes.idInspType DESC LIMIT 0,30 ";
@@ -72,7 +73,31 @@ class InspectionType extends Model
     }
     
     
+    public static function create($title, $description){
+        
+        $idController = Inspection::register($title);
+
+        $f = static::make($title, $description);
+        $f->insert();
+
+        $result = $f->data->toArray();
+        return $result;
+    }
     
+    public static function make($title = "0", $description = "") {
+
+        $rowData = ['title'=>$title,
+            'description'=>$description];
+
+        return self::InspectionTypeConstruct($rowData);
+    }
+    
+    public static function InspectionTypeConstruct($rowData = []) {
+        $instance = new self();
+        $instance->data = self::keydict();
+        $instance->data->acceptArray($rowData);
+        return $instance;
+    }
     
   
     

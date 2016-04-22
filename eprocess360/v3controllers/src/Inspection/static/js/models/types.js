@@ -1,10 +1,10 @@
 /**
- * Categories: Models
+ * Types: Models
  */
 
 /**
  * Backbone model for inspection categories
- * @typedef {Object} CategoryModel
+ * @typedef {Object} TypeModel
  */
 var TypesModel = BizzyBone.BaseModel.extend({
     urlRoot: hbInitData().meta.Inspection.apiPath,
@@ -23,10 +23,10 @@ var TypesModel = BizzyBone.BaseModel.extend({
         'roles'
     ],
     /**
-     * If roles in attributes, call initRoleTable()
-     * @param {Object} attributes
-     * @param {Object} [options]
-     * @returns {GroupModel}
+     * 
+     * @param {type} attributes
+     * @param {type} options
+     * @returns {unresolved}
      */
     set: function(attributes, options) {    
         if(_.has(attributes, 'roles')) {
@@ -88,8 +88,8 @@ var TypesModel = BizzyBone.BaseModel.extend({
 //});
 
 /**
- * A list of CategoryModels
- * @typedef {Object} CategoryList
+ * 
+ * @type Backbone.Collection.extend
  */
 var TypesList = BizzyBone.BaseCollection.extend({
     model: TypesModel,

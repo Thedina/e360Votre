@@ -58,6 +58,9 @@ class Inspection extends Controller
         $this->routes->map('GET', '/types', function () {
             $this->getInspectionTypesAPI();
         });
+        $this->routes->map('POST', '/types', function () {
+            $this->createInspectionTypeAPI();
+        });
         $this->routes->map('PUT', '/types/[i:idInspType]', function ($idInspType) {
             $this->editInspectionTypesAPI($idInspType);
         });
@@ -226,25 +229,39 @@ class Inspection extends Controller
     
     /**
      * 
+     */
+    public function createInspectionTypeAPI(){
+        
+        $this->verifyPrivilege(Privilege::CREATE);
+
+        $data = Request::get()->getRequestBody();
+        $title = $data['title'];
+        $description = $data['description'];
+
+        $data = InspectionType::create($title, $description);
+    }
+    
+    /**
+     * 
      * @param type $idInspType
      */
     public function editInspectionTypesAPI($idInspType){
   
         $this->verifyPrivilege(Privilege::WRITE);
         
-        $category    = InspectionType::sqlFetch($idInspType);
+        $types    = InspectionType::sqlFetch($idInspType);
         $data        = Request::get()->getRequestBody();
         
         $title       = $data['title'];
         $description = $data['description'];
         
         if($title !== null)
-            $category->title->set($title);
+            $types->title->set($title);
         if($description !== null)
-            $category->description->set($description);
+            $types->description->set($description);
 
-        $category->update();
-        $data = $category->toArray();        
+        $types->update();
+        $data = $types->toArray();        
         
     }
 
