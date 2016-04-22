@@ -147,7 +147,7 @@ var TypeListItemView = BizzyBone.BaseView.extend({
     eventButtonRemoveGroup: function(e) {
         var thisView = this;
 
-        bootbox.confirm("Are you sure you want to delete this group?", function(result) {
+        bootbox.confirm("Are you sure you want to delete this Inspection Type?", function(result) {
             if (result) {
                     thisView.model.destroy({
                         wait: true,

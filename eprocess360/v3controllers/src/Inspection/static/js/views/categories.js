@@ -21,8 +21,6 @@ var CategoryListMainView = BizzyBone.BaseView.extend({
             thisView.categoryViews.push(new CategoryListItemView({model: categoryModel}));
         });
         
-        console.log(this.collection);
-        
         this.listenTo(this.collection, 'add', this.eventCategoryAdded);
 
         return Backbone.View.prototype.initialize.call(this, options);
@@ -50,29 +48,29 @@ var CategoryListMainView = BizzyBone.BaseView.extend({
         Inspection: 'meta'
     },
     events: {
-        "click #btn-new-category": "eventButtonNewGroup"
+        "click #btn-new-category": "eventButtonNewCategory"
     },
     /**
-     * Event handler for click "New Group" button
+     * Event handler for click "New Category" button
      * @param {Object} e
      */
-    eventButtonNewGroup: function(e) {
+    eventButtonNewCategory: function(e) {
         var newCategory = new CategoryModel();
         modalEditCategory.show(newCategory, this.collection);
     },
     /**
-     * Event hander for collection add group
+     * Event hander for collection add category
      * @param model
      */
     eventCategoryAdded: function(model) {
         var newView = new CategoryListItemView({model: model});
         this.categoryViews.push(newView);
-        newView.render().$el.appendTo($('#group-list')).hide().fadeIn(500);
+        newView.render().$el.appendTo($('#category-list')).hide().fadeIn(500);
     }
 });
 
 /**
- * backbone view for group list item
+ * backbone view for category list item
  * @typedef {Object} CategoryListItemView
  */
 var CategoryListItemView = BizzyBone.BaseView.extend({
@@ -129,23 +127,23 @@ var CategoryListItemView = BizzyBone.BaseView.extend({
     },
     events: {
         "click .btn-edit": "eventButtonEditGroup",
-        "click .btn-remove": "eventButtonRemoveGroup"
+        "click .btn-remove": "eventButtonRemoveCategory"
     },
     /**
-     * Event handler for click edit group button
+     * Event handler for click edit category button
      * @param {Object} e
      */
     eventButtonEditGroup: function(e) {
         modalEditCategory.show(this.model);
     },
     /**
-     * Event hander for click remove group button
+     * Event hander for click remove category button
      * @param {Object} e
      */
-    eventButtonRemoveGroup: function(e) {
+    eventButtonRemoveCategory: function(e) {
         var thisView = this;
 
-        bootbox.confirm("Are you sure you want to delete this group?", function(result) {
+        bootbox.confirm("Are you sure you want to delete this category?", function(result) {
             if (result) {
                     thisView.model.destroy({
                         wait: true,
@@ -162,7 +160,7 @@ var CategoryListItemView = BizzyBone.BaseView.extend({
         });
     },
     /**
-     * Event handler for group model change
+     * Event handler for category model change
      * @param {GroupModel} model
      */
     eventCategoryUpdated: function(model) {
@@ -177,7 +175,7 @@ var CategoryListItemView = BizzyBone.BaseView.extend({
 var ModalEditCategory = BizzyBone.BaseView.extend({
     /**
      * @param {Object} options
-     * @returns {ModalEditGroup}
+     * @returns {ModalEditCategory}
      */
     initialize: function(options) {
         this.rendered = false;
@@ -185,7 +183,7 @@ var ModalEditCategory = BizzyBone.BaseView.extend({
         return Backbone.View.prototype.initialize.call(this, options);
     },
     /**
-     * @returns {ModalEditGroupUser}
+     * @returns {ModalEditCategory}
      */
     render: function() {
         
@@ -208,14 +206,14 @@ var ModalEditCategory = BizzyBone.BaseView.extend({
         "submit form": "eventSave"
     },
     /**
-     * Show the group add/edit group modal. To set up save callbacks, takes a
-     * new or existing group model and (for adding) a collection to add to.
-     * @param {GroupModel} groupModal
-     * @param {GroupList} groupCollection
+     * Show the category add/edit category modal. To set up save callbacks, takes a
+     * new or existing category model and (for adding) a collection to add to.
+     * @param {CategoryModel} categoryModal
+     * @param {CategoryList} categoryCollection
      * @returns {ModalEditGroup}
      */
     show: function(categoryModal, categoryCollection) {
-        
+
         this.model = categoryModal;
         this.collection = categoryCollection;
 
@@ -234,7 +232,7 @@ var ModalEditCategory = BizzyBone.BaseView.extend({
         return this;
     },
     /**
-     * Even handler for "Save" button. Saves new or existing group model.
+     * Even handler for "Save" button. Saves new or existing category model.
      * @param {Object} e
      */
     eventSave: function(e) {
@@ -244,11 +242,7 @@ var ModalEditCategory = BizzyBone.BaseView.extend({
         toSave   = {};
 
         wasNew          = this.model.isNew();
-//        newStatus       = _.clone(this.model.get('status'));
-//        
-//        console.log(newStatus);
-//        return;
-//        toSave.status   = newStatus;
+
         toSave.title        = $('#category-addedit-title').val();
         toSave.description  = $('#category-addedit-desc').val();
         
@@ -271,180 +265,5 @@ var ModalEditCategory = BizzyBone.BaseView.extend({
      */
     eventCancel: function(e) {
         this.hide();
-    }
-});
-
-/**
- * Backbone view for group with user list
- * @typedef {Object} GroupView
- */
-var CategoryView = BizzyBone.BaseView.extend({
-    /**
-     * @param {Object} [options]
-     * @returns {GroupView}
-     */
-    initialize: function(options) {
-        var thisView = this;
-        this.userViews = [];
-
-        // Instantiate a model for each group user and put them in a collection
-        this.collection = new GroupUserList(_.map(this.model.get('users'), function(userData) {
-            return new GroupUserModel(userData, {group: thisView.model});
-        }));
-
-        _.each(this.collection.models, function(userModel) {
-            thisView.userViews.push(new GroupUserView({model: userModel}));
-        });
-
-        this.listenTo(this.model, 'change', this.eventCategoryUpdated);
-        this.listenTo(this.collection, 'add', this.eventUserAdded);
-
-        return Backbone.View.prototype.initialize.call(this, options);
-    },
-    render: function() {
-        var template, userList;
-        template = Handlebars.templates.groupInsideMain;
-
-        this.$el.html(template({group: this.model.attributes, meta: hbInitData().meta.Group}));
-        this.applyPermissions();
-
-        userList = $('#user-list');
-
-        _.each(this.userViews, function(userView) {
-            userList.append(userView.render().$el);
-        });
-
-        return this;
-    },
-    permissionTargets: {
-        Inspection: 'meta'
-    },
-    events: {
-        "click #btn-add-user": "eventButtonAddUser",
-        "click #btn-edit-group": "eventButtonEditGroup"
-    },
-    /**
-     * Event handler for add user button click
-     * @param {Object} e
-     */
-    eventButtonAddUser: function(e) {
-        var newUser = new GroupUserModel(null, {group: this.model});
-        modalEditUser.show(newUser, this.collection);
-    },
-    /**
-     * Event handler for edit group button click
-     * @param e
-     */
-    eventButtonEditGroup: function(e) {
-        modalEditCategory.show(this.model);
-    },
-    /**
-     * Event handler for collection add user
-     * @param {GroupUserModel} model
-     */
-    eventUserAdded: function(model) {
-        var newView = new GroupUserView({model: model});
-        this.userViews.push(newView);
-        newView.render().$el.appendTo($('#user-list')).hide().fadeIn(500);
-    },
-    eventCategoryUpdated: function(model) {
-        this.render();
-    }
-});
-
-/**
- * Backbone view for user in group user list
- * @typedef {Object} GroupUserView
- */
-var GroupUserView = BizzyBone.BaseView.extend({
-    /**
-     * @param [options]
-     * @returns {GroupUserView}
-     */
-    initialize: function(options) {
-        this.defaultElement = _.has(options, 'el') ? false : true;
-        this.listenTo(this.model, 'change', this.eventUserUpdated);
-        return Backbone.View.prototype.initialize.call(this, options);
-    },
-    /**
-     * @returns {GroupUserView}
-     */
-    render: function() {
-        var template;
-        template = Handlebars.templates.groupInsideUser;
-
-        // If this is the first render, fill $el from the template. Otherwise replace it.
-        if(this.$el.is(':empty')) {
-            this.$el.html(template({groupUser: this.model.attributes, group: this.model.group, meta: hbInitData().meta.Group}));
-
-            // If we rendered into the default div (i.e. this.el was never set) lose the outer
-            // div and point whatever is the outermost container from the template
-            if(this.defaultElement) {
-                this.setElement(this.$el.children().first());
-            }
-        }
-        else {
-            oldEl = this.$el;
-            this.setElement(template({groupUser: this.model.attributes, group: this.model.group, meta: hbInitData().meta.Group}));
-            oldEl.replaceWith(this.$el);
-        }
-
-        this.applyPermissions();
-
-        return this;
-    },
-    /**
-     * setElement is modified to set this.defaultElement to false when first
-     * called
-     * @param {jQuery} element
-     * @returns {CategoryListItemView}
-     */
-    setElement: function(element) {
-        this.defaultElement = false;
-        return Backbone.View.prototype.setElement.call(this, element);
-    },
-    permissionTargets: {
-        Inspection: 'meta'
-    },
-    events: {
-        "click .btn-edit": "eventEditUser",
-        "click .btn-remove": "eventRemoveUser"
-    },
-    /**
-     * Event handler for edit user button click
-     * @param {Object} e
-     */
-    eventEditUser: function(e) {
-        modalEditUser.show(this.model);
-    },
-    /**
-     * Event hander for remove user button click
-     * @param {Object} e
-     */
-    eventRemoveUser: function(e) {
-        var thisView = this;
-
-        bootbox.confirm("Are you sure you want to remove this user from the group?", function (result) {
-           if (result) {
-               thisView.model.destroy({
-                   wait: true,
-                   success: function (model, response, options) {
-                       thisView.$el.fadeOut(500, function () {
-                           thisView.remove();
-                       });
-                   },
-                   error: function (model, response, options) {
-                       Util.showError(response.responseJSON);
-                   }
-               });
-           }
-        });
-    },
-    /**
-     * Event handler for user model change event
-     * @param {GroupUserModel} model
-     */
-    eventUserUpdated: function(model) {
-        this.render();
     }
 });

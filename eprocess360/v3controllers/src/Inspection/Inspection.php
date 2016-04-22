@@ -23,6 +23,10 @@ use Exception;
 class Inspection extends Controller
 {
     use Router, Auth, Warden;
+    
+    private $messages = [200 => false,
+        404 => "404 Not Found - Resource not found",
+        403 => "Permissions are not sufficient."];
 
 
     /*********************************************   #ROUTING#  **********************************************/
@@ -41,14 +45,14 @@ class Inspection extends Controller
         $this->routes->map('GET', '/categories', function () {
             $this->getInspectionCategoryAPI();
         });
-        $this->routes->map('GET', '/skills', function () {
-            $this->getInspectionSkillAPI();
-        });
         $this->routes->map('POST', '/categories', function () {
             $this->createInspectionCategoryAPI();
         });
         $this->routes->map('PUT', '/categories/[i:idInspCategory]', function ($idInspCategory) {
             $this->editInspectionCategoryAPI($idInspCategory);
+        });
+        $this->routes->map('DELETE', '/categories/[i:idInspCategory]', function ($idInspCategory) {
+            $this->deleteInspectionCategoryAPI($idInspCategory);
         });
         $this->routes->map('GET', '/types', function () {
             $this->getInspectionTypesAPI();
@@ -56,49 +60,16 @@ class Inspection extends Controller
         $this->routes->map('PUT', '/types/[i:idInspType]', function ($idInspType) {
             $this->editInspectionTypesAPI($idInspType);
         });
-        
-        
-        
+        $this->routes->map('DELETE', '/types/[i:idInspType]', function ($idInspType) {
+            $this->deleteInspectionTypeAPI($idInspType);
+        });
+        $this->routes->map('GET', '/skills', function () {
+            $this->getInspectionSkillAPI();
+        });
         $this->routes->map('GET', '/limitation', function () {
             $this->getLimitationAPI();
         });
-        $this->routes->map('GET', '/inspection', function () {
-            $this->editGroupUserAPI();
-        });
         
-    }
-
-     public function getInspectionTypesAPI()
-    {
-
-         
-        $data = InspectionType::allInspectionTypes($this->hasPrivilege(Privilege::ADMIN));
-       
-        $responseData = [
-            'data' => $data
-        ];
-        
-        $response       = $this->getResponseHandler();
-        $responseMeta   = $response->getResponseMeta();
-        $currentApi     = $responseMeta["Inspection"]["api"];
-        $newApi         = $currentApi . '/types';
-        
-        $currentApiPath = $responseMeta["Inspection"]["apiPath"];
-        $newApiPath     = $currentApiPath . '/types';
-
-        $response->extendResponseMeta('Inspection', array('api' => $newApi));
-        $response->extendResponseMeta('Inspection', array('apiPath' => $newApiPath));
-
-        $response->setResponse($responseData);
-    
-        
-//        $responseData= ['data' => $data];
-//        
-//        $response = $this->getResponseHandler();
-        
-        $response->setResponse($responseData);
-        $response->setTemplate('Inspection.types.html.twig', 'server');
-        $response->setTemplate('module.inspection.types.handlebars.html', 'client', $this);
     }
     
     public function getInspectionAPI()
@@ -106,49 +77,145 @@ class Inspection extends Controller
 
     }
     
-    public function getInspectionCategoryAPI()
+    private function standardResponse($data = [], $responseCode = 200, $apiType = "", $error = false)
     {
-        
-        $data = InspectionCategories::allCategories();
-        
+        if($error == false)
+            $error = $this->messages[$responseCode];
+
         $responseData = [
             'data' => $data
         ];
+
+        $response = $this->getResponseHandler();
+        $this->changeApiPaths($response, $apiType);
+        $response->setResponse($responseData, $responseCode, false);
+        $this->setRenderingTemplates($response, $apiType);
         
-        $response       = $this->getResponseHandler();
+        if($error)
+            $response->setErrorResponse(new Exception($error));
+    }
+    
+    
+    private function changeApiPaths($response, $apiType){
+        
+        if(!$apiType){
+            return false;
+        }
+        
         $responseMeta   = $response->getResponseMeta();
         $currentApi     = $responseMeta["Inspection"]["api"];
-        $newApi         = $currentApi . '/categories';
-        
         $currentApiPath = $responseMeta["Inspection"]["apiPath"];
-        $newApiPath     = $currentApiPath . '/categories';
-
+        
+        if($apiType == "categories"){
+            $newApi     = $currentApi . '/categories';
+            $newApiPath = $currentApiPath . '/categories';
+        }
+        else if($apiType == "types"){
+            $newApi     = $currentApi . '/types';
+            $newApiPath = $currentApiPath . '/types';
+        }
+            
         $response->extendResponseMeta('Inspection', array('api' => $newApi));
         $response->extendResponseMeta('Inspection', array('apiPath' => $newApiPath));
-
-        $response->setResponse($responseData);
         
-        $response->setTemplate('Inspection.category.html.twig', 'server');
-        $response->setTemplate('module.inspection.categories.handlebars.html', 'client', $this);
+    }
+    
+    private function setRenderingTemplates($response, $apiType){
+        
+        if($apiType == "categories"){
+            $response->setTemplate('Inspection.category.html.twig', 'server');
+            $response->setTemplate('module.inspection.categories.handlebars.html', 'client', $this);
+        }
+        else if($apiType == "types"){
+            $response->setTemplate('Inspection.types.html.twig', 'server');
+            $response->setTemplate('module.inspection.types.handlebars.html', 'client', $this);
+        }
+        else{
+            $response->setTemplate('Inspection.main.html', 'server');
+        }
+        
+    }
+    
+    public function getInspectionCategoryAPI()
+    {
+        $data = InspectionCategories::allCategories();
+        $this->standardResponse($data, 200, "categories");
 
+    }
+    
+    public function createInspectionCategoryAPI(){
+        
+        $this->verifyPrivilege(Privilege::CREATE);
 
+        $data = Request::get()->getRequestBody();
+        $title = $data['title'];
+        $description = $data['description'];
 
-//        $response->setResponse($responseData);
-//        if($error == false)
-//            $error = $this->messages[$responseCode];
-//
+        $data = InspectionCategories::create($title, $description);
+    }
+    
+    public function deleteInspectionCategoryAPI($idInspCategory){
+        
+        $this->verifyPrivilege(Privilege::DELETE);
+
+        $data = InspectionCategories::deleteCategory($idInspCategory);
+
+        $this->standardResponse($data, 200, "categories");
+        
+    }
+
+    public function getInspectionTypesAPI()
+    {
+       
+        $data = InspectionType::allInspectionTypes($this->hasPrivilege(Privilege::ADMIN));
+       
+        $this->standardResponse($data, 200, "types");
+        
+    }
+    
+    /**
+     * 
+     * @param type $idInspType
+     */
+    public function editInspectionTypesAPI($idInspType){
+  
+        $this->verifyPrivilege(Privilege::WRITE);
+        
+        $category    = InspectionType::sqlFetch($idInspType);
+        $data        = Request::get()->getRequestBody();
+        
+        $title       = $data['title'];
+        $description = $data['description'];
+        
+        if($title !== null)
+            $category->title->set($title);
+        if($description !== null)
+            $category->description->set($description);
+
+        $category->update();
+        $data = $category->toArray();        
+        
+    }
+
+    public function deleteInspectionTypeAPI($idInspType)
+    {
+        $this->verifyPrivilege(Privilege::DELETE);
+
+        $data = InspectionType::deleteById($idInspType);
+        
+        $this->standardResponse($data, 200, "types");
+        
+
 //        $responseData = [
 //            'data' => $data
 //        ];
-//
 //        $response = $this->getResponseHandler();
-//        $response->setResponse($responseData, $responseCode, false);
-//        $response->setTemplate('inspection.category.html', 'server');
-//        $response->setTemplate('module.groups.handlebars.html', 'client', $this);
-//        if($error)
-//            $response->setErrorResponse(new Exception($error));
-
+//        $response->setResponse($responseData);
+//        $response->setTemplate('Inspection.types.html.twig', 'server');
+//        $response->setTemplate('module.inspection.types.handlebars.html', 'client', $this);
     }
+    
+
 
     public function getInspectionSkillAPI()
     {
@@ -201,31 +268,9 @@ class Inspection extends Controller
 
     }
     
-    public function editInspectionTypesAPI($idInspType){
-  
-        $this->verifyPrivilege(Privilege::WRITE);
-        
-        $category    = InspectionType::sqlFetch($idInspType);
-        $data        = Request::get()->getRequestBody();
-        
-       // print_r("ID :"+$idInspType);
-        
-        $title       = $data['title'];
-        $description = $data['description'];
-        
-        if($title !== null)
-            $category->title->set($title);
-        if($description !== null)
-            $category->description->set($description);
-
-        $category->update();
-        $data = $category->toArray();        
-        
-    }
-
-
     
-    public function editInspectionCategoryAPI($idInspCategory){
+
+        public function editInspectionCategoryAPI($idInspCategory){
        
         $this->verifyPrivilege(Privilege::WRITE);
         
@@ -244,37 +289,7 @@ class Inspection extends Controller
         
     }
     
-    public function createInspectionCategoryAPI(){
-        
-        $this->verifyPrivilege(Privilege::CREATE);
-
-        $data = Request::get()->getRequestBody();
-        $title = $data['title'];
-        $description = $data['description'];
-
-        $data = InspectionCategories::create($title, $description);
-    }
-
-//    public function testFunc(){
-//        $form = Form::build(0, 'checkList', 'Check List')->setPublic(true);
-//// Declare what values the form can accept
-//
-//        $form->accepts(
-//            String::build('cheklistName', 'Name')->setRequired(),
-//            String::build('checklistDesc', 'Description')->setRequired()
-//        )->setLabel('Checklist')->setDescription('Cheklist form.');
-//
-//        $data['form'] = $form;
-//        $data['keydict'] = $form->getKeydict();
-//        
-//        $responseData = [
-//            'data' => $data
-//        ];
-//        
-//        $response = $this->getResponseHandler();
-//        $response->setTemplate('Inspection.main.html.twig');
-//        $response->setResponse($responseData);
-//    }
+    
     public function getLimitationAPI()
     {
 
@@ -305,8 +320,5 @@ class Inspection extends Controller
 
 
     }
-
-
-
-
+    
 }
