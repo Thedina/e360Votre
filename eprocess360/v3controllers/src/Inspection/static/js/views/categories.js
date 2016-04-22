@@ -245,7 +245,7 @@ var ModalEditCategory = BizzyBone.BaseView.extend({
 
         toSave.title        = $('#category-addedit-title').val();
         toSave.description  = $('#category-addedit-desc').val();
-        
+      
         thisView.model.save(toSave, {
             wait: true,
             success: function(model, response, options) {

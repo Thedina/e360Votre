@@ -8,7 +8,7 @@
  */
 var LimitationModel = BizzyBone.BaseModel.extend({
     urlRoot: hbInitData().meta.Inspection.apiPath,
-    idAttribute: 'idCategory',
+    idAttribute: 'idInspLimiattion',
     defaults: {
         idController: 0,
         title: '',

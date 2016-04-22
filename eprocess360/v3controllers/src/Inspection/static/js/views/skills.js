@@ -649,9 +649,9 @@ var ModalEditGroupUser = BizzyBone.BaseView.extend({
      * @param {GroupUserList} userCollection
      * @returns {ModalEditGroupUser}
      */
-    show: function(userModel, userCollection) {
-        this.model = userModel;
-        this.collection = userCollection;
+    show: function(limitationModel, limitationCollection) {
+        this.model = limitationModel;
+        this.collection = limitationCollection;
 
         this.render();
 

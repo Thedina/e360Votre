@@ -49,7 +49,7 @@ class Inspection extends Controller
         $this->routes->map('POST', '/categories', function () {
             $this->createInspectionCategoryAPI();
         });
-        $this->routes->map('PUT', '/categories/[i:idInspCategory]', function ($idInspCategory) {
+         $this->routes->map('PUT', '/categories/[i:idInspCategory]', function ($idInspCategory) {
             $this->editInspectionCategoryAPI($idInspCategory);
         });
         $this->routes->map('DELETE', '/categories/[i:idInspCategory]', function ($idInspCategory) {
@@ -71,10 +71,19 @@ class Inspection extends Controller
             $this->createInspectionSkillAPI();
         });
         $this->routes->map('PUT', '/skills/[i:idInspSkill]', function ($idInspSkill) {
-            //$this->editInspectionSkillsAPI($idInspSkill);
+            $this->editInspectionSkillsAPI($idInspSkill);
         });
         $this->routes->map('GET', '/limitation', function () {
             $this->getLimitationAPI();
+        });
+        $this->routes->map('POST', '/limitation/', function ($idlimitation) {
+            $this->createLimitationAPI($idlimitation);
+        });
+        $this->routes->map('PUT', '/limitation/[i:idInspLimiattion]', function ($idlimitation) {
+            $this->editLimitationAPI($idlimitation);
+        });
+        $this->routes->map('DELETE', '/limitation/[i:idInspLimiattion]', function ($idlimitation) {
+            $this->deleteLimitation($idlimitation);
         });
         
     }
@@ -121,6 +130,14 @@ class Inspection extends Controller
             $newApi     = $currentApi . '/types';
             $newApiPath = $currentApiPath . '/types';
         }
+        else if($apiType == "skills"){
+            $newApi     = $currentApi . '/skills';
+            $newApiPath = $currentApiPath . '/skills';
+        }
+        else if($apiType == "limitation"){
+            $newApi     = $currentApi . '/limitation';
+            $newApiPath = $currentApiPath . '/limitation';
+        }
             
         $response->extendResponseMeta('Inspection', array('api' => $newApi));
         $response->extendResponseMeta('Inspection', array('apiPath' => $newApiPath));
@@ -136,6 +153,14 @@ class Inspection extends Controller
         else if($apiType == "types"){
             $response->setTemplate('Inspection.types.html.twig', 'server');
             $response->setTemplate('module.inspection.types.handlebars.html', 'client', $this);
+        }
+        else if($apiType == "skills"){
+            $response->setTemplate('Inspection.skills.html.twig', 'server');
+            $response->setTemplate('module.inspection.skills.handlebars.html', 'client', $this);
+        }
+        else if($apiType == "limitation"){
+            $response->setTemplate('Inspection.lim.html.twig', 'server');
+            $response->setTemplate('module.inspection.limitation.handlebars.html', 'client', $this);
         }
         else{
             $response->setTemplate('Inspection.main.html', 'server');
@@ -159,25 +184,6 @@ class Inspection extends Controller
         $description = $data['description'];
 
         $data = InspectionCategories::create($title, $description);
-    }
-
-    public function editInspectionSkillsAPI($idInspSkill){
-
-        $this->verifyPrivilege(Privilege::WRITE);
-
-        $skill   = InspectionSkills::sqlFetch($idInspSkill);
-        $data        = Request::get()->getRequestBody();
-        $title       = $data['title'];
-        $description = $data['description'];
-
-        if($title !== null)
-            $skill->title->set($title);
-        if($description !== null)
-            $skill->description->set($description);
-
-        $skill->update();
-        $data = $skill->toArray();
-
     }
     
     public function deleteInspectionCategoryAPI($idInspCategory){
@@ -237,27 +243,8 @@ class Inspection extends Controller
     {
 
         $data = InspectionSkills::allSkills($this->hasPrivilege(Privilege::ADMIN));
-        $responseData = [
-            'data' => $data
-        ];
 
-        $response       = $this->getResponseHandler();
-        $responseMeta   = $response->getResponseMeta();
-        $currentApi     = $responseMeta["Inspection"]["api"];
-        $newApi         = $currentApi . '/skills';
-
-        $currentApiPath = $responseMeta["Inspection"]["apiPath"];
-        $newApiPath     = $currentApiPath . '/skills';
-
-        $response->extendResponseMeta('Inspection', array('api' => $newApi));
-        $response->extendResponseMeta('Inspection', array('apiPath' => $newApiPath));
-
-//        $this->hasPrivilege(Privilege::ADMIN);
-        $response = $this->getResponseHandler();
-
-        $response->setResponse($responseData);
-        $response->setTemplate('Inspection.skills.html.twig', 'server');
-        $response->setTemplate('module.inspection.skills.handlebars.html', 'client', $this);
+        $this->standardResponse($data, 200, "skills");
 
     }
 
@@ -272,26 +259,82 @@ class Inspection extends Controller
         $data = InspectionSkills::create($title, $description);
     }
 
+    public function editInspectionSkillsAPI($idInspSkill){
+
+        $this->verifyPrivilege(Privilege::WRITE);
+
+        $skill   = InspectionSkills::sqlFetch($idInspSkill);
+        $data        = Request::get()->getRequestBody();
+        $title       = $data['title'];
+        $description = $data['description'];
+
+        if($title !== null)
+            $skill->title->set($title);
+        if($description !== null)
+            $skill->description->set($description);
+
+        $skill->update();
+        $data = $skill->toArray();
+
+    }
+
     public function getLimitationAPI()
     {
 
-//        $data = InspectionCategories::allCategories();
-//        echo "<pre>";
-//        print_r($data);
-//        echo "</pre>";
         $data = Limitation::allLimitation($this->hasPrivilege(Privilege::ADMIN));
-        $responseData = [
-            'data' => $data
-        ];
 
-//        $this->hasPrivilege(Privilege::ADMIN);
-
-        $response = $this->getResponseHandler();
-
-        $response->setResponse($responseData);
-        $response->setTemplate('Inspection.lim.html.twig', 'server');
-        $response->setTemplate('module.inspection.limitation.handlebars.html', 'client', $this);
+        $this->standardResponse($data, 200, "limitation");
 
     }
-    
+
+    public function createLimitationAPI($idInspLimitation){
+
+        $this->verifyPrivilege(Privilege::WRITE);
+
+        $limitation    = Limitation::sqlFetch($idInspLimitation);
+        $data        = Request::get()->getRequestBody();
+        $title       = $data['title'];
+        $description = $data['description'];
+
+        if($title !== null)
+            $limitation->title->set($title);
+        if($description !== null)
+            $limitation->description->set($description);
+
+        $limitation->update();
+        $data = $limitation->toArray();
+
+    }
+
+    public function editLimitationAPI($idInspLimitation){
+
+        $this->verifyPrivilege(Privilege::WRITE);
+
+        $limitation    = Limitation::sqlFetch($idInspLimitation);
+        $data        = Request::get()->getRequestBody();
+        $title       = $data['title'];
+        $description = $data['description'];
+
+        if($title !== null)
+            $limitation->title->set($title);
+        if($description !== null)
+            $limitation->description->set($description);
+
+        $limitation->update();
+
+        $data = $limitation->toArray();
+
+    }
+
+    public function deleteLimitation($idLimitation)
+    {
+        $this->verifyPrivilege(Privilege::DELETE);
+
+        $data = Limitation::deletelimitation($idLimitation);
+
+        $this->standardResponse($data, 200, "limitation");
+    }
+
+
+
 }

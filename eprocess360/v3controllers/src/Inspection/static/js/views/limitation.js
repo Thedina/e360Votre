@@ -224,9 +224,9 @@ var ModalEditLimitation = BizzyBone.BaseView.extend({
      * @param {GroupList} groupCollection
      * @returns {ModalEditGroup}
      */
-    show: function(groupModal, groupCollection) {
-        this.model = groupModal;
-        this.collection = groupCollection;
+    show: function(limitationModal, limitationCollection) {
+        this.model = limitationModal;
+        this.collection = limitationCollection;
 
         this.render();
 
@@ -249,13 +249,17 @@ var ModalEditLimitation = BizzyBone.BaseView.extend({
     eventSave: function(e) {
         var thisView, toSave, newStatus, wasNew;
         thisView = this;
-        toSave = {};
+        toSave   = {};
 
-        wasNew = this.model.isNew();
-        newStatus = _.clone(this.model.get('status'));
-        newStatus.isActive = $('#group-addedit-isactive').prop('checked');
-        toSave.status = newStatus;
-        toSave.title = $('#group-addedit-title').val();
+        wasNew          = this.model.isNew();
+//        newStatus       = _.clone(this.model.get('status'));
+//
+//        console.log(newStatus);
+//        return;
+//        toSave.status   = newStatus;
+        toSave.title        = $('#limitation-addedit-title').val();
+        toSave.description  = $('#limitation-addedit-description').val();
+        
         thisView.model.save(toSave, {
             wait: true,
             success: function(model, response, options) {
@@ -549,9 +553,9 @@ var ModalEditGroupUser = BizzyBone.BaseView.extend({
      * @param {GroupUserList} userCollection
      * @returns {ModalEditGroupUser}
      */
-    show: function(userModel, userCollection) {
-        this.model = userModel;
-        this.collection = userCollection;
+    show: function(limitationModel, limitationCollection) {
+        this.model = limitationModel;
+        this.collection = limitationCollection;
 
         this.render();
 
