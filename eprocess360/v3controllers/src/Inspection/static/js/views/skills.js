@@ -198,7 +198,7 @@ var ModalEditGroup = BizzyBone.BaseView.extend({
         
         var template;
         template = Handlebars.templates.EditSkill;
-        this.$el.html(template({group: this.model.attributes, meta: hbInitData().meta.Group}));
+        this.$el.html(template({skill: this.model.attributes, meta: hbInitData().meta.Inspection}));
 
         // If never rendered before, insert the modal div at the top of the page
         if(!this.rendered) {
@@ -228,13 +228,16 @@ var ModalEditGroup = BizzyBone.BaseView.extend({
 
         this.$el.children().first().modal('show');
 
-        return this;
+        //return this;
+
     },
     /**
      * Just hide the modal
      * @returns {ModalEditGroup}
      */
+
     hide: function() {
+        console.log('yyttyy');
         this.$el.children().first().modal('hide');
         return this;
     },
@@ -297,7 +300,7 @@ var ModalAddGroup = BizzyBone.BaseView.extend({
 
         var template;
         template = Handlebars.templates.AddSkill;
-        this.$el.html(template({group: this.model.attributes, meta: hbInitData().meta.Group}));
+        this.$el.html(template({skill: this.model.attributes, meta: hbInitData().meta.Group}));
 
         // If never rendered before, insert the modal div at the top of the page
         if(!this.rendered) {

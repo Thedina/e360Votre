@@ -27,7 +27,7 @@
     <tr>
         <td><a href="{{meta.path}}/{{skills.idSkill}}">{{skills.title}}</a></td>
         <td>
-            {{skills.title}}
+            {{skills.description}}
             <div class="btn-skill pull-right" role="skill" aria-label="Skill Options">
                 <button type="button" class="btn btn-default btn-xs btn-edit use-perm" data-ifperm="Inspection:write">Edit</button>
                 <button type="button" class="btn btn-default btn-xs btn-remove use-perm" data-ifperm="Inspection:delete">Remove</button>
@@ -117,30 +117,29 @@
 
 
 
-<script id="hb-group-modal-edituser" type="text/x-handlebars-template">
-    <div class="modal fade" id="groupAddEditMemberModel" tabindex="-1" role="dialog" aria-labelledby="groupAddEditMemberModel">
+
+
+
+<script id="hb-group-modal-edituserw" type="text/x-handlebars-template">
+    <div class="modal fade" id="skillAddEditskillModal" tabindex="-1" role="dialog" aria-labelledby="skillAddEditModal">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    <a type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></a>
                     <h4 class="modal-title">Add/Edit Skill</h4>
                 </div>
                 <div class="modal-body">
                     <form class="form-horizontal">
-                        <div class="form-group" id="edituser-modal-user-subform">
-                            <label for="groupuser-addedit-username" class="col-sm-2 control-label">Skill</label>
+                        <div class="form-group">
+                            <label for="skill-addedit-title" class="col-sm-2 control-label">Name</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control" id="groupuser-addedit-username" placeholder="Find Skill..." value="{{#if groupUser.firstName}}{{groupUser.firstName}} {{groupUser.lastName}}{{/if}}">
-                                <input type="hidden" id="groupuser-addedit-iduser" value="{{groupUser.idUser}}">
+                                <input type="text" class="form-control" id="skill-addedit-title" placeholder="Title" value="{{skill.title}}">
                             </div>
                         </div>
-
-
                         <div class="form-group">
-                            <div class="col-sm-offset-2 col-sm-10">
-                                <div class="checkbox">
-
-                                </div>
+                            <label for="skill-addedit-desc" class="col-sm-2 control-label">Description</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="skill-addedit-desc" placeholder="Description" value="{{skill.description}}">
                             </div>
                         </div>
                     </form>
@@ -153,6 +152,8 @@
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
 </script>
+
+
 <script id="hb-group-modal-adduser" type="text/x-handlebars-template">
     <div class="modal fade" id="groupAddMemberModel" tabindex="-1" role="dialog" aria-labelledby="groupAddMemberModel">
         <div class="modal-dialog">
@@ -199,6 +200,39 @@
                                     </label>
 
                                 </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary">Save</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+</script>
+
+<script id="hb-category-modal-editSkill" type="text/x-handlebars-template">
+    <div class="modal fade" id="categoryAddEditModal" tabindex="-1" role="dialog" aria-labelledby="SkillAddEditModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <a type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></a>
+                    <h4 class="modal-title">Add/Edit Category</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                            <label for="category-addedit-title" class="col-sm-2 control-label">Title</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="category-addedit-title" placeholder="Title" value="{{category.title}}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="category-addedit-desc" class="col-sm-2 control-label">Description</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="category-addedit-desc" placeholder="Description" value="{{category.description}}">
                             </div>
                         </div>
                     </form>

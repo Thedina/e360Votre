@@ -56,6 +56,7 @@ class Model extends Keydict
     public static function each($sql = null)
     {
         if ($sql) {
+            //die("ddd");
             $results = DB::sql($sql);
             
             if ($results) {
@@ -63,6 +64,7 @@ class Model extends Keydict
                 $keydict = static::keydict();
 
                 foreach ($results as $result) {
+
                     yield $keydict->wakeup($result);
                 }
             }

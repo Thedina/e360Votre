@@ -8,7 +8,7 @@
  */
 var SkillModel= BizzyBone.BaseModel.extend({
     urlRoot: hbInitData().meta.Inspection.apiPath,
-    idAttribute: 'idCategory',
+    idAttribute: 'idInspSkill',
     defaults: {
         idController: 0,
         title: '',
@@ -23,10 +23,7 @@ var SkillModel= BizzyBone.BaseModel.extend({
         'roles'
     ],
     /**
-     * If roles in attributes, call initRoleTable()
-     * @param {Object} attributes
-     * @param {Object} [options]
-     * @returns {GroupModel}
+   
      */
     set: function(attributes, options) {    
         if(_.has(attributes, 'roles')) {
