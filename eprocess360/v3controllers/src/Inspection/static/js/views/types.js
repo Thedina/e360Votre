@@ -49,15 +49,15 @@ var TypesListMainView = BizzyBone.BaseView.extend({
         Inspection: 'meta'
     },
     events: {
-        "click #btn-new-group": "eventButtonNewGroup"
+        "click #btn-new-type": "eventButtonNewGroup"
     },
     /**
      * Event handler for click "New Group" button
      * @param {Object} e
      */
     eventButtonNewGroup: function(e) {
-        var newGroup = new GroupModel();
-        modalEditGroup.show(newGroup, this.collection);
+        var newGroup = new TypesModel();
+        modalAddType.show(newGroup, this.collection);
     },
     /**
      * Event hander for collection add group
@@ -270,6 +270,100 @@ var ModalEditType = BizzyBone.BaseView.extend({
     }
 });
 
+
+var ModalAddType = BizzyBone.BaseView.extend({
+    /**
+     * @param {Object} options
+     * @returns {ModalEditType}
+     */
+    initialize: function(options) {
+        
+        this.rendered = false;
+        this.userIDs = {};
+        return Backbone.View.prototype.initialize.call(this, options);
+    },
+    /**
+     * @returns {ModalEditTypeUser}
+     */
+    render: function() {
+        
+        var template;
+        template = Handlebars.templates.typeModelAdd; // set da template here
+        this.$el.html(template({type: this.model.attributes, meta: hbInitData().meta.Group})); //meta.Group ?
+
+        // If never rendered before, insert the modal div at the top of the page
+        if(!this.rendered) {
+            $(document.body).prepend(this.$el);
+            this.rendered = true;
+        }
+
+        return this;
+    },
+    events: {
+        "click .btn-primary": "eventSave",
+        "click .btn-default": "eventCancel",
+        "submit form": "eventSave"
+    },
+    /**
+     * Show the group add/edit group modal. To set up save callbacks, takes a
+     * new or existing group model and (for adding) a collection to add to.
+     * @param {GroupModel} groupModal
+     * @param {GroupList} groupCollection
+     * @returns {ModalEditType}
+     */
+    show: function(groupModal, groupCollection) {
+        this.model = groupModal;
+        this.collection = groupCollection;
+
+        this.render();
+
+        this.$el.children().first().modal('show');
+
+        return this;
+    },
+    /**
+     * Just hide the modal
+     * @returns {ModalEditType}
+     */
+    hide: function() {
+        this.$el.children().first().modal('hide');
+        return this;
+    },
+    /**
+     * Even handler for "Save" button. Saves new or existing group model.
+     * @param {Object} e
+     */
+    eventSave: function(e) {
+        var thisView, toSave, newStatus, wasNew;
+        thisView = this;
+        toSave = {};
+
+        wasNew = this.model.isNew();
+        newStatus = _.clone(this.model.get('status'));
+        newStatus.isActive = $('#group-addedit-isactive').prop('checked');
+        toSave.status = newStatus;
+        toSave.title = $('#group-addedit-title').val();
+        thisView.model.save(toSave, {
+            wait: true,
+            success: function(model, response, options) {
+                if(wasNew) {
+                    thisView.collection.add(model);
+                }
+                thisView.hide();
+            },
+            error: function(model, response, options) {
+                Util.showError(response.responseJSON);
+            }
+        });
+    },
+    /**
+     * Even handler for "Cancel" button
+     * @param {Object} e
+     */
+    eventCancel: function(e) {
+        this.hide();
+    }
+});
 /**
  * Backbone view for group with user list
  * @typedef {Object} GroupView

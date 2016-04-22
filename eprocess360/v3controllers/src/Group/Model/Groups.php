@@ -41,7 +41,7 @@ class Groups extends Model
     public static function keydict()
     {
         return Table::build(
-            PrimaryKeyInt::build('idGroup', 'Inspection ID'),
+            PrimaryKeyInt::build('idGroup', 'Group ID'),
             IdInteger::build('idController', 'Controller ID'),
             FixedString128::build('title', 'Group Title')->setRequired(),
             Bits8::make('status',
@@ -86,7 +86,7 @@ class Groups extends Model
      * @throws \Exception
      */
     public static function create($title, $isActive, $isSystem = false) {
-
+        die("da");
         $idController = Group::register($title);
         $status = ['isActive'=>$isActive,'isSystem'=>$isSystem];
 

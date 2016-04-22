@@ -58,10 +58,10 @@ class Model extends Keydict
         if ($sql) {
             $results = DB::sql($sql);
             
-//            echo "<pre>";
-//            print_r($results);
             if ($results) {
+                
                 $keydict = static::keydict();
+
                 foreach ($results as $result) {
                     yield $keydict->wakeup($result);
                 }

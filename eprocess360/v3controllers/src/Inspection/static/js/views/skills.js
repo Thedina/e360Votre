@@ -1,99 +1,103 @@
 /**
- * Groups: Views
+ * Category: Views
  */
 
 /**
- * Backbone view for group list
- * @typedef {Object} GroupListMainView
+ * Backbone view for category list
+ * @typedef {Object} CategoryListMainView
  */
-var GroupListMainView = BizzyBone.BaseView.extend({
+var SkillListMainView = BizzyBone.BaseView.extend({
     /**
      * @param options
-     * @returns {GroupListMainView}
+     * @returns {SkillListMainView}
      */
     initialize: function(options) {
         
         var thisView = this;
-        this.groupViews = [];
+        this.skillViews = [];
         
-        // For each GroupModel in the collection, instantiate a view
-        _.each(this.collection.models, function(groupModel) {
-            thisView.groupViews.push(new GroupListItemView({model: groupModel}));
+        // For each SkillModel in the collection, instantiate a view
+        _.each(this.collection.models, function(SkillModel) {
+            thisView.skillViews.push(new SkillListItemView({model: SkillModel}));
         });
 
-        this.listenTo(this.collection, 'add', this.eventGroupAdded);
+        this.listenTo(this.collection, 'add', this.eventSkillAdded);
 
         return Backbone.View.prototype.initialize.call(this, options);
     },
     /**
-     * @returns {GroupListMainView}
+     * @returns {SkillListMainView}
      */
     render: function() {
         
-        var template, groupList;
-
-        template = Handlebars.templates.groupListMain;
-
-        this.$el.html(template({meta: hbInitData().meta.Group}));
+        console.log("CHECKKK");
+        var template, skillList;
+        
+        template = Handlebars.templates.skillListMain;
+        this.$el.html(template({meta: hbInitData().meta.Inspection}));
         this.applyPermissions();
 
-        groupList = $('#group-list');
-
-        _.each(this.groupViews, function(groupView) {
-            groupList.append(groupView.render().$el);
+        skillList = $('#skill-list');
+        
+        _.each(this.skillViews, function(skillView) {
+            skillList.append(skillView.render().$el);
         });
 
         return this;
     },
     permissionTargets: {
-        Group: 'meta'
+        Inspection: 'meta'
     },
     events: {
-        "click #btn-new-group": "eventButtonNewGroup"
+        "click #btn-new-skill": "eventButtonNewGroup"
     },
     /**
      * Event handler for click "New Group" button
      * @param {Object} e
      */
     eventButtonNewGroup: function(e) {
-        var newGroup = new GroupModel();
-        modalEditGroup.show(newGroup, this.collection);
+        var newGroup = new SkillModel();
+        modalAddSkill.show(newGroup, this.collection);
     },
     /**
      * Event hander for collection add group
      * @param model
      */
-    eventGroupAdded: function(model) {
-        var newView = new GroupListItemView({model: model});
-        this.groupViews.push(newView);
+    eventSkillAdded: function(model) {
+        var newView = new SkillListItemView({model: model});
+        this.skillViews.push(newView);
         newView.render().$el.appendTo($('#group-list')).hide().fadeIn(500);
     }
 });
 
 /**
  * backbone view for group list item
- * @typedef {Object} GroupListItemView
+ * @typedef {Object} SkillListItemView
  */
-var GroupListItemView = BizzyBone.BaseView.extend({
+var SkillListItemView = BizzyBone.BaseView.extend({
     /**
      * @param [options]
-     * @returns {GroupListItemView}
+     * @returns {SkillListItemView}
      */
     initialize: function(options) {
+        
         this.defaultElement = _.has(options, 'el') ? false : true;
-        this.listenTo(this.model, 'change', this.eventGroupUpdated);
+        this.listenTo(this.model, 'change', this.eventSkillUpdated);
+        
         return Backbone.View.prototype.initialize.call(this, options);
     },
     /**
-     * @returns {GroupListItemView}
+     * @returns {SkillListItemView}
      */
     render: function() {
         var template;
-        template = Handlebars.templates.groupListItem;
-
+        template = Handlebars.templates.skillListItem;
+        console.log("exiiiit", this.model.attributes);
+//        console.log(template);
+//        return false; 
         // If this is the first render, fill $el from the template. Otherwise replace it.
         if(this.$el.is(':empty')) {
-            this.$el.html(template({group: this.model.attributes, meta: hbInitData().meta.Group}));
+            this.$el.html(template({skills: this.model.attributes, meta: hbInitData().meta.Inspection}));
 
             // If we rendered into the default div (i.e. this.el was never set) lose the outer
             // div and point whatever is the outermost container from the template
@@ -103,7 +107,7 @@ var GroupListItemView = BizzyBone.BaseView.extend({
         }
         else {
             oldEl = this.$el;
-            this.setElement(template({group: this.model.attributes, meta: hbInitData().meta.Group}));
+            this.setElement(template({skills: this.model.attributes, meta: hbInitData().meta.Inspection}));
             oldEl.replaceWith(this.$el);
         }
 
@@ -115,14 +119,14 @@ var GroupListItemView = BizzyBone.BaseView.extend({
      * setElement is modified to set this.defaultElement to false when first
      * called
      * @param {jQuery} element
-     * @returns {GroupListItemView}
+     * @returns {SkillListItemView}
      */
     setElement: function(element) {
         this.defaultElement = false;
         return Backbone.View.prototype.setElement.call(this, element);
     },
     permissionTargets: {
-        Group: 'meta'
+        Inspection: 'meta'
     },
     events: {
         "click .btn-edit": "eventButtonEditGroup",
@@ -133,7 +137,7 @@ var GroupListItemView = BizzyBone.BaseView.extend({
      * @param {Object} e
      */
     eventButtonEditGroup: function(e) {
-        modalEditGroup.show(this.model);
+        modalEditSkill.show(this.model);
     },
     /**
      * Event hander for click remove group button
@@ -162,7 +166,7 @@ var GroupListItemView = BizzyBone.BaseView.extend({
      * Event handler for group model change
      * @param {GroupModel} model
      */
-    eventGroupUpdated: function(model) {
+    eventSkillUpdated: function(model) {
         this.render();
     }
 });
@@ -177,17 +181,23 @@ var ModalEditGroup = BizzyBone.BaseView.extend({
      * @returns {ModalEditGroup}
      */
     initialize: function(options) {
+        
         this.rendered = false;
         this.userIDs = {};
         return Backbone.View.prototype.initialize.call(this, options);
     },
     /**
      * @returns {ModalEditGroupUser}
+     *
      */
+
+
+
+
     render: function() {
         
         var template;
-        template = Handlebars.templates.groupModalEditGroup;
+        template = Handlebars.templates.EditSkill;
         this.$el.html(template({group: this.model.attributes, meta: hbInitData().meta.Group}));
 
         // If never rendered before, insert the modal div at the top of the page
@@ -264,6 +274,107 @@ var ModalEditGroup = BizzyBone.BaseView.extend({
     }
 });
 
+var ModalAddGroup = BizzyBone.BaseView.extend({
+    /**
+     * @param {Object} options
+     * @returns {ModalEditGroup}
+     */
+    initialize: function(options) {
+
+        this.rendered = false;
+        this.userIDs = {};
+        return Backbone.View.prototype.initialize.call(this, options);
+    },
+    /**
+     * @returns {ModalEditGroupUser}
+     *
+     */
+
+
+
+
+    render: function() {
+
+        var template;
+        template = Handlebars.templates.AddSkill;
+        this.$el.html(template({group: this.model.attributes, meta: hbInitData().meta.Group}));
+
+        // If never rendered before, insert the modal div at the top of the page
+        if(!this.rendered) {
+            $(document.body).prepend(this.$el);
+            this.rendered = true;
+        }
+
+        return this;
+    },
+    events: {
+        "click .btn-primary": "eventSave",
+        "click .btn-default": "eventCancel",
+        "submit form": "eventSave"
+    },
+    /**
+     * Show the group add/edit group modal. To set up save callbacks, takes a
+     * new or existing group model and (for adding) a collection to add to.
+     * @param {GroupModel} groupModal
+     * @param {GroupList} groupCollection
+     * @returns {ModalEditGroup}
+     */
+    show: function(groupModal, groupCollection) {
+        this.model = groupModal;
+        this.collection = groupCollection;
+
+        this.render();
+
+        this.$el.children().first().modal('show');
+
+        return this;
+    },
+    /**
+     * Just hide the modal
+     * @returns {ModalEditGroup}
+     */
+    hide: function() {
+        this.$el.children().first().modal('hide');
+        return this;
+    },
+    /**
+     * Even handler for "Save" button. Saves new or existing group model.
+     * @param {Object} e
+     */
+    eventSave: function(e) {
+        var thisView, toSave, newStatus, wasNew;
+        thisView = this;
+        toSave = {};
+
+        wasNew = this.model.isNew();
+        newStatus = _.clone(this.model.get('status'));
+        newStatus.isActive = $('#group-addedit-isactive').prop('checked');
+        toSave.status = newStatus;
+        toSave.title = $('#group-addedit-title').val();
+        thisView.model.save(toSave, {
+            wait: true,
+            success: function(model, response, options) {
+                if(wasNew) {
+                    thisView.collection.add(model);
+                }
+                thisView.hide();
+            },
+            error: function(model, response, options) {
+                Util.showError(response.responseJSON);
+            }
+        });
+    },
+    /**
+     * Even handler for "Cancel" button
+     * @param {Object} e
+     */
+    eventCancel: function(e) {
+        this.hide();
+    }
+});
+
+
+
 /**
  * Backbone view for group with user list
  * @typedef {Object} GroupView
@@ -286,7 +397,7 @@ var GroupView = BizzyBone.BaseView.extend({
             thisView.userViews.push(new GroupUserView({model: userModel}));
         });
 
-        this.listenTo(this.model, 'change', this.eventGroupUpdated);
+        this.listenTo(this.model, 'change', this.eventSkillUpdated);
         this.listenTo(this.collection, 'add', this.eventUserAdded);
 
         return Backbone.View.prototype.initialize.call(this, options);
@@ -307,7 +418,7 @@ var GroupView = BizzyBone.BaseView.extend({
         return this;
     },
     permissionTargets: {
-        Group: 'meta'
+        Inspection: 'meta'
     },
     events: {
         "click #btn-add-user": "eventButtonAddUser",
@@ -337,7 +448,7 @@ var GroupView = BizzyBone.BaseView.extend({
         this.userViews.push(newView);
         newView.render().$el.appendTo($('#user-list')).hide().fadeIn(500);
     },
-    eventGroupUpdated: function(model) {
+    eventSkillUpdated: function(model) {
         this.render();
     }
 });
@@ -387,14 +498,14 @@ var GroupUserView = BizzyBone.BaseView.extend({
      * setElement is modified to set this.defaultElement to false when first
      * called
      * @param {jQuery} element
-     * @returns {GroupListItemView}
+     * @returns {SkillListItemView}
      */
     setElement: function(element) {
         this.defaultElement = false;
         return Backbone.View.prototype.setElement.call(this, element);
     },
     permissionTargets: {
-        Group: 'meta'
+        Inspection: 'meta'
     },
     events: {
         "click .btn-edit": "eventEditUser",

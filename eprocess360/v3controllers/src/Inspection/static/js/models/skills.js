@@ -4,15 +4,19 @@
 
 /**
  * Backbone model for inspection categories
- * @typedef {Object} CategoryModel
+ * @typedef {Object} SkillModel
  */
-var CategoryModel = BizzyBone.BaseModel.extend({
+var SkillModel= BizzyBone.BaseModel.extend({
     urlRoot: hbInitData().meta.Inspection.apiPath,
-    idAttribute: 'idInspCategory',
+    idAttribute: 'idCategory',
     defaults: {
-        idInspController: 0,
+        idController: 0,
         title: '',
-        description: '',
+        status: {
+            isActive: true
+        },
+        users: [],
+        roles: []
     },
     dontSave: [
         'users',
@@ -87,8 +91,8 @@ var CategoryModel = BizzyBone.BaseModel.extend({
  * A list of CategoryModels
  * @typedef {Object} CategoryList
  */
-var CategoryList = BizzyBone.BaseCollection.extend({
-    model: CategoryModel,
+var SkillList = BizzyBone.BaseCollection.extend({
+    model: SkillModel,
     url: hbInitData().meta.Inspection.apiPath,
     /**
      * Export a lookup table of group names by ID

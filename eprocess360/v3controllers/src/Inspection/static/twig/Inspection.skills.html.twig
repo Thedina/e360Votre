@@ -12,8 +12,8 @@
     <script src="{{ Response.meta.SystemController.static }}/js/util.js"></script>
     <script src="{{ Response.meta.SystemController.static }}/js/bizzybone.js"></script>
 {#    <script src="{{ Response.meta.Inspection.static }}/js/helpers/groupHelpers.js"></script>#}
-    <script src="{{ Response.meta.Inspection.static }}/js/models/types.js"></script>
-    <script src="{{ Response.meta.Inspection.static }}/js/views/types.js"></script>
+    <script src="{{ Response.meta.Inspection.static }}/js/models/skills.js"></script>
+    <script src="{{ Response.meta.Inspection.static }}/js/views/skills.js"></script>
 {% endblock %}
 {% block javascript %}
     <script type="text/javascript">
@@ -22,31 +22,34 @@
 
             // Precompile all the relevant templates
             _.each({
-                typeListMain: '#hb-type-list-main',
-                typeListItem: '#hb-type-list-item',
-                typeModelEdit: '#hb-group-modal-editgroup',
-                typeModelAdd: '#hb-group-modal-addgroup'
+                skillListMain: '#hb-skill-list-main',
+                skillListItem: '#hb-skill-list-item',
+                EditSkill:'#hb-group-modal-edituser',
+                AddSkill: '#hb-group-modal-adduser',
                 {#groupListItem: '#hb-group-list-item',
                 groupInsideMain: '#hb-group-inside-main',
                 groupInsideUser: '#hb-group-inside-user',
-                
+                groupModalEditGroup: '#hb-group-modal-editgroup',
                 groupModalEditUser: '#hb-group-modal-edituser'#}
             }, hbCompileTemplate);
             
             getData = hbInitData().data;
             
             
-             modalEditType = new ModalEditType();
-             modalAddType = new ModalAddType();
+            modalEditSkill = new ModalEditGroup();
+            modalAddSkill = new ModalAddGroup();
             //modalEditUser = new ModalEditGroupUser();
 
             if(_.isArray(getData)) {
-                
-                baseCollection = new TypesList(_.map(getData, function(typeData) {
-                    return new TypesModel(typeData);
+
+                console.log("ssss");
+
+
+                baseCollection = new SkillList(_.map(getData, function(skillData) {
+                    return new SkillModel(skillData);
                 }));
                 
-                baseView = new TypesListMainView({collection: baseCollection, el: $('#content-container')});
+                baseView = new SkillListMainView({collection: baseCollection, el: $('#content-container')});
                 baseView.render();
                 
                 return;
