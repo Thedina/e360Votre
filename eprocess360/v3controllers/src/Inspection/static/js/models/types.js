@@ -8,7 +8,7 @@
  */
 var TypesModel = BizzyBone.BaseModel.extend({
     urlRoot: hbInitData().meta.Inspection.apiPath,
-    idAttribute: 'idTypes',
+    idAttribute: 'idInspType',
     defaults: {
         idController: 0,
         title: '',

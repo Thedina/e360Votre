@@ -194,7 +194,7 @@ var ModalEditType = BizzyBone.BaseView.extend({
         
         var template;
         template = Handlebars.templates.typeModelEdit; // set da template here
-        this.$el.html(template({type: this.model.attributes, meta: hbInitData().meta.Group})); //meta.Group ?
+        this.$el.html(template({type: this.model.attributes, meta: hbInitData().meta.Inspection})); //meta.Group ?
 
         // If never rendered before, insert the modal div at the top of the page
         if(!this.rendered) {
@@ -216,9 +216,9 @@ var ModalEditType = BizzyBone.BaseView.extend({
      * @param {GroupList} groupCollection
      * @returns {ModalEditType}
      */
-    show: function(groupModal, groupCollection) {
-        this.model = groupModal;
-        this.collection = groupCollection;
+    show: function(typesModal, typesCollection) {
+        this.model = typesModal;
+        this.collection = typesCollection;
 
         this.render();
 
@@ -239,6 +239,17 @@ var ModalEditType = BizzyBone.BaseView.extend({
      * @param {Object} e
      */
     eventSave: function(e) {
+//        var thisView, toSave, newStatus, wasNew;
+//        thisView = this;
+//        toSave = {};
+//
+//        wasNew = this.model.isNew();
+//        newStatus = _.clone(this.model.get('status'));
+//        newStatus.isActive = $('#group-addedit-isactive').prop('checked');
+//        toSave.status = newStatus;
+//        toSave.title = $('#group-addedit-title').val();
+
+        
         var thisView, toSave, newStatus, wasNew;
         thisView = this;
         toSave = {};
@@ -248,6 +259,12 @@ var ModalEditType = BizzyBone.BaseView.extend({
         newStatus.isActive = $('#group-addedit-isactive').prop('checked');
         toSave.status = newStatus;
         toSave.title = $('#group-addedit-title').val();
+        toSave   = {};
+
+        wasNew          = this.model.isNew();
+        toSave.title        = $('#Type-addedit-name').val();//Change the in handlerbaar input id
+        toSave.description  = $('#Type-addedit-descr').val();
+  
         thisView.model.save(toSave, {
             wait: true,
             success: function(model, response, options) {
@@ -257,7 +274,7 @@ var ModalEditType = BizzyBone.BaseView.extend({
                 thisView.hide();
             },
             error: function(model, response, options) {
-                Util.showError(response.responseJSON);
+                Util.showError(response.responseJSON +'Test Error');
             }
         });
     },

@@ -35,14 +35,14 @@ class InspectionType extends Model
     {
         return Table::build(
             PrimaryKeyInt::build('idInspType', 'Type Id'),	
-            FixedString128::build('description', 'Description'),
-            FixedString128::build('title', 'Titel'),
+            String::build('description', 'Description'),
+            String::build('title', 'Titel'),
             IdInteger::build('idInspCategory', 'Category'),
             IdInteger::build('status', 'Controller ID'),
             IdInteger::build('createdUserId', 'Created By'),
             Datetime::build('creaetdDate', 'Date')
            
-        )->setName('InspectionType')->setLabel('InspectionType');
+        )->setName('InspTypes')->setLabel('InspTypes');
     }
 
         public static function allInspectionTypes($readable = false)

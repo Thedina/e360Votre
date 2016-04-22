@@ -53,6 +53,12 @@ class Inspection extends Controller
         $this->routes->map('GET', '/types', function () {
             $this->getInspectionTypesAPI();
         });
+        $this->routes->map('PUT', '/types/[i:idInspType]', function ($idInspType) {
+            $this->editInspectionTypesAPI($idInspType);
+        });
+        
+        
+        
         $this->routes->map('GET', '/limitation', function () {
             $this->getLimitationAPI();
         });
@@ -67,12 +73,28 @@ class Inspection extends Controller
 
          
         $data = InspectionType::allInspectionTypes($this->hasPrivilege(Privilege::ADMIN));
-     
+       
+        $responseData = [
+            'data' => $data
+        ];
+        
+        $response       = $this->getResponseHandler();
+        $responseMeta   = $response->getResponseMeta();
+        $currentApi     = $responseMeta["Inspection"]["api"];
+        $newApi         = $currentApi . '/types';
+        
+        $currentApiPath = $responseMeta["Inspection"]["apiPath"];
+        $newApiPath     = $currentApiPath . '/types';
+
+        $response->extendResponseMeta('Inspection', array('api' => $newApi));
+        $response->extendResponseMeta('Inspection', array('apiPath' => $newApiPath));
+
+        $response->setResponse($responseData);
     
         
-        $responseData= ['data' => $data];
-        
-        $response = $this->getResponseHandler();
+//        $responseData= ['data' => $data];
+//        
+//        $response = $this->getResponseHandler();
         
         $response->setResponse($responseData);
         $response->setTemplate('Inspection.types.html.twig', 'server');
@@ -86,6 +108,7 @@ class Inspection extends Controller
     
     public function getInspectionCategoryAPI()
     {
+        
         $data = InspectionCategories::allCategories();
         
         $responseData = [
@@ -177,18 +200,40 @@ class Inspection extends Controller
 //            $response->setErrorResponse(new Exception($error));
 
     }
+    
+    public function editInspectionTypesAPI($idInspType){
+  
+        $this->verifyPrivilege(Privilege::WRITE);
+        
+        $category    = InspectionType::sqlFetch($idInspType);
+        $data        = Request::get()->getRequestBody();
+        
+       // print_r("ID :"+$idInspType);
+        
+        $title       = $data['title'];
+        $description = $data['description'];
+        
+        if($title !== null)
+            $category->title->set($title);
+        if($description !== null)
+            $category->description->set($description);
+
+        $category->update();
+        $data = $category->toArray();        
+        
+    }
 
 
     
     public function editInspectionCategoryAPI($idInspCategory){
-        
+       
         $this->verifyPrivilege(Privilege::WRITE);
         
         $category    = InspectionCategories::sqlFetch($idInspCategory);
         $data        = Request::get()->getRequestBody();
         $title       = $data['title'];
         $description = $data['description'];
-        
+//        print_r($data);
         if($title !== null)
             $category->title->set($title);
         if($description !== null)
