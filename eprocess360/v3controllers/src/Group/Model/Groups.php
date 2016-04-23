@@ -86,7 +86,7 @@ class Groups extends Model
      * @throws \Exception
      */
     public static function create($title, $isActive, $isSystem = false) {
-        die("da");
+
         $idController = Group::register($title);
         $status = ['isActive'=>$isActive,'isSystem'=>$isSystem];
 

@@ -42,7 +42,6 @@ trait Children
             }
         }
         if ($save) {
-            die("==da");
             // we only save if we absolutely have to
             $this->controllerTable->update();
         }

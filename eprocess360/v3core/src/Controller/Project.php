@@ -58,9 +58,11 @@ trait Project
             throw new Exception("Controller '{$controllerTable->title->get()}' is currently unavailable.");
         }
         $class = $controllerTable->class->get();
+       
         $controllerNamespace = $controllerTable->status->isAbnormalNamespace->get()? '' : 'App\\'.$class.'\\';
         /** @var Controller|Project $controllerName */
         $controllerName = $controllerNamespace . $class;
+        
         /** @var Controller|Project $controller */
         $controller = $controllerName::build($projectTable->idController->get());
         $controller->projectControllerTableCreate($controllerTable, $projectTable);

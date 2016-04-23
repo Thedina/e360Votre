@@ -35,6 +35,7 @@ use eprocess360\v3controllers\Controller\Controller as Control;
 use eprocess360\v3modules\Task\Task;
 
 use eprocess360\v3controllers\Inspection\Inspection;
+use eprocess360\v3controllers\Inspector\Inspector;
 
 
 
@@ -96,6 +97,7 @@ class SystemController extends Controller
         ('Migration Manager'));
         
         $this->addController(Inspection::build()->setName('inspection')->setDescription("Inspection"));
+        $this->addController(Inspector::build()->setName('inspector')->setDescription("Inspector"));
 
         $this->setChildrenBuilt(true);
     }

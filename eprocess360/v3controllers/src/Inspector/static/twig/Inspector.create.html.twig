@@ -1,0 +1,86 @@
+{% extends 'SystemController.backbone.base.html.twig' %}
+
+{% block moduleCSS %}
+    <link rel="Stylesheet" type="text/css" href="{{ Response.meta.SystemController.static }}/css/typeahead.css"/>
+{% endblock %}
+{% block body %}
+    <div class="container">
+        <div class="col-sm-6 clearfix pull-right">
+            <div class="btn-group pull-right h3 use-perm" data-ifperm="Inspector:write" role="inspector" aria-label="Inspector Options">
+                <button type="button" class="btn btn-info" id="btn-assign-skills">Add Skills</button>
+                <button type="button" class="btn btn-danger" id="btn-edit-limitations">Add Limitations</button>
+            </div>
+        </div>
+        <div class="row" style="padding-top:25px">
+            <div class="col-md-12 col-sm-12">
+                <div class="panel panel-default">
+                    <form class="form-horizontal" method="POST" action="{{ pool.SysVar.get('siteUrl') }}/inspector/{{ Response.data.idUser }}" id="formreg">
+                    <div class="panel-body">
+                        <br />
+                        {% if Response.data.errors %}
+                            <div class="alert alert-danger" role="alert">
+                                <p>There were problems with your submission:</p>
+                                <ul>{% for error in Response.data.errors %}
+                                        <li>{{ error.getMessage }}</li>
+                                    {% endfor %}</ul>
+                            </div>
+                        {% endif %}
+
+                        <input type="hidden" name="submitform" value="true"/>
+                        {% for Field in Response.data.form.Keydict.Fields  %}
+                            <div class="form-group{% if Field.hasMeta('required') %} {% if Field.hasException %}has-warning{% endif %} has-feedback" id="indicator-{{ Field.FormName }}-color{% endif %}">
+                                <label for="{{ Field.FormName }}" class="col-sm-3 col-md-2">{{ Field.Label }}</label>
+                                <div class="col-sm-9 col-md-10">
+                                    <input type="{{ Field.FormType }}" {% if Field.hasMeta('readonly') %}readonly="true"{% endif %} class="form-control" id="{{ Field.FormName }}" name="{{ Field.FormName }}" value="{% if Field.hasMeta('ignore') %}{% else %}{% if Field.hasException %}{{ Field.AttemptedValue }}{% else %}{{ Field.Value }}{% endif %}{% endif %}" placeholder="{{ Field.Label }}">
+                                    {% if Field.hasMeta('required')  %}<span class="glyphicon glyphicon-exclamation-sign form-control-feedback" id="indicator-{{ Field.FormName }}-status" aria-hidden="true"></span>{% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+
+                    </div>
+                        <div class="panel-footer clearfix">
+                            <div class="btn-group pull-right">
+                                <a href="{{ SysVar.get('siteUrl') }}/" class="btn btn-default">Cancel</a>
+                                <button type="submit" id="btn-save" class="btn btn-primary">Save</button>
+                            </div>
+
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block moduleJS %}
+    <script src="{{ Response.meta.SystemController.static }}/js/typeahead.bundle.min.js"></script>
+    <script src="{{ Response.meta.SystemController.static }}/js/util.js"></script>
+    <script src="{{ Response.meta.SystemController.static }}/js/bizzybone.js"></script>
+    <script src="{{ Response.meta.Inspector.static }}/js/models/inspectors.js"></script>
+    <script src="{{ Response.meta.Inspector.static }}/js/views/inspectors.js"></script>
+{% endblock %}
+
+{% block javascript %}
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var getData, meta, baseModel, baseCollection, baseView;
+
+            // Precompile all the relevant templates
+            _.each({
+                inspectorModalAddSkills: '#hb-inspector-modal-addskills',
+                inspectorSkillItem: '#hb-skill-list-item'
+            }, hbCompileTemplate);
+            
+            var tt = new InspectorSkillsMain();
+{#            var test = new InspectorListMainView();#}
+{#            console.log(test);#}
+            {#getData = hbInitData().data;#}
+            
+            modalAssignInspSkills = new ModalAssignInspectorSkills();
+            
+        });
+    </script>
+{% endblock %}
+

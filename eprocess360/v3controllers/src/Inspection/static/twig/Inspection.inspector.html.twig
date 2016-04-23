@@ -11,8 +11,8 @@
     <script src="{{ Response.meta.SystemController.static }}/js/typeahead.bundle.min.js"></script>
     <script src="{{ Response.meta.SystemController.static }}/js/util.js"></script>
     <script src="{{ Response.meta.SystemController.static }}/js/bizzybone.js"></script>
-    <script src="{{ Response.meta.Inspection.static }}/js/models/categories.js"></script>
-    <script src="{{ Response.meta.Inspection.static }}/js/views/categories.js"></script>
+    <script src="{{ Response.meta.Inspection.static }}/js/models/inspectors.js"></script>
+    <script src="{{ Response.meta.Inspection.static }}/js/views/inspectors.js"></script>
 {% endblock %}
 {% block javascript %}
     <script type="text/javascript">
@@ -21,13 +21,15 @@
 
             // Precompile all the relevant templates
             _.each({
-                categoryListMain: '#hb-category-list-main',
-                categoryListItem: '#hb-category-list-item',
-                categoryModalEditCategory: '#hb-category-modal-editcategory'
+                inspectorListMain: '#hb-inspection-list-main',
+                inspectorListItem: '#hb-inspection-list-item',
+{#                categoryModalEditCategory: '#hb-category-modal-editcategory'#}
             }, hbCompileTemplate);
             
             getData = hbInitData().data;
             
+            console.log(getData);
+            {#
             modalEditCategory = new ModalEditCategory();
 
             if(_.isArray(getData)) {
@@ -46,7 +48,7 @@
                 baseModel = new CategoryModel(getData);
                 baseView = new CategoryView({el: $('#content-container'), model: baseModel});
                 baseView.render();
-            }
+            }#}
         });
     </script>
 {% endblock %}

@@ -88,7 +88,9 @@ class Inspection extends Controller
         $this->routes->map('DELETE', '/limitation/[i:idInspLimiattion]', function ($idlimitation) {
             $this->deleteLimitation($idlimitation);
         });
-        
+        $this->routes->map('GET', '/inspectors', function () {
+            $this->getInspectorAPI();
+        });
     }
     
     public function getInspectionAPI()
@@ -141,6 +143,10 @@ class Inspection extends Controller
             $newApi     = $currentApi . '/limitation';
             $newApiPath = $currentApiPath . '/limitation';
         }
+        else if($apiType == "inspectors"){
+            $newApi     = $currentApi . '/inspectors';
+            $newApiPath = $currentApiPath . '/inspectors';
+        }
             
         $response->extendResponseMeta('Inspection', array('api' => $newApi));
         $response->extendResponseMeta('Inspection', array('apiPath' => $newApiPath));
@@ -164,6 +170,10 @@ class Inspection extends Controller
         else if($apiType == "limitation"){
             $response->setTemplate('Inspection.lim.html.twig', 'server');
             $response->setTemplate('module.inspection.limitation.handlebars.html', 'client', $this);
+        }
+        else if($apiType == "inspectors"){
+            $response->setTemplate('Inspection.inspector.html.twig', 'server');
+            $response->setTemplate('module.inspector.handlebars.html', 'client', $this);
         }
         else{
             $response->setTemplate('Inspection.main.html', 'server');
@@ -370,7 +380,5 @@ class Inspection extends Controller
 
         $this->standardResponse($data, 200, "limitation");
     }
-
-
 
 }

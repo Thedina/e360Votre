@@ -11,8 +11,8 @@
     <script src="{{ Response.meta.SystemController.static }}/js/typeahead.bundle.min.js"></script>
     <script src="{{ Response.meta.SystemController.static }}/js/util.js"></script>
     <script src="{{ Response.meta.SystemController.static }}/js/bizzybone.js"></script>
-    <script src="{{ Response.meta.Inspection.static }}/js/models/categories.js"></script>
-    <script src="{{ Response.meta.Inspection.static }}/js/views/categories.js"></script>
+    <script src="{{ Response.meta.Inspector.static }}/js/models/inspectors.js"></script>
+    <script src="{{ Response.meta.Inspector.static }}/js/views/inspectors.js"></script>
 {% endblock %}
 {% block javascript %}
     <script type="text/javascript">
@@ -21,22 +21,24 @@
 
             // Precompile all the relevant templates
             _.each({
-                categoryListMain: '#hb-category-list-main',
-                categoryListItem: '#hb-category-list-item',
-                categoryModalEditCategory: '#hb-category-modal-editcategory'
+                inspectorListMain: '#hb-inspector-list-main',
+                inspectorListItem: '#hb-inspector-list-item',
+                inspectorModalAddUser: '#hb-inspector-modal-adduser'
             }, hbCompileTemplate);
             
             getData = hbInitData().data;
             
-            modalEditCategory = new ModalEditCategory();
+            modalAddInspectorUser = new ModalAddInspectorUser();
+            
 
             if(_.isArray(getData)) {
                 
-                baseCollection = new CategoryList(_.map(getData, function(categoryData) {
-                    return new CategoryModel(categoryData);
+                baseCollection = new InspectorList(_.map(getData, function(inspectorData) {
+                    return new InspectorModel(inspectorData);
                 }));
                 
-                baseView = new CategoryListMainView({collection: baseCollection, el: $('#content-container')});
+                
+                baseView = new InspectorListMainView({collection: baseCollection, el: $('#content-container')});
                 baseView.render();
                 
                 return;
