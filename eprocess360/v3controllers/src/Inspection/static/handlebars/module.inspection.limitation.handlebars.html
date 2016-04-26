@@ -8,7 +8,6 @@
                 <button type="button" class="btn btn-info" id="btn-new-group">New Limitation</button>
             </div>
         </div>
-
         <div class="col-sm-12">
             <ol class="breadcrumb"><li class="active">Limitations</li></ol>
         </div>
@@ -25,7 +24,7 @@
 
 <script id="hb-category-list-item" type="text/x-handlebars-template">
     <tr>
-        <td><a href="{{meta.path}}/{{limitation.title}}">{{limitation.title}}</a></td>
+        <td>{{limitation.title}}</td>
         <td>{{limitation.description}}</td>
         <td>
             {{ limitation.status}}

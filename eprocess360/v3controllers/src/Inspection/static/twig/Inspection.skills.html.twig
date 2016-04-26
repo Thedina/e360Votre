@@ -18,34 +18,23 @@
 {% block javascript %}
     <script type="text/javascript">
         $(document).ready(function() {
-            var getData, meta, baseModel, baseCollection, baseView;
+            var getData, baseCollection, baseView;
 
             // Precompile all the relevant templates
             _.each({
                 skillListMain: '#hb-skill-list-main',
                 skillListItem: '#hb-skill-list-item',
-                //EditSkill:'#hb-group-modal-edituser',
-                EditSkill:'#hb-group-modal-edituserw',
-
-                AddSkill: '#hb-group-modal-adduser',
-                {#groupListItem: '#hb-group-list-item',
-                groupInsideMain: '#hb-group-inside-main',
-                groupInsideUser: '#hb-group-inside-user',
-                groupModalEditGroup: '#hb-group-modal-editgroup',
-                groupModalEditUser: '#hb-group-modal-edituser'#}
+                EditSkill:'#hb-inspection-modal-editskill',
+                AddSkill: '#hb-inspection-modal-addskill',
             }, hbCompileTemplate);
             
             getData = hbInitData().data;
             
             
-            modalEditSkill = new ModalEditGroup();
-            modalAddSkill = new ModalAddGroup();
-            //modalEditUser = new ModalEditGroupUser();
+            modalEditSkill = new ModalEditSkill();
+            modalAddSkill = new ModalAddSkill();
 
             if(_.isArray(getData)) {
-
-                console.log("ssss");
-
 
                 baseCollection = new SkillList(_.map(getData, function(skillData) {
                     return new SkillModel(skillData);
@@ -57,11 +46,7 @@
                 return;
 
             }
-            else if(_.isObject(getData)) {
-                baseModel = new GroupModel(getData);
-                baseView = new GroupView({el: $('#content-container'), model: baseModel});
-                baseView.render();
-            }
+            
         });
     </script>
 {% endblock %}

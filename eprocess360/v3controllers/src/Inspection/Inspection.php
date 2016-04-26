@@ -10,10 +10,13 @@ use eprocess360\v3core\Controller\Router;
 use eprocess360\v3core\Controller\Warden;
 use eprocess360\v3core\Controller\Warden\Privilege;
 use eprocess360\v3core\Request\Request;
+use eprocess360\v3core\Controller\Dashboard;
 
 use eprocess360\v3controllers\Inspection\Model\InspectionType;
 use eprocess360\v3controllers\Inspection\Model\InspectionLimitations;
 use eprocess360\v3controllers\Inspection\Model\InspectionCategories;
+
+use eprocess360\v3modules\Toolbar\Toolbar;
 
 use Exception;
 
@@ -23,12 +26,25 @@ use Exception;
  */
 class Inspection extends Controller
 {
-    use Router, Auth, Warden;
+    use Router, Auth, Dashboard, Warden;
     
     private $messages = [200 => false,
         404 => "404 Not Found - Resource not found",
         403 => "Permissions are not sufficient."];
 
+    private $toolbarLinks = [
+        [ 'id' =>'categories', 'title'=> 'Categories','url'=> '/inspection/categories' ],
+        [ 'id' =>'types', 'title'=> 'Inspection Types','url'=> '/inspection/types' ],
+        [ 'id' =>'skills', 'title'=> 'Skills','url'=> '/inspection/skills' ],
+        [ 'id' =>'limitations', 'title'=> 'Limitations','url'=> '/inspection/limitations' ]
+    ];
+    
+//    private $toolbarMore = [
+//        [ 'id' =>'utils', 'title'=> 'Inspection Utils', 
+//          'url'=> '/inspection/categories', 'activeOn' => [ 'categories', 'types', 'skills', 'limitations' ] 
+//        ],
+//        [ 'id' =>'inspectors', 'title'=> 'Manage Inspector','url'=> '/inspectors' ],
+//    ];
 
     /*********************************************   #ROUTING#  **********************************************/
 
@@ -88,28 +104,36 @@ class Inspection extends Controller
         $this->routes->map('PUT', '/skills/[i:idInspSkill]', function ($idInspSkill) {
             $this->editInspectionSkillsAPI($idInspSkill);
         });
+        $this->routes->map('DELETE', '/skills/[i:idInspSkill]', function ($idInspSkill) {
+            $this->deleteInspectionSkillsAPI($idInspSkill);
+        });
         
         //getskills
-        $this->routes->map('GET', '/limitation', function () {
+        $this->routes->map('GET', '/limitations', function () {
             $this->getLimitationAPI();
         });
-        $this->routes->map('POST', '/limitation', function ($idlimitation) {
+        $this->routes->map('POST', '/limitations', function ($idlimitation) {
             $this->createLimitationAPI($idlimitation);
         });
-        $this->routes->map('PUT', '/limitation/[i:idInspLimiattion]', function ($idlimitation) {
+        $this->routes->map('PUT', '/limitations/[i:idInspLimiattion]', function ($idlimitation) {
             $this->editLimitationAPI($idlimitation);
         });
-        $this->routes->map('DELETE', '/limitation/[i:idInspLimiattion]', function ($idlimitation) {
-            $this->deleteLimitation($idlimitation);
+        $this->routes->map('DELETE', '/limitations/[i:idInspLimiattion]', function ($idlimitation) {
+            $this->deleteLimitationAPI($idlimitation);
         });
-        $this->routes->map('GET', '/inspectors', function () {
-            $this->getInspectorAPI();
+        $this->routes->map('GET', '/projectconfig', function () {
+            $this->getProjectConfigAPI();
         });
+
     }
     
     public function getInspectionAPI()
     {
-
+        $response = $this->getResponseHandler();
+        $toolbar  = $this->buildDashboardToolbar();
+        
+        if($toolbar)
+            $response->addResponseMeta('dashboardBar', $toolbar);
     }
     
     private function standardResponse($data = [], $responseCode = 200, $apiType = "", $error = false)
@@ -122,6 +146,11 @@ class Inspection extends Controller
         ];
 
         $response = $this->getResponseHandler();
+        $toolbar  = $this->buildDashboardToolbar($apiType);
+        
+        if($toolbar)
+            $response->addResponseMeta('dashboardBar', $toolbar);
+        
         $this->changeApiPaths($response, $apiType);
         $response->setResponse($responseData, $responseCode, false);
         $this->setRenderingTemplates($response, $apiType);
@@ -153,9 +182,9 @@ class Inspection extends Controller
             $newApi     = $currentApi . '/skills';
             $newApiPath = $currentApiPath . '/skills';
         }
-        else if($apiType == "limitation"){
-            $newApi     = $currentApi . '/limitation';
-            $newApiPath = $currentApiPath . '/limitation';
+        else if($apiType == "limitations"){
+            $newApi     = $currentApi . '/limitations';
+            $newApiPath = $currentApiPath . '/limitations';
         }
         else if($apiType == "inspectors"){
             $newApi     = $currentApi . '/inspectors';
@@ -181,7 +210,7 @@ class Inspection extends Controller
             $response->setTemplate('Inspection.skills.html.twig', 'server');
             $response->setTemplate('module.inspection.skills.handlebars.html', 'client', $this);
         }
-        else if($apiType == "limitation"){
+        else if($apiType == "limitations"){
             $response->setTemplate('Inspection.lim.html.twig', 'server');
             $response->setTemplate('module.inspection.limitation.handlebars.html', 'client', $this);
         }
@@ -197,6 +226,7 @@ class Inspection extends Controller
     
     public function getInspectionCategoryAPI()
     {
+        
         $data = InspectionCategories::allCategories();
         $this->standardResponse($data, 200, "categories");
 
@@ -404,7 +434,9 @@ class Inspection extends Controller
         $title = $data['title'];
         $description = $data['description'];
 
-        $data = InspectionSkills::create($title, $description);
+        $responseData = InspectionSkills::create($title, $description);
+        
+        $this->standardResponse($responseData);
     }
 
     public function editInspectionSkillsAPI($idInspSkill){
@@ -426,14 +458,22 @@ class Inspection extends Controller
 
     }
     
+    public function deleteInspectionSkillsAPI($idInspSkill)
+    {
+        $this->verifyPrivilege(Privilege::DELETE);
+        
+        $data = InspectionSkills::deleteSkill($idInspSkill);
+        
+        $this->standardResponse($data, 200, "skills");
+    }
     
-
+    
     public function getLimitationAPI()
     {
 
         $data = InspectionLimitations::allLimitations($this->hasPrivilege(Privilege::ADMIN));
 
-        $this->standardResponse($data, 200, "limitation");
+        $this->standardResponse($data, 200, "limitations");
 
     }
 
@@ -476,7 +516,7 @@ class Inspection extends Controller
 
     }
 
-    public function deleteLimitation($idLimitation)
+    public function deleteLimitationAPI($idLimitation)
     {
         $this->verifyPrivilege(Privilege::DELETE);
 
@@ -485,4 +525,41 @@ class Inspection extends Controller
         $this->standardResponse($data, 200, "limitation");
     }
 
+    public function getProjectConfigAPI()
+    {
+
+    }
+    
+    private function buildDashboardToolbar($apiType = '', $removeFirstLink = false) {
+        
+        
+        $controller = Request::get()->getResponder();
+        $toolbar    = Toolbar::buildDashboardBar($controller);
+        
+        if(!empty($apiType))
+        {
+            foreach($this->toolbarLinks as $link){
+                $setActive = false;
+                if($link['id'] == $apiType)
+                    $setActive = true;
+                $toolbar->addToolbarLink($link['title'], $link['url'], $setActive, $setActive);
+            }
+        }
+        
+        $utilActive = false;
+        if($apiType == "categories" || $apiType == "types"  || $apiType == "skills" || $apiType == "limitations")
+            $utilActive = true;
+        
+        $toolbar->addToolbarMore('Inspection Utils', '/inspection/categories', $utilActive);
+        $toolbar->addToolbarMore('Manage Inspectors', '/inspector', false);
+        
+        $toolbarArr = $toolbar->getToolbar();
+        
+        if(!empty($apiType))
+            unset($toolbarArr['links'][0]);
+            
+        return $toolbarArr;
+    }
+    
+    
 }

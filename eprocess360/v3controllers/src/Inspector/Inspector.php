@@ -20,6 +20,7 @@ use eprocess360\v3core\Keydict\Entry\String;
 use eprocess360\v3controllers\Inspection\Model\InspectionSkills;
 use eprocess360\v3controllers\Inspection\Model\InspectionLimitations;
 
+use eprocess360\v3modules\Toolbar\Toolbar;
 
 use Exception;
 
@@ -70,6 +71,9 @@ class Inspector extends Controller
         $this->routes->map('POST', '/limitations/[i:idInspUser]', function ($idInspector) {
             $this->postInspectorLimitationsAPI($idInspector);
         });
+        $this->routes->map('DELETE', '/[i:idInspUser]', function ($idInspector) {
+            $this->deleteInspectorAPI($idInspector);
+        });
         
     }
     
@@ -82,8 +86,11 @@ class Inspector extends Controller
         $responseData = [
             'data' => $data
         ];
-
+        
         $response = $this->getResponseHandler();
+        $toolbar = $this->buildDashboardToolbar();
+        $response->addResponseMeta('dashboardBar', $toolbar);
+
         $response->setResponse($responseData, $responseCode, false);
         $response->setTemplate('Inspector.base.html.twig', 'server');
         $response->setTemplate('module.inspector.handlebars.html', 'client', $this);
@@ -140,6 +147,8 @@ class Inspector extends Controller
         ];
         
         $response = $this->getResponseHandler();
+        $toolbar = $this->buildDashboardToolbar();
+        $response->addResponseMeta('dashboardBar', $toolbar);
         $response->setTemplate('Inspector.create.html.twig', 'server');
         $response->setTemplate('module.inspector.handlebars.html', 'client', $this);
         $response->setResponse($responseData);
@@ -179,6 +188,8 @@ class Inspector extends Controller
         ];
         
         $response = $this->getResponseHandler();
+        $toolbar = $this->buildDashboardToolbar();
+        $response->addResponseMeta('dashboardBar', $toolbar);
         $response->setTemplate('Inspector.create.html.twig', 'server');
         $response->setTemplate('module.inspector.handlebars.html', 'client', $this);
         $response->setResponse($responseData);
@@ -283,6 +294,27 @@ class Inspector extends Controller
         $data       = Inspectors::editLimitations($idInspector, $postData);
         
         
+    }
+    
+    public function deleteInspectorAPI($idInspector){
+        
+        $this->verifyPrivilege(Privilege::DELETE);
+        
+        $data = Inspectors::deleteInspector($idInspector);
+
+    }
+    
+    private function buildDashboardToolbar() {
+        
+        $controller = Request::get()->getResponder();
+        $toolbar    = Toolbar::buildDashboardBar($controller);
+        
+        $toolbar->addToolbarMore('Inspection Utils', '/inspection/categories', false);
+        $toolbar->addToolbarMore('Manage Inspectors', '/inspector', true);
+        
+        $toolbarArr = $toolbar->getToolbar();
+            
+        return $toolbarArr;
     }
     
 }

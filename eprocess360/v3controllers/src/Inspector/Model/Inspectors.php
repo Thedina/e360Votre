@@ -76,22 +76,6 @@ class Inspectors extends Model
         return $new;
     }
     
-    public static function allSkills($idInspUser)
-    {
-        $sql = "SELECT * FROM InspSkills LEFT JOIN InspectorSkills ON " .
-               "InspSkills.idInspSKill = InspectorSkills.idInspSKill " . 
-               "WHERE Inspectors.idUser = {$idInspUser}";
-
-        $inspectors = DB::sql($sql);
-        
-        $new = [];
-            
-        if(isset($inspectors[0]['idInspector'])) {
-            $new = $inspectors[0];
-        }
-        
-        return $new;
-    }
     
     public static function getInspector($idInspUser)
     {    
@@ -277,6 +261,35 @@ class Inspectors extends Model
         return true;
     }
 
+    public static function deleteInspector($idInspector){
+        
+        self::deleteAllInspectorSkills($idInspector);
+        self::deleteAllInspectorLimitations($idInspector);
+        self::deleteById($idInspector);
+        
+        return true;
+    }
+    
+    public static function deleteAllInspectorSkills($idInspector)
+    {
+        $sql = "DELETE FROM InspectorSkills " . 
+               "WHERE idInspector = {$idInspector}";
+               
+        DB::sql($sql);
+        
+        return true;
+    }
+    
+    
+    public static function deleteAllInspectorLimitations($idInspector)
+    {
+        $sql = "DELETE FROM InspectorLimitations " . 
+               "WHERE idInspector = {$idInspector} ";
+               
+        DB::sql($sql);
+        
+        return true;
+    }
     
     public static function make($idUser = NULL)
     {

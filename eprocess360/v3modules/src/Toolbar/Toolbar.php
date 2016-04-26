@@ -184,7 +184,7 @@ class Toolbar extends Controller
 
         /** @var Controller|DashboardToolbar $parent */
         $parent = $controller->getParent();
-
+        
         if($parent && $parent->uses('DashboardToolbar') && $parent->buildToolbarChildren($toolbar, $controller)){
 
         }

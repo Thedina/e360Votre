@@ -16,7 +16,7 @@
     <div class="panel panel-default">
         <div class="table-responsive">
             <table class="table table-hover">
-                <thead><tr><th>Name</th><th>Description</th></tr></thead>
+                <thead><tr><th>Name</th><th>Email</th></tr></thead>
                 <tbody id="inspector-list"></tbody>
             </table>
         </div>
@@ -26,10 +26,10 @@
 <script id="hb-inspector-list-item" type="text/x-handlebars-template">
     <tr>
         <td><a href="{{meta.path}}/{{inspector.idUser}}">{{inspector.firstName}} {{inspector.lastName}}</a></td>
-        <td>
-            {{category.description}}
+        <td>{{inspector.email}}</td>
+        <td>    
             <div class="btn-category pull-right" role="category" aria-label="Inspector Options">
-                <button type="button" class="btn btn-default btn-xs btn-edit use-perm" data-ifperm="Inspector:write">Edit</button>
+                <a href="{{meta.path}}/{{inspector.idUser}}" type="button" class="btn btn-default btn-xs use-perm" data-ifperm="Inspector:write">Edit</a>
                 <button type="button" class="btn btn-default btn-xs btn-remove use-perm" data-ifperm="Inspector:delete">Remove</button>
             </div>
         </td>

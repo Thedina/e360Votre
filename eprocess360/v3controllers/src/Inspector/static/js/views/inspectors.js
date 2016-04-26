@@ -146,7 +146,7 @@ var InspectorListItemView = BizzyBone.BaseView.extend({
     eventButtonRemoveCategory: function(e) {
         var thisView = this;
 
-        bootbox.confirm("Are you sure you want to delete this category?", function(result) {
+        bootbox.confirm("Are you sure you want to delete this inspector?", function(result) {
             if (result) {
                     thisView.model.destroy({
                         wait: true,
