@@ -23,12 +23,18 @@
             _.each({
                 categoryListMain: '#hb-category-list-main',
                 categoryListItem: '#hb-category-list-item',
-                categoryModalEditCategory: '#hb-category-modal-editcategory'
+                categoryModalEditCategory: '#hb-category-modal-editcategory',
+                categoryModalAddSkills: '#hb-category-modal-addskills',
+                categorySkillItem: '#hb-skill-list-item',
+                categoryModalAddLimitations : '#hb-category-modal-addlimitations',
+                categoryLimitationItem : '#hb-limitation-list-item',
             }, hbCompileTemplate);
             
             getData = hbInitData().data;
             
             modalEditCategory = new ModalEditCategory();
+            modalAssignSkills = new ModalAssignSkills();
+            modalAssignLimitations = new ModalAssignLimitations();
 
             if(_.isArray(getData)) {
                 

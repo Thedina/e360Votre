@@ -126,15 +126,30 @@ var CategoryListItemView = BizzyBone.BaseView.extend({
         Inspection: 'meta'
     },
     events: {
-        "click .btn-edit": "eventButtonEditGroup",
-        "click .btn-remove": "eventButtonRemoveCategory"
+        "click .btn-edit": "eventButtonEditCategory",
+        "click .btn-remove": "eventButtonRemoveCategory",
+        "click .btn-assign-types": "eventButtonAssignTypes",
+        "click .btn-assign-skills": "eventButtonAssignSkills",
+        "click .btn-assign-limitations": "eventButtonAssignLimitations"
     },
     /**
      * Event handler for click edit category button
      * @param {Object} e
      */
-    eventButtonEditGroup: function(e) {
+    eventButtonEditCategory: function(e) {
         modalEditCategory.show(this.model);
+    },
+    
+    eventButtonAssignTypes: function(e){
+        console.log("wadaaa");
+    },
+    
+    eventButtonAssignSkills: function(e){
+        modalAssignSkills.show(this.model);
+    },
+    
+    eventButtonAssignLimitations: function(e){
+        modalAssignLimitations.show(this.model);
     },
     /**
      * Event hander for click remove category button
@@ -216,7 +231,7 @@ var ModalEditCategory = BizzyBone.BaseView.extend({
 
         this.model = categoryModal;
         this.collection = categoryCollection;
-
+        
         this.render();
 
         this.$el.children().first().modal('show');
@@ -242,10 +257,10 @@ var ModalEditCategory = BizzyBone.BaseView.extend({
         toSave   = {};
 
         wasNew          = this.model.isNew();
-
+        
         toSave.title        = $('#category-addedit-title').val();
         toSave.description  = $('#category-addedit-desc').val();
-      
+        
         thisView.model.save(toSave, {
             wait: true,
             success: function(model, response, options) {
@@ -255,6 +270,319 @@ var ModalEditCategory = BizzyBone.BaseView.extend({
                 thisView.hide();
             },
             error: function(model, response, options) {
+                Util.showError(response.responseJSON);
+            }
+        });
+    },
+    /**
+     * Even handler for "Cancel" button
+     * @param {Object} e
+     */
+    eventCancel: function(e) {
+        this.hide();
+    }
+});
+
+
+
+
+
+
+
+
+var ModalAssignSkills = BizzyBone.BaseView.extend({
+    /**
+     * @param {Object} options
+     * @returns {ModalEditCategory}
+     */
+    initialize: function(options) {
+        this.rendered = false;
+        return Backbone.View.prototype.initialize.call(this, options);
+    },
+    /**
+     * @returns {ModalEditCategory}
+     */
+    render: function() {
+        
+        var thisView, url;
+        
+        thisView = this;
+        thisView.showModal = true;
+        
+        url = thisView.model.urlRoot + "/getskills/" + thisView.model.attributes.idInspCategory;
+        
+        thisView.model.save({}, {
+            url: url,
+            method: 'POST',
+            wait: true,
+            async :false,
+            success: function(model, response, options) {
+                thisView.showModal = true;
+                thisView.renderSkills(response.data);        
+            },
+            error: function (model, response, options) {
+                thisView.showModal = false;
+                Util.showError(response.responseJSON);
+            }
+        });
+        
+        return this;
+    },
+    
+    renderSkills: function(skills){
+        
+        var template, elemSkillsList, templateSkillItem;
+        
+        template = Handlebars.templates.categoryModalAddSkills;
+        
+        this.$el.html(template({category: this.model.attributes, meta: hbInitData().meta.Inspection}));
+        
+        
+        // If never rendered before, insert the modal div at the top of the page
+        if(!this.rendered) {
+            $(document.body).prepend(this.$el);
+            this.rendered = true;
+        }
+        
+        elemSkillsList = $('#skills-list');
+
+        _.each(skills, function(categorySkill) {
+            templateSkillItem = Handlebars.templates.categorySkillItem;
+            elemSkillsList.append(templateSkillItem({skill: categorySkill}));                 
+        });
+    },
+    
+    events: {
+        "click .btn-primary": "eventSave",
+        "click .btn-default": "eventCancel",
+        "submit form": "eventSave"
+    },
+    /**
+     * Show the category add/edit category modal. To set up save callbacks, takes a
+     * new or existing category model and (for adding) a collection to add to.
+     * @param {CategoryModel} categoryModal
+     * @param {CategoryList} categoryCollection
+     * @returns {ModalEditGroup}
+     */
+    show: function(categoryModal, categoryCollection) {
+        
+        this.model = categoryModal;
+        this.collection = categoryCollection;
+        
+        this.render();
+        
+        if(this.showModal){
+            this.$el.children().first().modal('show');
+        }
+        
+        return this;
+    },
+    /**
+     * Just hide the modal
+     * @returns {ModalEditGroup}
+     */
+    hide: function() {
+        this.$el.children().first().modal('hide');
+        return this;
+    },
+    /**
+     * Even handler for "Save" button. Saves new or existing category model.
+     * @param {Object} e
+     */
+    eventSave: function(e) {
+        
+        var thisView, toSave, type, url;
+        thisView = this;
+        toSave   = {};
+        
+        var skillValues = [];
+        $.each($("input[name='skills[]']"), function(element) {
+            
+            var skillsData, skillId, skillAssigned;
+            skillId = $(this).attr('attr-id');
+            skillAssigned = $(this).prop('checked');
+            skillsData = { 'id' : skillId, 'assigned' : skillAssigned };
+            skillValues.push(skillsData);
+        });
+
+        type            = 'POST';
+        url             = this.model.urlRoot + "/skills/" + thisView.model.attributes.idInspCategory;
+        toSave.skills   = skillValues;
+        
+        this.model.save(toSave, {
+            type: type,
+            url: url,
+            wait: true,
+            success: function(model, response, options) {
+                thisView.hide();
+            },
+            error: function (model, response, options) {
+                Util.showError(response.responseJSON);
+            }
+        });
+
+//        wasNew          = this.model.isNew();
+//
+//        toSave.title        = $('#category-addedit-title').val();
+//        toSave.description  = $('#category-addedit-desc').val();
+//      
+//        thisView.model.save(toSave, {
+//            wait: true,
+//            success: function(model, response, options) {
+//                if(wasNew) {
+//                    thisView.collection.add(model);
+//                }
+//                thisView.hide();
+//            },
+//            error: function(model, response, options) {
+//                Util.showError(response.responseJSON);
+//            }
+//        });
+    },
+    /**
+     * Even handler for "Cancel" button
+     * @param {Object} e
+     */
+    eventCancel: function(e) {
+        this.hide();
+    }
+});
+
+
+
+
+
+
+
+
+var ModalAssignLimitations = BizzyBone.BaseView.extend({
+    /**
+     * @param {Object} options
+     * @returns {ModalEditCategory}
+     */
+    initialize: function(options) {
+        this.rendered = false;
+        return Backbone.View.prototype.initialize.call(this, options);
+    },
+    /**
+     * @returns {ModalEditCategory}
+     */
+    render: function() {
+        
+        var thisView, url;
+        
+        thisView = this;
+        thisView.showModal = true;
+        
+        url = thisView.model.urlRoot + "/getlimitations/" + thisView.model.attributes.idInspCategory;
+        
+        thisView.model.save({}, {
+            url: url,
+            method: 'POST',
+            wait: true,
+            async :false,
+            success: function(model, response, options) {
+                thisView.showModal = true;
+                thisView.renderLimitations(response.data);        
+            },
+            error: function (model, response, options) {
+                thisView.showModal = false;
+                Util.showError(response.responseJSON);
+            }
+        });
+        
+        return this;
+    },
+    
+    renderLimitations: function(limitations){
+        
+        var template, elemLimitationsList, templateLimitationItem;
+        
+        template = Handlebars.templates.categoryModalAddLimitations;
+        
+        this.$el.html(template({}));
+        
+        
+        // If never rendered before, insert the modal div at the top of the page
+        if(!this.rendered) {
+            $(document.body).prepend(this.$el);
+            this.rendered = true;
+        }
+        
+        elemLimitationsList = $('#limitations-list');
+
+        _.each(limitations, function(categoryLimitation) {
+            templateLimitationItem = Handlebars.templates.categoryLimitationItem;
+            elemLimitationsList.append(templateLimitationItem({limitation: categoryLimitation}));                 
+        });
+    },
+    
+    events: {
+        "click .btn-primary": "eventSave",
+        "click .btn-default": "eventCancel",
+        "submit form": "eventSave"
+    },
+    /**
+     * Show the category add/edit category modal. To set up save callbacks, takes a
+     * new or existing category model and (for adding) a collection to add to.
+     * @param {CategoryModel} categoryModal
+     * @param {CategoryList} categoryCollection
+     * @returns {ModalEditGroup}
+     */
+    show: function(categoryModal, categoryCollection) {
+        
+        this.model = categoryModal;
+        this.collection = categoryCollection;
+        
+        this.render();
+        
+        if(this.showModal){
+            this.$el.children().first().modal('show');
+        }
+        
+        return this;
+    },
+    /**
+     * Just hide the modal
+     * @returns {ModalEditGroup}
+     */
+    hide: function() {
+        this.$el.children().first().modal('hide');
+        return this;
+    },
+    /**
+     * Even handler for "Save" button. Saves new or existing category model.
+     * @param {Object} e
+     */
+    eventSave: function(e) {
+        
+        var thisView, toSave, type, url;
+        thisView = this;
+        toSave   = {};
+        
+        var limitationValues = [];
+        
+        $.each($("input[name='limitations[]']"), function(element) {
+            
+            var limitationData, limitationId, limitationAssigned;
+            limitationId = $(this).attr('attr-id');
+            limitationAssigned = $(this).prop('checked');
+            limitationData = { 'id' : limitationId, 'assigned' : limitationAssigned };
+            limitationValues.push(limitationData);
+        });
+
+        type                = 'POST';
+        url                 = this.model.urlRoot + "/limitations/" + thisView.model.attributes.idInspCategory;
+        toSave.limitations  = limitationValues;
+        
+        this.model.save(toSave, {
+            type: type,
+            url: url,
+            wait: true,
+            success: function(model, response, options) {
+                thisView.hide();
+            },
+            error: function (model, response, options) {
                 Util.showError(response.responseJSON);
             }
         });

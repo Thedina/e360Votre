@@ -18,6 +18,7 @@ use eprocess360\v3core\Keydict\Entry\PhoneNumber;
 use eprocess360\v3core\Keydict\Entry\String;
 
 use eprocess360\v3controllers\Inspection\Model\InspectionSkills;
+use eprocess360\v3controllers\Inspection\Model\InspectionLimitations;
 
 
 use Exception;
@@ -51,57 +52,25 @@ class Inspector extends Controller
         $this->routes->map('POST', '', function () {
             $this->createInspectorAPI();
         });
-        $this->routes->map('GET', '/[i:idInspector]', function ($idInspector) {
-            $this->getInspectorAPI($idInspector);
+        $this->routes->map('GET', '/[i:idInspector]', function ($idInspUser) {
+            $this->getInspectorAPI($idInspUser);
         });
         $this->routes->map('POST', '/[i:idInspector]', function ($idInspector) {
             $this->postInspectorAPI($idInspector);
         });
-        $this->routes->map('POST', '/skills', function () {
-            $this->getInspectorSkillsAPI();
+        $this->routes->map('POST', '/getskills/[i:idInspector]', function ($idInspector) {
+            $this->getInspectorSkillsAPI($idInspector);
         });
-//         $this->routes->map('PUT', '/categories/[i:idInspCategory]', function ($idInspCategory) {
-//            $this->editInspectionCategoryAPI($idInspCategory);
-//        });
-//        $this->routes->map('DELETE', '/categories/[i:idInspCategory]', function ($idInspCategory) {
-//            $this->deleteInspectionCategoryAPI($idInspCategory);
-//        });
-//        $this->routes->map('GET', '/types', function () {
-//            $this->getInspectionTypesAPI();
-//        });
-//        $this->routes->map('POST', '/types', function () {
-//            $this->createInspectionTypeAPI();
-//        });
-//        $this->routes->map('PUT', '/types/[i:idInspType]', function ($idInspType) {
-//            $this->editInspectionTypesAPI($idInspType);
-//        });
-//        $this->routes->map('DELETE', '/types/[i:idInspType]', function ($idInspType) {
-//            $this->deleteInspectionTypeAPI($idInspType);
-//        });
-//        $this->routes->map('GET', '/skills', function () {
-//            $this->getInspectionSkillAPI();
-//        });
-//        $this->routes->map('POST', '/skills', function () {
-//            $this->createInspectionSkillAPI();
-//        });
-//        $this->routes->map('PUT', '/skills/[i:idInspSkill]', function ($idInspSkill) {
-//            $this->editInspectionSkillsAPI($idInspSkill);
-//        });
-//        $this->routes->map('GET', '/limitation', function () {
-//            $this->getLimitationAPI();
-//        });
-//        $this->routes->map('POST', '/limitation/', function ($idlimitation) {
-//            $this->createLimitationAPI($idlimitation);
-//        });
-//        $this->routes->map('PUT', '/limitation/[i:idInspLimiattion]', function ($idlimitation) {
-//            $this->editLimitationAPI($idlimitation);
-//        });
-//        $this->routes->map('DELETE', '/limitation/[i:idInspLimiattion]', function ($idlimitation) {
-//            $this->deleteLimitation($idlimitation);
-//        });
-//        $this->routes->map('GET', '/inspectors', function () {
-//            $this->getInspectorAPI();
-//        });
+        $this->routes->map('POST', '/skills/[i:idInspUser]', function ($idInspector) {
+            $this->postInspectorSkillsAPI($idInspector);
+        });
+        $this->routes->map('POST', '/getlimitations/[i:idInspector]', function ($idInspector) {
+            $this->getInspectorLimitationsAPI($idInspector);
+        });
+        $this->routes->map('POST', '/limitations/[i:idInspUser]', function ($idInspector) {
+            $this->postInspectorLimitationsAPI($idInspector);
+        });
+        
     }
     
     
@@ -142,9 +111,10 @@ class Inspector extends Controller
     }
     
     
-    public function getInspectorAPI($idInspector){
+    public function getInspectorAPI($idInspUser){
         
-        $inspector = Inspectors::getInspector($idInspector);
+        $inspector = Inspectors::getInspector($idInspUser);
+        $idInspector = $inspector['idInspector'];
         
         if(empty($inspector['idInspector'])){
             throw new Exception("Inspector not found.");
@@ -162,7 +132,8 @@ class Inspector extends Controller
 
         $data['form']    = $form;
         $data['keydict'] = $form->getKeydict();
-        $data['idUser']  = $idInspector;
+        $data['idUser']  = $idInspUser;
+        $data['idInspector'] = $idInspector;
         
         $responseData = [
             'data' => $data
@@ -177,7 +148,8 @@ class Inspector extends Controller
     
     public function postInspectorAPI($idInspUser){
         
-        global $pool;
+        $inspector = Inspectors::getInspector($idInspUser);
+        $idInspector = $inspector['idInspector'];
 
         $form = $this->generateInspectorForm();
 
@@ -200,6 +172,7 @@ class Inspector extends Controller
         $data['form']    = $form;
         $data['keydict'] = $form->getKeydict();
         $data['idUser']  = $idInspUser;
+        $data['idInspector'] = $idInspector;
         
         $responseData = [
             'data' => $data
@@ -229,14 +202,87 @@ class Inspector extends Controller
         
     }
     
-    public function getInspectorSkillsAPI(){
+    public function getInspectorSkillsAPI($idInspector){
         
         $allSkills = InspectionSkills::allSkills();
         
+        if(empty($allSkills))
+            throw new Exception("Skills not found. Add skills before assign");
+        
+        $inspectorSkills = Inspectors::getSkills($idInspector);
+        $assignedSkills = array();
+        $allSkillsData = array();
+        
+        foreach($inspectorSkills as $inspSkill){
+            $skillId = $inspSkill['idInspSkill'];
+            $assignedSkills[$skillId] = $skillId;
+        }
+        
+        foreach($allSkills as $skill){
+            $skillData = array();
+            $idSkill = $skill['idInspSkill'];
+            $skillData['idInspSkill'] = $idSkill;
+            $skillData['title'] = $skill['title'];
+            $skillData['assigned'] = (!empty($assignedSkills[$idSkill])) ? true : false;
+            $allSkillsData[] = $skillData;
+        }
+        
         $responseData = [
-            'data' => $allSkills
+            'data' => $allSkillsData
         ];
         $response = $this->getResponseHandler();
         $response->setResponse($responseData);
     }
+    
+    public function postInspectorSkillsAPI($idInspector){
+        
+        
+        $data       = Request::get()->getRequestBody();
+        $postData   = $data['skills'];
+        $data       = Inspectors::editSkills($idInspector, $postData);
+        
+        
+    }
+    
+    public function getInspectorLimitationsAPI($idInspector){
+        
+        $allLimitations = InspectionLimitations::allLimitations();
+        
+        if(empty($allLimitations))
+            throw new Exception("Limitations not found. Add limitations before assign");
+        
+        $inspectorLimitations = Inspectors::getLimitations($idInspector);
+        $assignedLimitations = array();
+        $allLimitationsData = array();
+        
+        foreach($inspectorLimitations as $inspLimitation){
+            $limitationId = $inspLimitation['idInspLimitation'];
+            $assignedLimitations[$limitationId] = $limitationId;
+        }
+        
+        foreach($allLimitations as $limitation){
+            $limitationData = array();
+            $idLimitation = $limitation['idInspLimitation'];
+            $limitationData['idInspLimitation'] = $idLimitation;
+            $limitationData['title'] = $limitation['title'];
+            $limitationData['assigned'] = (!empty($assignedLimitations[$idLimitation])) ? true : false;
+            $allLimitationsData[] = $limitationData;
+        }
+        
+        $responseData = [
+            'data' => $allLimitationsData
+        ];
+        $response = $this->getResponseHandler();
+        $response->setResponse($responseData);
+    }
+    
+    public function postInspectorLimitationsAPI($idInspector){
+        
+        $data       = Request::get()->getRequestBody();
+        $postData   = $data['limitations'];
+        $data       = Inspectors::editLimitations($idInspector, $postData);
+        
+        
+    }
+    
 }

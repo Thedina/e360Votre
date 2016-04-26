@@ -158,3 +158,25 @@ var InspectorSkillsModel = BizzyBone.BaseModel.extend({
         return BizzyBone.BaseModel.prototype.set.call(this, attributes, options);
     },
 });
+
+
+var InspectorLimitationsModel = BizzyBone.BaseModel.extend({
+    urlRoot: hbInitData().meta.Inspector.apiPath,
+    idAttribute: 'idInspLimitation',
+    defaults: {
+        idInspector: 0,
+        firstName : '',
+        lastName : '',
+        description: '',
+    },
+    /**
+     * If roles in attributes, call initRoleTable()
+     * @param {Object} attributes
+     * @param {Object} [options]
+     * @returns {GroupModel}
+     */
+    set: function(attributes, options) {    
+
+        return BizzyBone.BaseModel.prototype.set.call(this, attributes, options);
+    },
+});

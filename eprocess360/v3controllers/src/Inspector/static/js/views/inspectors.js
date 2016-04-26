@@ -323,17 +323,9 @@ var ModalAddInspectorUser = BizzyBone.BaseView.extend({
 });
 
 
-
-
-
-
-
-
-
 var InspectorSkillsMain = BizzyBone.BaseView.extend({
    
     initialize: function(options) {
-        console.log("INITTT");
         var thisView = this;
         thisView.bindClickEvent();
         return Backbone.View.prototype.initialize.call(this, options);
@@ -374,10 +366,6 @@ var InspectorSkillsMain = BizzyBone.BaseView.extend({
 
 
 
-
-
-
-
 var ModalAssignInspectorSkills = BizzyBone.BaseView.extend({
     /**
      * @param {Object} options
@@ -395,49 +383,50 @@ var ModalAssignInspectorSkills = BizzyBone.BaseView.extend({
      * @returns {ModalEditGroupUser}
      */
     render: function() {
-        var thisView, template, userSearch;
+        var thisView, url;
         thisView = this;
-//        template = Handlebars.templates.inspectorModalAddSkills;
+        url = thisView.model.urlRoot + "/getskills/" + hbInitData().data.idInspector;
+        thisView.showModal = true;
         
         thisView.model.save({}, {
-            url: thisView.model.urlRoot + "/skills",
+            url: url,
             wait: true,
             async :false,
             success: function(model, response, options) {
                 
-                
-                var templateModel = Handlebars.templates.inspectorModalAddSkills;;
-                _.each(response.data, function(inspectorSkill) {
-                    
-                    template = Handlebars.templates.inspectorSkillItem;
-                    console.log(template({skill: inspectorSkill}));
-                    thisView.$el.find('.modal-body').html(template({skill: inspectorSkill}));
-                    
-                });
-                
-                
-                
-                thisView.$el.html(templateModel());
-                
-                console.log(thisView.$el.find('.modal-body').html());
-                
-                if(!this.rendered) {
-                    $(document.body).prepend(thisView.$el);
-                    thisView.rendered = true;
-                }
+                thisView.showModal = true;
+                thisView.renderSkills(response.data);
             },
             error: function (model, response, options) {
+                thisView.showModal = false;
                 Util.showError(response.responseJSON);
             }
         });
         
+    },
+    renderSkills: function(skills){
         
+        var templateModal, templateSkillItem, thisView = this, elemSkillsList;
+        
+        templateModal = Handlebars.templates.inspectorModalAddSkills;
+        thisView.$el.html(templateModal());
+                
+        if(!this.rendered) {
+            $(document.body).prepend(thisView.$el);
+            thisView.rendered = true;
+        }
+
+        elemSkillsList = $('#skills-list');
+
+        _.each(skills, function(inspectorSkill) {
+            templateSkillItem = Handlebars.templates.inspectorSkillItem;
+            elemSkillsList.append(templateSkillItem({skill: inspectorSkill}));                 
+        });
         
     },
     events: {
         "click .btn-primary": "eventSave",
-        "click .btn-default": "eventCancel",
-        "typeahead:select": "eventTypeaheadSelect"
+        "click .btn-default": "eventCancel"
     },
     /**
      * Show the group add/edit user modal. To set up save callbacks, takes a
@@ -454,34 +443,209 @@ var ModalAssignInspectorSkills = BizzyBone.BaseView.extend({
         this.model = inspSkillModel;
         this.collection = skillCollection;
         
-//        this.getAllSkills();
         this.render();
         
-        console.log("dasdas");
+        if(this.showModal){
+            this.$el.children().first().modal('show');
+        }
+
+        return this;
+    },
+    /**
+     * Just hide the modal
+     * @returns {ModalEditGroupUser}
+     */
+    hide: function() {
+        this.$el.children().first().modal('hide');
+        return this;
+    },
+    /**
+     * Event handler for "Save" button. Saves new or existing group user model.
+     * @param {Object} e
+     */
+    eventSave: function(e) {
+        var thisView, toSave, type, url, redirectUrl;
+        thisView    = this;
+        toSave      = {};
         
-        console.log(this.$el.children().first() );
+
+        var skillValues = [];
+        $.each($("input[name='skills[]']"), function(element) {
+            
+            var skillsData, skillId, skillAssigned;
+            skillId = $(this).attr('attr-id');
+            skillAssigned = $(this).prop('checked');
+            skillsData = { 'id' : skillId, 'assigned' : skillAssigned };
+            skillValues.push(skillsData);
+        });
+
+        type            = 'POST';
+        url             = this.model.urlRoot + "/skills/" + hbInitData().data.idInspector;
+        toSave.skills   = skillValues;
         
+        this.model.save(toSave, {
+            type: type,
+            url: url,
+            wait: true,
+            success: function(model, response, options) {
+                thisView.hide();
+            },
+            error: function (model, response, options) {
+                Util.showError(response.responseJSON);
+            }
+        });
+    },
+    /**
+     * Even handler for "Cancel" button
+     * @param {Object} e
+     */
+    eventCancel: function(e) {
+        this.hide();
+    },
+});
+
+
+//var SkillListItemView = BizzyBone.BaseView.extend({
+//    /**
+//     * @param [options]
+//     * @returns {InspectorListItemView}
+//     */
+//    initialize: function(options) {
+//        
+//        this.defaultElement = _.has(options, 'el') ? false : true;        
+//        return Backbone.View.prototype.initialize.call(this, options);
+//    },
+//    /**
+//     * @returns {InspectorListItemView}
+//     */
+//    render: function() {
+//        var template;
+//        
+//        template = Handlebars.templates.inspectorSkillItem;
+//        
+//        this.$el.html(template({skill: this.data}));
+//        
+//        return this;
+//    },
+//});
+
+
+var InspectorLimitationsMain = BizzyBone.BaseView.extend({
+   
+    initialize: function(options) {
+        var thisView = this;
+        thisView.bindClickEvent();
+        return Backbone.View.prototype.initialize.call(this, options);
+    },
+    
+    bindClickEvent : function(){
+        
+        var thisView = this;
+        $('#btn-assign-limitations').click(function(){
+            thisView.eventButtonAssignLimitations();
+        });
+    },
+    /**
+     * Event handler for click "New Category" button
+     * @param {Object} e
+     */
+    eventButtonAssignLimitations: function(e) {
+        
+        var newInspectorLimitations = new InspectorLimitationsModel();
+        modalAssignInspLimitations.show(newInspectorLimitations, this.collection);
+    },
+    /**
+     * Event hander for collection add category
+     * @param model
+     */
+    eventInspectorAdded: function(model) {
+        var newView = new InspectorListItemView({model: model});
+        this.categoryViews.push(newView);
+        newView.render().$el.appendTo($('#category-list')).hide().fadeIn(500);
+    }
+});
+
+
+
+
+var ModalAssignInspectorLimitations = BizzyBone.BaseView.extend({
+    /**
+     * @param {Object} options
+     * @returns {ModalEditGroupUser}
+     */
+    initialize: function(options) {
+        this.rendered = false;
+        return Backbone.View.prototype.initialize.call(this, options);
+    },
+    /**
+     * If render() is called while user model.isNew(), set up and display the
+     * user search box. Otherwise remove all traces of it.
+     * @returns {ModalEditGroupUser}
+     */
+    render: function() {
+        var thisView, url;
+        thisView = this;
+        url = thisView.model.urlRoot + "/getlimitations/" + hbInitData().data.idInspector;
+        
+        thisView.model.save({}, {
+            url: url,
+            wait: true,
+            async :false,
+            success: function(model, response, options) {
+
+                thisView.renderLimitations(response.data);
+                
+            },
+            error: function (model, response, options) {
+                Util.showError(response.responseJSON);
+            }
+        });
+        
+    },
+    renderLimitations: function(skills){
+        
+        var templateModal, templateLimitationItem, thisView = this, elemLimitationsList;
+        
+        templateModal = Handlebars.templates.inspectorModalAddLimitations;
+        thisView.$el.html(templateModal());
+                
+        if(!this.rendered) {
+            $(document.body).prepend(thisView.$el);
+            thisView.rendered = true;
+        }
+
+        elemLimitationsList = $('#limitations-list');
+
+
+        _.each(skills, function(inspectorLimitation) {
+            templateLimitationItem = Handlebars.templates.inspectorLimitationItem;
+            elemLimitationsList.append(templateLimitationItem({limitation: inspectorLimitation}));                 
+        });
+        
+    },
+    events: {
+        "click .btn-primary": "eventSave",
+        "click .btn-default": "eventCancel"
+    },
+    /**
+     * Show the group add/edit user modal. To set up save callbacks, takes a
+     * new or existing group user model and (for adding) a collection to add
+     * to.
+     * @param {GroupUserModel} userModel
+     * @param {GroupUserList} userCollection
+     * @returns {ModalEditGroupUser}
+     */
+    show: function(inspLimitationModel, limitationCollection) {
+        
+        this.model = inspLimitationModel;
+        this.collection = limitationCollection;
+        
+        this.render();
+
         this.$el.children().first().modal('show');
 
         return this;
     },
-    
-//    getAllSkills : function(){
-//        
-//        var thisView = this;
-//        
-//        thisView.model.save({}, {
-//            url: thisView.model.urlRoot + "/skills",
-//            wait: true,
-//            success: function(model, response, options) {
-//                
-//            },
-//            error: function (model, response, options) {
-//                Util.showError(response.responseJSON);
-//            }
-//        });
-//        
-//    },
     /**
      * Just hide the modal
      * @returns {ModalEditGroupUser}
@@ -499,17 +663,27 @@ var ModalAssignInspectorSkills = BizzyBone.BaseView.extend({
         thisView    = this;
         toSave      = {};
         redirectUrl = hbInitData().meta.Inspector.path;
-        
-        type            = 'POST';
-        url             = this.model.urlRoot;
-        toSave.idUser   = parseInt($('#inspector-addedit-iduser').val());
+
+        var limitationValues = [];
+        $.each($("input[name='limitations[]']"), function(element) {
+            
+            var limitationsData, limitationId, limitationAssigned;
+            limitationId = $(this).attr('attr-id');
+            limitationAssigned = $(this).prop('checked');
+            limitationsData = { 'id' : limitationId, 'assigned' : limitationAssigned };
+            limitationValues.push(limitationsData);
+        });
+
+        type                = 'POST';
+        url                 = this.model.urlRoot + "/limitations/" + hbInitData().data.idInspector;
+        toSave.limitations  = limitationValues;
         
         this.model.save(toSave, {
             type: type,
             url: url,
             wait: true,
             success: function(model, response, options) {
-                window.location = redirectUrl + "/" + toSave.idUser;
+                thisView.hide();
             },
             error: function (model, response, options) {
                 Util.showError(response.responseJSON);
@@ -523,40 +697,29 @@ var ModalAssignInspectorSkills = BizzyBone.BaseView.extend({
     eventCancel: function(e) {
         this.hide();
     },
-    /**
-     * Event handler for selecting option from typeahead. Sets corresponding
-     * user ID for selected user into hidden field.
-     * @param {Object} e
-     * @param name
-     */
-    eventTypeaheadSelect: function(e, name) {
-        $('#inspector-addedit-iduser').val(this.userIDs[name]);
-    }
 });
 
 
-
-
-var SkillListItemView = BizzyBone.BaseView.extend({
-    /**
-     * @param [options]
-     * @returns {InspectorListItemView}
-     */
-    initialize: function(options) {
-        
-        this.defaultElement = _.has(options, 'el') ? false : true;        
-        return Backbone.View.prototype.initialize.call(this, options);
-    },
-    /**
-     * @returns {InspectorListItemView}
-     */
-    render: function() {
-        var template;
-        
-        template = Handlebars.templates.inspectorSkillItem;
-        
-        this.$el.html(template({skill: this.data}));
-        
-        return this;
-    },
-});
+//var LimitationListItemView = BizzyBone.BaseView.extend({
+//    /**
+//     * @param [options]
+//     * @returns {InspectorListItemView}
+//     */
+//    initialize: function(options) {
+//        
+//        this.defaultElement = _.has(options, 'el') ? false : true;        
+//        return Backbone.View.prototype.initialize.call(this, options);
+//    },
+//    /**
+//     * @returns {InspectorListItemView}
+//     */
+//    render: function() {
+//        var template;
+//        
+//        template = Handlebars.templates.inspectorLimitationItem;
+//        
+//        this.$el.html(template({limitation: this.data}));
+//        
+//        return this;
+//    },
+//});

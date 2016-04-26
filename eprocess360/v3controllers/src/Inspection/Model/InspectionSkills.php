@@ -39,8 +39,7 @@ class InspectionSkills extends Model
         return Table::build(
             PrimaryKeyInt::build('idInspSkill', 'Skill ID'),
             FixedString128::build('description', 'Description'),
-            FixedString128::build('title', 'Titel'),
-            IdInteger::build('idInspCategory', 'Category'),
+            FixedString128::build('title', 'Title'),
             IdInteger::build('status', 'Controller ID'),
             IdInteger::build('createdUserId', 'Created By'),
             Datetime::build('creaetdDate', 'Date')

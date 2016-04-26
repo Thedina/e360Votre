@@ -12,7 +12,7 @@ use eprocess360\v3core\Controller\Warden\Privilege;
 use eprocess360\v3core\Request\Request;
 
 use eprocess360\v3controllers\Inspection\Model\InspectionType;
-use eprocess360\v3controllers\Inspection\Model\Limitation;
+use eprocess360\v3controllers\Inspection\Model\InspectionLimitations;
 use eprocess360\v3controllers\Inspection\Model\InspectionCategories;
 
 use Exception;
@@ -55,6 +55,18 @@ class Inspection extends Controller
         $this->routes->map('DELETE', '/categories/[i:idInspCategory]', function ($idInspCategory) {
             $this->deleteInspectionCategoryAPI($idInspCategory);
         });
+        $this->routes->map('POST', '/categories/getskills/[i:idInspCategory]', function ($idInspCategory) {
+            $this->getInspectionCategorySkillsAPI($idInspCategory);
+        });
+        $this->routes->map('POST', '/categories/skills/[i:idInspCategory]', function ($idInspCategory) {
+            $this->postInspectionCategorySkillsAPI($idInspCategory);
+        });
+        $this->routes->map('POST', '/categories/getlimitations/[i:idInspCategory]', function ($idInspCategory) {
+            $this->getInspectionCategoryLimitationsAPI($idInspCategory);
+        });
+        $this->routes->map('POST', '/categories/limitations/[i:idInspCategory]', function ($idInspCategory) {
+            $this->postInspectionCategoryLimitationsAPI($idInspCategory);
+        });
         $this->routes->map('GET', '/types', function () {
             $this->getInspectionTypesAPI();
         });
@@ -76,6 +88,8 @@ class Inspection extends Controller
         $this->routes->map('PUT', '/skills/[i:idInspSkill]', function ($idInspSkill) {
             $this->editInspectionSkillsAPI($idInspSkill);
         });
+        
+        //getskills
         $this->routes->map('GET', '/limitation', function () {
             $this->getLimitationAPI();
         });
@@ -196,7 +210,9 @@ class Inspection extends Controller
         $title = $data['title'];
         $description = $data['description'];
 
-        $data = InspectionCategories::create($title, $description);
+        $responseData = InspectionCategories::create($title, $description);
+        
+        $this->standardResponse($responseData);
     }
     
     public function editInspectionCategoryAPI($idInspCategory){
@@ -214,7 +230,9 @@ class Inspection extends Controller
             $category->description->set($description);
 
         $category->update();
-        $data = $category->toArray();        
+        $responseData = $category->toArray();        
+        
+        $this->standardResponse($responseData);
         
     }
     
@@ -227,6 +245,90 @@ class Inspection extends Controller
         $this->standardResponse($data, 200, "categories");
         
     }
+    
+    
+    public function getInspectionCategorySkillsAPI($idInspCategory)
+    {
+        
+        $allSkills = InspectionSkills::allSkills();
+        
+        if(empty($allSkills))
+            throw new Exception("Skills not found. Add skills before assign");
+        
+        $categorySkills = InspectionCategories::getSkills($idInspCategory);
+        $assignedSkills = array();
+        $allSkillsData = array();
+        
+        foreach($categorySkills as $categorySkill){
+            $skillId = $categorySkill['idInspSkill'];
+            $assignedSkills[$skillId] = $skillId;
+        }
+        
+        foreach($allSkills as $skill){
+            $skillData = array();
+            $idSkill = $skill['idInspSkill'];
+            $skillData['idInspSkill'] = $idSkill;
+            $skillData['title'] = $skill['title'];
+            $skillData['assigned'] = (!empty($assignedSkills[$idSkill])) ? true : false;
+            $allSkillsData[] = $skillData;
+        }
+        
+        $responseData = [
+            'data' => $allSkillsData
+        ];
+        $response = $this->getResponseHandler();
+        $response->setResponse($responseData);
+    }
+    
+    public function postInspectionCategorySkillsAPI($idInspCategory)
+    {
+        $data       = Request::get()->getRequestBody();
+        $postData   = $data['skills'];
+        $data       = InspectionCategories::editSkills($idInspCategory, $postData);
+    }
+    
+    
+    public function getInspectionCategoryLimitationsAPI($idInspCategory)
+    {
+        
+        $allLimitations = InspectionLimitations::allLimitations();
+        
+        if(empty($allLimitations))
+            throw new Exception("Limitations not found. Add limitations before assign");
+        
+        $categoryLimitations = InspectionCategories::getLimitations($idInspCategory);
+        
+        $assignedLimitations = array();
+        $allLimitationsData = array();
+        
+        foreach($categoryLimitations as $categoryLimitation){
+            $limitationId = $categoryLimitation['idInspLimitation'];
+            $assignedLimitations[$limitationId] = $limitationId;
+        }
+        
+        foreach($allLimitations as $limitation){
+            $limitationData = array();
+            $idLimitation = $limitation['idInspLimitation'];
+            $limitationData['idInspLimitation'] = $idLimitation;
+            $limitationData['title'] = $limitation['title'];
+            $limitationData['assigned'] = (!empty($assignedLimitations[$idLimitation])) ? true : false;
+            $allLimitationsData[] = $limitationData;
+        }
+        
+        $responseData = [
+            'data' => $allLimitationsData
+        ];
+        $response = $this->getResponseHandler();
+        $response->setResponse($responseData);
+    }
+    
+    public function postInspectionCategoryLimitationsAPI($idInspCategory)
+    {
+        $data       = Request::get()->getRequestBody();
+        $postData   = $data['limitations'];
+        $data       = InspectionCategories::editLimitations($idInspCategory, $postData);
+    }
+    
 
     public function getInspectionTypesAPI()
     {
@@ -323,6 +425,8 @@ class Inspection extends Controller
         $data = $skill->toArray();
 
     }
+    
+    
 
     public function getLimitationAPI()
     {

@@ -76,11 +76,28 @@ class Inspectors extends Model
         return $new;
     }
     
-    public static function getInspector($idInspector)
+    public static function allSkills($idInspUser)
+    {
+        $sql = "SELECT * FROM InspSkills LEFT JOIN InspectorSkills ON " .
+               "InspSkills.idInspSKill = InspectorSkills.idInspSKill " . 
+               "WHERE Inspectors.idUser = {$idInspUser}";
+
+        $inspectors = DB::sql($sql);
+        
+        $new = [];
+            
+        if(isset($inspectors[0]['idInspector'])) {
+            $new = $inspectors[0];
+        }
+        
+        return $new;
+    }
+    
+    public static function getInspector($idInspUser)
     {    
         
         $sql = "SELECT * FROM Inspectors LEFT JOIN Users ON Inspectors.idUser = Users.idUser " . 
-               "WHERE Inspectors.idUser = {$idInspector}";
+               "WHERE Inspectors.idUser = {$idInspUser}";
 
         $inspectors = DB::sql($sql);
         
@@ -102,7 +119,165 @@ class Inspectors extends Model
         
         return true;
     }
+    
+    
+    public static function editSkills($idInspector, $postData)
+    {
+        $inspSkills     = self::getSkills($idInspector);
+        $inspSkillIds   = array();
+        $checkSkill     = false;
+        
+        if(!empty($inspSkills)){
+            $checkSkill = true;
+            foreach($inspSkills as $skill){
+                $idInspSkill = $skill['idInspSkill'];
+                $inspSkillIds[$idInspSkill] = $idInspSkill;
+            }
+        }
+        
+        foreach($postData as $postSkill){
+            
+            $add    = false;
+            $remove = false;
+            
+            if($checkSkill){
+                //skill alredy assigned to inspector
+                //check skill needs to be removed from inspector
+                if(isset($inspSkillIds[$postSkill['id']]) && $postSkill['assigned'] == false){
+                    $remove = true;
+                }
+                else if(!isset($inspSkillIds[$postSkill['id']])){
+                    $add = ($postSkill['assigned'] == true) ? true : false;
+                }
+            }
+            else{
+                $add = ($postSkill['assigned'] == true) ? true : false;
+            }
+            
+            if($add)
+                self::addInspectorSkill($idInspector, $postSkill['id']);
+            if($remove)
+                self::deleteInspectorSkill($idInspector, $postSkill['id']);
+        }
+    }
+    
+    public static function getSkills($idInspector)
+    {
+        $sql = "SELECT * FROM InspectorSkills LEFT JOIN InspSkills ON InspectorSkills.idInspSkill = InspSkills.idInspSkill " . 
+               "WHERE InspectorSkills.idInspector = {$idInspector}";
 
+        $skills = DB::sql($sql);
+        
+        $new = [];
+        foreach($skills as $skill){
+            if(isset($skill['idInspectorSkill'])) {
+                $new[] = $skill;
+            }
+        }
+        
+        return $new;
+    }
+    
+    public static function addInspectorSkill($idInspector, $idSkill)
+    {
+        $sql = "INSERT INTO InspectorSkills (`idInspector`, `idInspSkill`)" . 
+               "VALUES({$idInspector}, {$idSkill})";
+
+        $skills = DB::sql($sql);
+        
+        return true;
+    }
+    
+    public static function deleteInspectorSkill($idInspector, $idSkill)
+    {
+        $sql = "DELETE FROM InspectorSkills " . 
+               "WHERE idInspector = {$idInspector} AND idInspSkill = {$idSkill}";
+               
+        $skills = DB::sql($sql);
+        
+        return true;
+    }
+    
+    public static function getLimitations($idInspector)
+    {
+        $sql = "SELECT * FROM InspectorLimitations LEFT JOIN InspLimitations ON InspectorLimitations.idInspLimitation = InspLimitations.idInspLimitation " . 
+               "WHERE InspectorLimitations.idInspector = {$idInspector}";
+
+        $limitations = DB::sql($sql);
+        
+        $new = [];
+        foreach($limitations as $limitation){
+            if(isset($limitation['idInspectorLimitation'])) {
+                $new[] = $limitation;
+            }
+        }
+        
+        return $new;
+    }
+    
+    public static function editLimitations($idInspector, $postData)
+    {
+        $inspLimitations    = self::getLimitations($idInspector);
+        $inspLimitationIds   = array();
+        $checkLimitation     = false;
+        $limitationAdd       = array();
+        $limitationRemove    = array();
+        
+        if(!empty($inspLimitations)){
+            $checkLimitation = true;
+            foreach($inspLimitations as $limitation){
+                $idInspLimitation = $limitation['idInspLimitation'];
+                $inspLimitationIds[$idInspLimitation] = $idInspLimitation;
+            }
+        }
+        
+        foreach($postData as $postLimitation){
+            
+            $add    = false;
+            $remove = false;
+            
+            if($checkLimitation){
+                //limitation alredy assigned to inspector
+                //check limitaion needs to be removed from inspector
+                if(isset($inspLimitationIds[$postLimitation['id']]) && $postLimitation['assigned'] == false){
+                    $remove = true;
+                }
+                else if(!isset($inspLimitationIds[$postLimitation['id']])){
+                    $add = ($postLimitation['assigned'] == true) ? true : false;
+                }
+            }
+            else{
+                $add = ($postLimitation['assigned'] == true) ? true : false;
+            }
+            
+            if($add)
+                self::addInspectorLimitation($idInspector, $postLimitation['id']);
+            if($remove)
+                self::deleteInspectorLimitation($idInspector, $postLimitation['id']);
+        }
+    }
+    
+    public static function addInspectorLimitation($idInspector, $idLimitation)
+    {
+        $sql = "INSERT INTO InspectorLimitations (`idInspector`, `idInspLimitation`)" . 
+               "VALUES({$idInspector}, {$idLimitation})";
+
+        $limitations = DB::sql($sql);
+        
+        return true;
+    }
+    
+    public static function deleteInspectorLimitation($idInspector, $idLimitation)
+    {
+        $sql = "DELETE FROM InspectorLimitations " . 
+               "WHERE idInspector = {$idInspector} AND idInspLimitation = {$idLimitation}";
+               
+        $limitations = DB::sql($sql);
+        
+        return true;
+    }
+
+    
     public static function make($idUser = NULL)
     {
 
