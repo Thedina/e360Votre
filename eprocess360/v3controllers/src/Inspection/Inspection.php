@@ -93,7 +93,7 @@ class Inspection extends Controller
         $this->routes->map('GET', '/limitation', function () {
             $this->getLimitationAPI();
         });
-        $this->routes->map('POST', '/limitation/', function ($idlimitation) {
+        $this->routes->map('POST', '/limitation', function ($idlimitation) {
             $this->createLimitationAPI($idlimitation);
         });
         $this->routes->map('PUT', '/limitation/[i:idInspLimiattion]', function ($idlimitation) {
@@ -431,7 +431,7 @@ class Inspection extends Controller
     public function getLimitationAPI()
     {
 
-        $data = Limitation::allLimitation($this->hasPrivilege(Privilege::ADMIN));
+        $data = InspectionLimitations::allLimitations($this->hasPrivilege(Privilege::ADMIN));
 
         $this->standardResponse($data, 200, "limitation");
 
