@@ -3,7 +3,6 @@
 
 namespace eprocess360\v3controllers\Inspection\Model;
 use Composer\Command\SelfUpdateCommand;
-use Dompdf\Exception;
 use eprocess360\v3core\Keydict;
 use eprocess360\v3core\Keydict\Entry\Bits8;
 use eprocess360\v3core\Keydict\Entry\FixedString128;
@@ -23,7 +22,7 @@ use eprocess360\v3core\Model\UserRoles;
 use eprocess360\v3core\Model\Users;
 use eprocess360\v3core\User;
 use eprocess360\v3core\DB;
-use SebastianBergmann\Comparator\ExceptionComparatorTest;
+use Exception;
 
 /**
  * Class GroupUsers

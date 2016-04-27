@@ -141,7 +141,7 @@ var CategoryListItemView = BizzyBone.BaseView.extend({
     },
     
     eventButtonAssignTypes: function(e){
-        console.log("wadaaa");
+        modalAssignTypes.show(this.model);
     },
     
     eventButtonAssignSkills: function(e){
@@ -574,6 +574,149 @@ var ModalAssignLimitations = BizzyBone.BaseView.extend({
         type                = 'POST';
         url                 = this.model.urlRoot + "/limitations/" + thisView.model.attributes.idInspCategory;
         toSave.limitations  = limitationValues;
+        
+        this.model.save(toSave, {
+            type: type,
+            url: url,
+            wait: true,
+            success: function(model, response, options) {
+                thisView.hide();
+            },
+            error: function (model, response, options) {
+                Util.showError(response.responseJSON);
+            }
+        });
+    },
+    /**
+     * Even handler for "Cancel" button
+     * @param {Object} e
+     */
+    eventCancel: function(e) {
+        this.hide();
+    }
+});
+
+
+
+var ModalAssignTypes = BizzyBone.BaseView.extend({
+    /**
+     * 
+     * @param {type} options
+     * @returns {unresolved}
+     */
+    initialize: function(options) {
+        this.rendered = false;
+        return Backbone.View.prototype.initialize.call(this, options);
+    },
+    /**
+     * 
+     * @returns {categoriesAnonym$23}
+     */
+    render: function() {
+        
+        var thisView, url;
+        
+        thisView = this;
+        thisView.showModal = true;
+        
+        url = thisView.model.urlRoot + "/getTypes/" + thisView.model.attributes.idInspCategory;
+        
+        thisView.model.save({}, {
+            url: url,
+            method: 'POST',
+            wait: true,
+            async :false,
+            success: function(model, response, options) {
+                thisView.showModal = true;
+                thisView.renderSkills(response.data);        
+            },
+            error: function (model, response, options) {
+                thisView.showModal = false;
+                Util.showError(response.responseJSON);
+            }
+        });
+        
+        return this;
+    },
+    
+    renderSkills: function(types){
+        
+        var template, elemTypesList, templateTypeItem;
+        
+        template = Handlebars.templates.categoryModalAddTypes;
+        
+        this.$el.html(template({category: this.model.attributes, meta: hbInitData().meta.Inspection}));
+        
+        
+        // If never rendered before, insert the modal div at the top of the page
+        if(!this.rendered) {
+            $(document.body).prepend(this.$el);
+            this.rendered = true;
+        }
+        
+        elemTypesList = $('#type-list');
+
+        _.each(types, function(categorySkill) {
+            templateTypeItem = Handlebars.templates.categoryTypesItem;
+            elemTypesList.append(templateTypeItem({type: categorySkill}));                 
+        });
+    },
+    
+    events: {
+        "click .btn-primary": "eventSave",
+        "click .btn-default": "eventCancel",
+        "submit form": "eventSave"
+    },
+    /**
+     * 
+     * @param {type} categoryModal
+     * @param {type} categoryCollection
+     * @returns {categoriesAnonym$23}
+     */
+    show: function(categoryModal, categoryCollection) {
+        
+        this.model = categoryModal;
+        this.collection = categoryCollection;
+        
+        this.render();
+        
+        if(this.showModal){
+            this.$el.children().first().modal('show');
+        }
+        
+        return this;
+    },
+    /**
+     * Just hide the modal
+     * @returns {ModalEditGroup}
+     */
+    hide: function() {
+        this.$el.children().first().modal('hide');
+        return this;
+    },
+    /**
+     * Even handler for "Save" button. Saves new or existing category model.
+     * @param {Object} e
+     */
+    eventSave: function(e) {
+        
+        var thisView, toSave, type, url;
+        thisView = this;
+        toSave   = {};
+        
+        var typeValues = [];
+        $.each($("input[name='types[]']"), function(element) {
+            
+            var typesData, typesId, typesAssigned;
+            typesId = $(this).attr('attr-id');
+            typesAssigned = $(this).prop('checked');
+            typesData = { 'id' : typesId, 'assigned' : typesAssigned };
+            typeValues.push(typesData);
+        });
+
+        type            = 'POST';
+        url             = this.model.urlRoot + "/types/" + thisView.model.attributes.idInspCategory;
+        toSave.types   = typeValues;
         
         this.model.save(toSave, {
             type: type,

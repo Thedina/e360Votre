@@ -22,14 +22,9 @@
 
             // Precompile all the relevant templates
             _.each({
-                categoryListMain: '#hb-category-list-main',
-                limitationListItem: '#hb-category-list-item',
-                limitationEditView: '#eventButtonNewGroup',
-                {#groupListItem: '#hb-group-list-item',
-                groupInsideMain: '#hb-group-inside-main',
-                groupInsideUser: '#hb-group-inside-user',
-                groupModalEditGroup: '#hb-group-modal-editgroup',
-                groupModalEditUser: '#hb-group-modal-edituser'#}
+                limitationListMain: '#hb-limitation-list-main',
+                limitationListItem: '#hb-limitation-list-item',
+                limitationEditView: '#hb-inspection-modal-editlimitation'
             }, hbCompileTemplate);
 
             getData = hbInitData().data;

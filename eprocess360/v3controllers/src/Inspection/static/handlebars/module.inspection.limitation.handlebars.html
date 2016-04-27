@@ -1,4 +1,4 @@
-<script id="hb-category-list-main" type="text/x-handlebars-template">
+<script id="hb-limitation-list-main" type="text/x-handlebars-template">
     <div class="row">
         <div class="col-sm-6">
             <h3>Limitations</h3>
@@ -15,20 +15,19 @@
     <div class="panel panel-default">
         <div class="table-responsive">
             <table class="table table-hover">
-                <thead><tr><th>Name</th><th>Description</th><th>Status</th></tr></thead>
-                <tbody id="category-list"></tbody>
+                <thead><tr><th>Name</th><th>Description</th></tr></thead>
+                <tbody id="limitation-list"></tbody>
             </table>
         </div>
     </div>
 </script>
 
-<script id="hb-category-list-item" type="text/x-handlebars-template">
+<script id="hb-limitation-list-item" type="text/x-handlebars-template">
     <tr>
         <td>{{limitation.title}}</td>
         <td>{{limitation.description}}</td>
         <td>
-            {{ limitation.status}}
-            <div class="btn-category pull-right" role="category" aria-label="Category Options">
+            <div class="btn-category pull-right" role="limitation" aria-label="Limitation Options">
                 <button type="button" class="btn btn-default btn-xs btn-edit use-perm" data-ifperm="Inspection:write">Edit</button>
                 <button type="button" class="btn btn-default btn-xs btn-remove use-perm" data-ifperm="Inspection:delete">Remove</button>
             </div>
@@ -38,13 +37,13 @@
 
 
 
-<script id="eventButtonNewGroup" type="text/x-handlebars-template">
-    <div class="modal fade" id="groupAddEditModal" tabindex="-1" role="dialog" aria-labelledby="groupAddEditModal">
+<script id="hb-inspection-modal-editlimitation" type="text/x-handlebars-template">
+    <div class="modal fade" id="limitationAddEditModal" tabindex="-1" role="dialog" aria-labelledby="limitationAddEditModal">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <a type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></a>
-                    <h4 class="modal-title">Add/Edit Group</h4>
+                    <h4 class="modal-title">Add/Edit Limitation</h4>
                 </div>
                 <div class="modal-body">
                     <form class="form-horizontal">
@@ -57,16 +56,7 @@
                         <div class="form-group">
                             <label for="limitation-addedit-title" class="col-sm-2 control-label">Discription</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control" id="limitation-addedit-description" placeholder="Title" value="{{limitation.description}}">
-                            </div>
-                        </div>
-                        <div class="form-group" id="demo">
-                            <div class="col-sm-offset-2 col-sm-10">
-                                <div class="checkbox">
-                                    <label>
-                                        <input id="limitation-addedit-isactive" type="checkbox" >{{limitation.status}}
-                                    </label>
-                                </div>
+                                <input type="text" class="form-control" id="limitation-addedit-description" placeholder="Description" value="{{limitation.description}}">
                             </div>
                         </div>
                     </form>

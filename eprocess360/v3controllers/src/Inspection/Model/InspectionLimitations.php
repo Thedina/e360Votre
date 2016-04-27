@@ -30,6 +30,7 @@ use eprocess360\v3core\Warden;
 use eprocess360\v3core\Controller\Warden\Privilege;
 use MongoDB\BSON\Timestamp;
 
+use Exception;
 /**
  * Class Limitation
  * @package eprocess360\v3controllers\inspection\Model
@@ -51,6 +52,15 @@ class InspectionLimitations extends Model
         )->setName('InspLimitations')->setLabel('InspLimitations');
     }
 
+    
+    public static function create($title, $description){
+        
+        $f = static::make($title, $description);
+        $f->insert();
+
+        $result = $f->data->toArray();
+        return $result;
+    }
 
     public static function allLimitations($readable = false)
     {
@@ -75,13 +85,66 @@ class InspectionLimitations extends Model
         return $new;
     }
     public static function deletelimitation($idlimitation) {
-
        
-        $sql = "DELETE FROM InspLimitations WHERE `idInspLimitation` = 1";
-           DB::sql($sql);
+        $limitationsAssignedCat       = self::getAllLimitationAssignedCategories($idlimitation);
+        $limitationsAssignedInspector = self::getAllLimitationAssignedInspectors($idlimitation);
+        
+        if(!empty($limitationsAssignedCat) || !empty($limitationsAssignedInspector))
+            throw new Exception("Delete Error! Limitation assigned to categories / inspectors");
+        
+        self::deleteById($idlimitation);
+    }
+    
+     public static function getAllLimitationAssignedCategories($idlimitation)
+    {
+        
+        $sql = "SELECT * FROM 	InspCatLimitations " . 
+               "WHERE 	InspCatLimitations.idInspLimitation = {$idlimitation}";
 
+        $limitations = DB::sql($sql);
+        
+        $new = [];
+        foreach($limitations as $limitation){
+            if(isset($limitation['idInspLimitation'])) {
+                $new[] = $limitation;
+            }
+        }
+        
+        return $new;
+        
+    }
+    
+    public static function getAllLimitationAssignedInspectors($idlimitation)
+    {
+        $sql = "SELECT * FROM InspectorLimitations " . 
+               "WHERE InspectorLimitations.idInspLimitation = {$idlimitation}";
 
-        return true;
+        $limitations = DB::sql($sql);
+        
+        $new = [];
+        foreach($limitations as $limitation){
+            if(isset($limitation['idInspLimitation'])) {
+                $new[] = $limitation;
+            }
+        }
+        
+        return $new;
+        
+    }
+    
+    public static function make($title = "0", $description = "") {
+
+        $rowData = ['title'=>$title,
+            'description'=>$description];
+
+        return self::InspectionCategoryConstruct($rowData);
+    }
+
+    public static function InspectionCategoryConstruct($rowData = []) {
+        $instance = new self();
+        $instance->data = self::keydict();
+        $instance->data->acceptArray($rowData);
+        return $instance;
     }
 
 

@@ -218,7 +218,84 @@ class InspectionCategories extends Model
         
         return true;
     }
+    
+    public static function getTypes($idInspCategory)
+    {
+        $sql = "SELECT * FROM InspCatTypes LEFT JOIN InspTypes ON InspCatTypes.idInspType = InspTypes.idInspType " . 
+               "WHERE InspCatTypes.idInspCategory = {$idInspCategory}";
 
+        $skills = DB::sql($sql);
+        
+        $new = [];
+        foreach($skills as $skill){
+            if(isset($skill['idInspCategory'])) {
+                $new[] = $skill;
+            }
+        }
+        
+        return $new;
+    }
+
+    public static function editTypes($idInspCategory, $postData)
+    {
+        $inspTypes    = self::getTypes($idInspCategory);
+        $inspTypeIds   = array();
+        $checkType     = false;
+        
+        if(!empty($inspTypes)){
+            $checkLimitation = true;
+            foreach($inspTypes as $type){
+                $idInspType = $type['idInspType'];
+                $inspTypeIds[$idInspType] = $idInspType;
+            }
+        }
+        
+        foreach($postData as $postType){
+            
+            $add    = false;
+            $remove = false;
+            
+            if($checkType){
+                //limitation alredy assigned to inspector
+                //check limitaion needs to be removed from inspector
+                if(isset($inspTypeIds[$postType['id']]) && $postType['assigned'] == false){
+                    $remove = true;
+                }
+                else if(!isset($inspTypeIds[$postType['id']])){
+                    $add = ($postType['assigned'] == true) ? true : false;
+                }
+            }
+            else{
+                $add = ($postType['assigned'] == true) ? true : false;
+            }
+            
+            if($add)
+                self::addInspectionCategoryType($idInspCategory, $postType['id']);
+            if($remove)
+                self::deleteInspectionCategoryType($idInspCategory, $postType['id']);
+        }
+    }
+    
+    public static function addInspectionCategoryType($idInspCategory, $idType)
+    {
+        $sql = "INSERT INTO InspCatTypes (`idInspCategory`, `idInspType`)" . 
+               "VALUES({$idInspCategory}, {$idType})";
+
+        $types = DB::sql($sql);
+        
+        return true;
+    }
+    
+    public static function deleteInspectionCategoryType($idInspCategory, $idType)
+    {
+        $sql = "DELETE FROM InspCatTypes " . 
+               "WHERE idInspCategory = {$idInspCategory} AND idInspType = {$idType}";
+               
+        $types = DB::sql($sql);
+        
+        return true;
+    }
+    
     
     public static function make($title = "0", $description = "") {
 

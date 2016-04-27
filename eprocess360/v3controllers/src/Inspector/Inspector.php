@@ -87,6 +87,7 @@ class Inspector extends Controller
             'data' => $data
         ];
         
+        
         $response = $this->getResponseHandler();
         $toolbar = $this->buildDashboardToolbar();
         $response->addResponseMeta('dashboardBar', $toolbar);

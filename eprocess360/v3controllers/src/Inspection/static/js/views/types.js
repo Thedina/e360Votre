@@ -150,6 +150,7 @@ var TypeListItemView = BizzyBone.BaseView.extend({
                         success: function (model, response, options) {
                             thisView.$el.fadeOut(500, function () {
                                 thisView.remove();
+                              
                             });
                         },
                         error: function (model, response, options) {
@@ -184,7 +185,8 @@ var ModalEditType = BizzyBone.BaseView.extend({
         return Backbone.View.prototype.initialize.call(this, options);
     },
     /**
-     * @returns {ModalEditTypeUser}
+     * 
+     * @returns {typesAnonym$8}
      */
     render: function() {
         
@@ -230,8 +232,9 @@ var ModalEditType = BizzyBone.BaseView.extend({
         return this;
     },
     /**
-     * Even handler for "Save" button. Saves new or existing group model.
-     * @param {Object} e
+     * 
+     * @param {type} e
+     * @returns {undefined}
      */
     eventSave: function(e) {
 
@@ -239,13 +242,6 @@ var ModalEditType = BizzyBone.BaseView.extend({
         var thisView, toSave, newStatus, wasNew;
         thisView = this;
         toSave = {};
-
-        wasNew = this.model.isNew();
-        newStatus = _.clone(this.model.get('status'));
-        newStatus.isActive = $('#group-addedit-isactive').prop('checked');
-        toSave.status = newStatus;
-        toSave.title = $('#group-addedit-title').val();
-        toSave   = {};
 
         wasNew          = this.model.isNew();
         toSave.title        = $('#Type-addedit-name').val();//Change the in handlerbaar input id
@@ -260,7 +256,7 @@ var ModalEditType = BizzyBone.BaseView.extend({
                 thisView.hide();
             },
             error: function(model, response, options) {
-                Util.showError(response.responseJSON +'Test Error');
+                Util.showError(response.responseJSON);
             }
         });
     },
@@ -313,9 +309,9 @@ var ModalAddType = BizzyBone.BaseView.extend({
     * @param {type} groupCollection
     * @returns {typesAnonym$11}
     */
-    show: function(groupModal, groupCollection) {
-        this.model = groupModal;
-        this.collection = groupCollection;
+    show: function(typeModal, typeCollection) {
+        this.model = typeModal;
+        this.collection = typeCollection;
 
         this.render();
 
@@ -332,8 +328,9 @@ var ModalAddType = BizzyBone.BaseView.extend({
         return this;
     },
     /**
-     * Even handler for "Save" button. Saves new or existing group model.
-     * @param {Object} e
+     * 
+     * @param {type} e
+     * @returns {undefined}
      */
     eventSave: function(e) {
 
@@ -341,13 +338,6 @@ var ModalAddType = BizzyBone.BaseView.extend({
         var thisView, toSave, newStatus, wasNew;
         thisView = this;
         toSave = {};
-
-        wasNew = this.model.isNew();
-        newStatus = _.clone(this.model.get('status'));
-        newStatus.isActive = $('#group-addedit-isactive').prop('checked');
-        toSave.status = newStatus;
-        toSave.title = $('#group-addedit-title').val();
-        toSave   = {};
 
         wasNew          = this.model.isNew();
         toSave.title        = $('#Type-addedit-name').val();//Change the in handlerbaar input id
@@ -362,7 +352,7 @@ var ModalAddType = BizzyBone.BaseView.extend({
                 thisView.hide();
             },
             error: function(model, response, options) {
-                Util.showError(response.responseJSON +'Test Error');
+                Util.showError(response.responseJSON);
             }
         });
     },
@@ -374,4 +364,3 @@ var ModalAddType = BizzyBone.BaseView.extend({
         this.hide();
     }
 });
-

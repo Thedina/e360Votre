@@ -28,11 +28,14 @@
                 categorySkillItem: '#hb-skill-list-item',
                 categoryModalAddLimitations : '#hb-category-modal-addlimitations',
                 categoryLimitationItem : '#hb-limitation-list-item',
+                categoryModalAddTypes:'#hb-category-modal-addtypes',
+                categoryTypesItem:'#hb-type-list-item',
             }, hbCompileTemplate);
             
             getData = hbInitData().data;
             
             modalEditCategory = new ModalEditCategory();
+            modalAssignTypes = new ModalAssignTypes();
             modalAssignSkills = new ModalAssignSkills();
             modalAssignLimitations = new ModalAssignLimitations();
 

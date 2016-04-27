@@ -25,7 +25,7 @@ use eprocess360\v3core\Model\UserRoles;
 use eprocess360\v3core\Warden;
 use eprocess360\v3core\Controller\Warden\Privilege;
 use eprocess360\v3controllers\Inspection\Inspection;
-
+use Exception;
 /**
  * Class InspectionType
  * @package eprocess360\v3controllers\Inspection\Model
@@ -83,6 +83,37 @@ class InspectionType extends Model
         $result = $f->data->toArray();
         return $result;
     }
+    
+    public static function deleteTypes($idInspType){
+        
+        $typesAssignedCat  = self::getAllTypeAssignedCategories($idInspType);
+        
+        if(!empty($typesAssignedCat))
+            throw new Exception("Delete Error! Type assigned to categories");
+        
+        self::deleteById($idInspType);
+
+    }
+    
+    public static function getAllTypeAssignedCategories($idInspType)
+    {
+        
+        $sql = "SELECT * FROM InspCatTypes " . 
+               "WHERE InspCatTypes.idInspType = {$idInspType}";
+
+        $types = DB::sql($sql);
+        
+        $new = [];
+        foreach($types as $type){
+            if(isset($type['idInspType'])) {
+                $new[] = $type;
+            }
+        }
+        
+        return $new;
+        
+    }
+    
     
     public static function make($title = "0", $description = "") {
 

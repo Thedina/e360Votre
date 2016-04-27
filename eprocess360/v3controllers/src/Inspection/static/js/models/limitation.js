@@ -8,16 +8,12 @@
  */
 var LimitationModel = BizzyBone.BaseModel.extend({
     urlRoot: hbInitData().meta.Inspection.apiPath,
-    idAttribute: 'idInspLimiattion',
+    idAttribute: 'idInspLimitation',
     defaults: {
-        idController: 0,
+        idInspController: 0,
         title: '',
-        status: {
-            isActive: true
-        },
-        users: [],
-        roles: []
-    },
+        description: '',
+    },  
     dontSave: [
         'users',
         'roles'

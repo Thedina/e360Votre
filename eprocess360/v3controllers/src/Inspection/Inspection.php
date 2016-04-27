@@ -95,6 +95,12 @@ class Inspection extends Controller
         $this->routes->map('DELETE', '/types/[i:idInspType]', function ($idInspType) {
             $this->deleteInspectionTypeAPI($idInspType);
         });
+        $this->routes->map('POST', '/categories/getTypes/[i:idInspCategory]', function ($idInspCategory) {
+            $this->getInspectionCategoryTypeAPI($idInspCategory);
+        });
+        $this->routes->map('POST', '/categories/types/[i:idInspCategory]', function ($idInspCategory) {
+            $this->postInspectionCategoryTypesAPI($idInspCategory);
+        });
         $this->routes->map('GET', '/skills', function () {
             $this->getInspectionSkillAPI();
         });
@@ -112,8 +118,8 @@ class Inspection extends Controller
         $this->routes->map('GET', '/limitations', function () {
             $this->getLimitationAPI();
         });
-        $this->routes->map('POST', '/limitations', function ($idlimitation) {
-            $this->createLimitationAPI($idlimitation);
+        $this->routes->map('POST', '/limitations', function () {
+            $this->createLimitationAPI();
         });
         $this->routes->map('PUT', '/limitations/[i:idInspLimiattion]', function ($idlimitation) {
             $this->editLimitationAPI($idlimitation);
@@ -317,6 +323,47 @@ class Inspection extends Controller
         $data       = InspectionCategories::editSkills($idInspCategory, $postData);
     }
     
+    public function getInspectionCategoryTypeAPI($idInspCategory)
+    {
+        
+        $allTypes = InspectionType::allInspectionTypes();
+        
+        if(empty($allTypes))
+            throw new Exception("Types not found. Add Types before assign");
+        
+        $categoryTypes = InspectionCategories::getTypes($idInspCategory);
+        $assignedTypes = array();
+        $allTypessData = array();
+        
+        foreach($categoryTypes as $categoryType){
+            $typeId = $categoryType['idInspType'];
+            $assignedTypes[$typeId] = $typeId;
+        }
+        
+        foreach($allTypes as $type){
+            $typeData = array();
+            $idType = $type['idInspType'];
+            $typeData['idInspType'] = $idType;
+            $typeData['title'] = $type['title'];
+            $typeData['assigned'] = (!empty($assignedTypes[$idType])) ? true : false;
+            $allTypessData[] = $typeData;
+        }
+        
+        $responseData = [
+            'data' => $allTypessData
+        ];
+        $response = $this->getResponseHandler();
+        $response->setResponse($responseData);
+    }
+    
+    public function postInspectionCategoryTypesAPI($idInspCategory)
+    {
+        $data       = Request::get()->getRequestBody();
+        $postData   = $data['types'];
+
+        $responseData       = InspectionCategories::editTypes($idInspCategory, $postData);
+        $this->standardResponse($responseData);
+    }
     
     public function getInspectionCategoryLimitationsAPI($idInspCategory)
     {
@@ -369,6 +416,15 @@ class Inspection extends Controller
         
     }
     
+    public function getInspectionTypesForCatAPI()
+    {
+       
+        $data = InspectionType::allInspectionTypes($this->hasPrivilege(Privilege::ADMIN));
+       
+        $this->standardResponse($data, 200, "categories");
+        
+    }
+    
     /**
      * 
      */
@@ -380,7 +436,8 @@ class Inspection extends Controller
         $title = $data['title'];
         $description = $data['description'];
 
-        $data = InspectionType::create($title, $description);
+        $responseData = InspectionType::create($title, $description);
+        $this->standardResponse($responseData);
     }
     
     /**
@@ -403,18 +460,21 @@ class Inspection extends Controller
             $types->description->set($description);
 
         $types->update();
-        $data = $types->toArray();        
+        $responseData = $types->toArray();
+
+        $this->standardResponse($responseData);       
         
     }
 
     public function deleteInspectionTypeAPI($idInspType)
     {
+        
         $this->verifyPrivilege(Privilege::DELETE);
 
-        $data = InspectionType::deleteById($idInspType);
-        
-        $this->standardResponse($data, 200, "types");
+        $data = InspectionType::deleteTypes($idInspType);
 
+        $this->standardResponse($data, 200, "types");
+        
     }
 
     public function getInspectionSkillAPI()
@@ -454,7 +514,8 @@ class Inspection extends Controller
             $skill->description->set($description);
 
         $skill->update();
-        $data = $skill->toArray();
+        $responseData = $skill->toArray();
+        $this->standardResponse($responseData);
 
     }
     
@@ -477,22 +538,17 @@ class Inspection extends Controller
 
     }
 
-    public function createLimitationAPI($idInspLimitation){
+    public function createLimitationAPI(){
 
-        $this->verifyPrivilege(Privilege::WRITE);
+        $this->verifyPrivilege(Privilege::CREATE);
 
-        $limitation    = Limitation::sqlFetch($idInspLimitation);
-        $data        = Request::get()->getRequestBody();
-        $title       = $data['title'];
+        $data = Request::get()->getRequestBody();
+        $title = $data['title'];
         $description = $data['description'];
 
-        if($title !== null)
-            $limitation->title->set($title);
-        if($description !== null)
-            $limitation->description->set($description);
-
-        $limitation->update();
-        $data = $limitation->toArray();
+        $responseData = InspectionLimitations::create($title, $description);
+        
+        $this->standardResponse($responseData);
 
     }
 
@@ -500,7 +556,7 @@ class Inspection extends Controller
 
         $this->verifyPrivilege(Privilege::WRITE);
 
-        $limitation    = Limitation::sqlFetch($idInspLimitation);
+        $limitation    = InspectionLimitations::sqlFetch($idInspLimitation);
         $data        = Request::get()->getRequestBody();
         $title       = $data['title'];
         $description = $data['description'];
@@ -512,17 +568,17 @@ class Inspection extends Controller
 
         $limitation->update();
 
-        $data = $limitation->toArray();
-
+        $responseData = $limitation->toArray();
+        $this->standardResponse($responseData);
     }
 
     public function deleteLimitationAPI($idLimitation)
     {
         $this->verifyPrivilege(Privilege::DELETE);
 
-        $data = Limitation::deletelimitation($idLimitation);
+        $data = InspectionLimitations::deletelimitation($idLimitation);
 
-        $this->standardResponse($data, 200, "limitation");
+        $this->standardResponse($data, 200, "limitations");
     }
 
     public function getProjectConfigAPI()
