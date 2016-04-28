@@ -1,9 +1,9 @@
 /**
- * Category: Views
+ * Inspector: Views
  */
 
 /**
- * Backbone view for category list
+ * Backbone view for inspector list
  * @typedef {Object} InspectorListMainView
  */
 var InspectorListMainView = BizzyBone.BaseView.extend({
@@ -16,7 +16,7 @@ var InspectorListMainView = BizzyBone.BaseView.extend({
         var thisView = this;
         this.inspectorViews = [];
         
-        // For each CategoryModel in the collection, instantiate a view
+        // For each InspectorModel in the collection, instantiate a view
         _.each(this.collection.models, function(inspectorModel) {
             thisView.inspectorViews.push(new InspectorListItemView({model: inspectorModel}));
         });
@@ -53,22 +53,13 @@ var InspectorListMainView = BizzyBone.BaseView.extend({
         "click #btn-new-inspector": "eventButtonNewInspection"
     },
     /**
-     * Event handler for click "New Category" button
+     * Event handler for click "New Inspector" button
      * @param {Object} e
      */
     eventButtonNewInspection: function(e) {
         var newInspector = new InspectorModel();
         modalAddInspectorUser.show(newInspector, this.collection);
     },
-    /**
-     * Event hander for collection add category
-     * @param model
-     */
-    eventInspectorAdded: function(model) {
-        var newView = new InspectorListItemView({model: model});
-        this.categoryViews.push(newView);
-        newView.render().$el.appendTo($('#category-list')).hide().fadeIn(500);
-    }
 });
 
 /**
@@ -82,9 +73,7 @@ var InspectorListItemView = BizzyBone.BaseView.extend({
      */
     initialize: function(options) {
         
-        this.defaultElement = _.has(options, 'el') ? false : true;
-//        this.listenTo(this.model, 'change', this.eventCategoryUpdated);
-        
+        this.defaultElement = _.has(options, 'el') ? false : true;        
         return Backbone.View.prototype.initialize.call(this, options);
     },
     /**
@@ -129,18 +118,10 @@ var InspectorListItemView = BizzyBone.BaseView.extend({
         Inspector: 'meta'
     },
     events: {
-        "click .btn-edit": "eventButtonEditGroup",
         "click .btn-remove": "eventButtonRemoveCategory"
     },
     /**
-     * Event handler for click edit category button
-     * @param {Object} e
-     */
-    eventButtonEditGroup: function(e) {
-        ModalAddInspectorUser.show(this.model);
-    },
-    /**
-     * Event hander for click remove category button
+     * Event hander for click remove inspector button
      * @param {Object} e
      */
     eventButtonRemoveCategory: function(e) {
@@ -162,13 +143,7 @@ var InspectorListItemView = BizzyBone.BaseView.extend({
             }
         });
     },
-    /**
-     * Event handler for category model change
-     * @param {GroupModel} model
-     */
-//    eventCategoryUpdated: function(model) {
-//        this.render();
-//    }
+    
 });
 
 
@@ -176,7 +151,7 @@ var InspectorListItemView = BizzyBone.BaseView.extend({
 var ModalAddInspectorUser = BizzyBone.BaseView.extend({
     /**
      * @param {Object} options
-     * @returns {ModalEditGroupUser}
+     * @returns {ModalAddInspectorUser}
      */
     initialize: function(options) {
         this.rendered = false;
@@ -184,9 +159,7 @@ var ModalAddInspectorUser = BizzyBone.BaseView.extend({
         return Backbone.View.prototype.initialize.call(this, options);
     },
     /**
-     * If render() is called while user model.isNew(), set up and display the
-     * user search box. Otherwise remove all traces of it.
-     * @returns {ModalEditGroupUser}
+     * @returns {ModalAddInspectorUser}
      */
     render: function() {
         var thisView, template, userSearch;
@@ -252,17 +225,16 @@ var ModalAddInspectorUser = BizzyBone.BaseView.extend({
         "click .btn-default": "eventCancel",
         "typeahead:select": "eventTypeaheadSelect"
     },
+
     /**
-     * Show the group add/edit user modal. To set up save callbacks, takes a
-     * new or existing group user model and (for adding) a collection to add
-     * to.
-     * @param {GroupUserModel} userModel
-     * @param {GroupUserList} userCollection
-     * @returns {ModalEditGroupUser}
+     * 
+     * @param {InspectorModel} inspectorModel
+     * @param {InspectorCollection} inspectorCollection
+     * @returns {inspectorsAnonym$6}
      */
-    show: function(userModel, userCollection) {
-        this.model = userModel;
-        this.collection = userCollection;
+    show: function(inspectorModel, inspectorCollection) {
+        this.model = inspectorModel;
+        this.collection = inspectorCollection;
 
         this.render();
 
@@ -272,14 +244,14 @@ var ModalAddInspectorUser = BizzyBone.BaseView.extend({
     },
     /**
      * Just hide the modal
-     * @returns {ModalEditGroupUser}
+     * @returns {ModalAddInspectorUser}
      */
     hide: function() {
         this.$el.children().first().modal('hide');
         return this;
     },
     /**
-     * Event handler for "Save" button. Saves new or existing group user model.
+     * Event handler for "Save" button. Saves new inspector     model.
      * @param {Object} e
      */
     eventSave: function(e) {
@@ -698,28 +670,3 @@ var ModalAssignInspectorLimitations = BizzyBone.BaseView.extend({
         this.hide();
     },
 });
-
-
-//var LimitationListItemView = BizzyBone.BaseView.extend({
-//    /**
-//     * @param [options]
-//     * @returns {InspectorListItemView}
-//     */
-//    initialize: function(options) {
-//        
-//        this.defaultElement = _.has(options, 'el') ? false : true;        
-//        return Backbone.View.prototype.initialize.call(this, options);
-//    },
-//    /**
-//     * @returns {InspectorListItemView}
-//     */
-//    render: function() {
-//        var template;
-//        
-//        template = Handlebars.templates.inspectorLimitationItem;
-//        
-//        this.$el.html(template({limitation: this.data}));
-//        
-//        return this;
-//    },
-//});

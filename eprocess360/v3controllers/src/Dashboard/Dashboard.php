@@ -63,9 +63,13 @@ class Dashboard extends Controller
         /** @var Users $users */
         $users = $parent->getChild('users');
 
+        $inspection = $parent->getChild('inspection');
+
         $buttons = Buttons::build('Dashboard');
+
+
         $inclean = [];
-        $in = [$controllers->getDashButton(), $groups->getDashButton(), $users->getDashButton()];
+        $in = [$controllers->getDashButton(), $groups->getDashButton(), $users->getDashButton(), $inspection->getDashButton()];
         foreach ($in as $i)
             if ($i !== null)
                 $inclean[] = $i;

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace eprocess360\v3controllers\Inspection\Model;
 use eprocess360\v3core\Keydict\Entry\PrimaryKeyInt;
 use eprocess360\v3core\Keydict\Entry\String;
@@ -12,7 +11,7 @@ use eprocess360\v3controllers\Inspection\Inspection;
 use eprocess360\v3core\DB;
 /**
  * Class InspectionCategories
- * @package eprocess360\v3controllers\Group\Model
+ * @package eprocess360\v3controllers\Inspection\InspectionCategories
  */
 class InspectionCategories extends Model
 {
@@ -28,21 +27,27 @@ class InspectionCategories extends Model
         )->setName('InspCategories')->setLabel('InspCategories');
     }
     
-    public static function create($title, $description){
-        
-        $idController = Inspection::register($title);
-
+    /**
+     * Insert inspection category to database
+     * @param $title
+     * @param $description
+     * @return array
+     */
+    public static function create($title, $description)
+    {    
         $f = static::make($title, $description);
         $f->insert();
 
         $result = $f->data->toArray();
         return $result;
     }
-
-    public static function allCategories($readable = false)
-    {
-        global $pool;
-        
+    
+    /**
+     * Get all categories from database
+     * @return array
+     */
+    public static function allCategories()
+    {        
         //find all Inspection Categories
         $sql = "SELECT * FROM InspCategories ORDER BY title";
 
@@ -58,13 +63,23 @@ class InspectionCategories extends Model
         return $new;
     }
     
-    public static function deleteCategory($idInspCategory){
-        
-        self::deleteById($idInspCategory);
-        
+    /**
+     * Delete inspection category by id
+     * @param $idInspCategory
+     * @return boolean
+     */
+    public static function deleteCategory($idInspCategory)
+    {
+        self::deleteById($idInspCategory);    
         return true;
     }
 
+    
+    /**
+     * Get skills assigned to category
+     * @param $idInspCategory
+     * @return array
+     */
     public static function getSkills($idInspCategory)
     {
         $sql = "SELECT * FROM InspCatSkills LEFT JOIN InspSkills ON InspCatSkills.idInspSkill = InspSkills.idInspSkill " . 
@@ -82,6 +97,12 @@ class InspectionCategories extends Model
         return $new;
     }
     
+    /**
+     * Assign / remove skill to / from category
+     * @param $idInspCategory
+     * @param $postData
+     * @return boolean
+     */
     public static function editSkills($idInspCategory, $postData)
     {
         $inspSkills     = self::getSkills($idInspCategory);
@@ -120,28 +141,45 @@ class InspectionCategories extends Model
             if($remove)
                 self::deleteInspectionCategorySkill($idInspCategory, $postSkill['id']);
         }
+        
+        return true;
     }
     
-     public static function addInspectionCategorySkill($idInspCategory, $idSkill)
+    /**
+     * Add category skill to database
+     * @param $idInspCategory
+     * @param $idSkill
+     * @return boolean
+     */
+    public static function addInspectionCategorySkill($idInspCategory, $idSkill)
     {
         $sql = "INSERT INTO InspCatSkills (`idInspCategory`, `idInspSkill`)" . 
                "VALUES({$idInspCategory}, {$idSkill})";
 
         DB::sql($sql);
-        
         return true;
     }
     
+    /**
+     * Remove category skill from database
+     * @param $idInspCategory
+     * @param $idSkill
+     * @return boolean
+     */
     public static function deleteInspectionCategorySkill($idInspCategory, $idSkill)
     {
         $sql = "DELETE FROM InspCatSkills " . 
                "WHERE idInspCategory = {$idInspCategory} AND idInspSkill = {$idSkill}";
                
         DB::sql($sql);
-        
         return true;
     }
     
+    /**
+     * Get limitations assigned to category
+     * @param type $idInspCategory
+     * @return type
+     */
     public static function getLimitations($idInspCategory)
     {
         $sql = "SELECT * FROM InspCatLimitations LEFT JOIN InspLimitations ON InspCatLimitations.idInspLimitation = InspLimitations.idInspLimitation " . 
@@ -159,6 +197,12 @@ class InspectionCategories extends Model
         return $new;
     }
     
+    /**
+     * Assign / remove limitations to / from category
+     * @param $idInspCategory
+     * @param $postData
+     * @return boolean
+     */
     public static function editLimitations($idInspCategory, $postData)
     {
         $inspLimitations    = self::getLimitations($idInspCategory);
@@ -197,8 +241,16 @@ class InspectionCategories extends Model
             if($remove)
                 self::deleteInspectionCategoryLimitation($idInspCategory, $postLimitation['id']);
         }
+        
+        return true;
     }
     
+    /**
+     * Add category limitation to database
+     * @param $idInspCategory
+     * @param $idLimitation
+     * @return boolean
+     */
     public static function addInspectionCategoryLimitation($idInspCategory, $idLimitation)
     {
         $sql = "INSERT INTO InspCatLimitations (`idInspCategory`, `idInspLimitation`)" . 
@@ -209,6 +261,12 @@ class InspectionCategories extends Model
         return true;
     }
     
+    /**
+     * Delete category limitation to database
+     * @param $idInspCategory
+     * @param $idLimitation
+     * @return boolean
+     */
     public static function deleteInspectionCategoryLimitation($idInspCategory, $idLimitation)
     {
         $sql = "DELETE FROM InspCatLimitations " . 
@@ -219,6 +277,11 @@ class InspectionCategories extends Model
         return true;
     }
     
+    /**
+     * Get inspection types assigned to category
+     * @param $idInspCategory
+     * @return array
+     */
     public static function getTypes($idInspCategory)
     {
         $sql = "SELECT * FROM InspCatTypes LEFT JOIN InspTypes ON InspCatTypes.idInspType = InspTypes.idInspType " . 
@@ -236,6 +299,11 @@ class InspectionCategories extends Model
         return $new;
     }
 
+    /**
+     * Assign / remove inspection types to / from category
+     * @param $idInspCategory
+     * @param $postData
+     */
     public static function editTypes($idInspCategory, $postData)
     {
         $inspTypes    = self::getTypes($idInspCategory);
@@ -276,27 +344,40 @@ class InspectionCategories extends Model
         }
     }
     
+    /**
+     * Add category inspection types to database
+     * @param $idInspCategory
+     * @param $idType
+     * @return boolean
+     */
     public static function addInspectionCategoryType($idInspCategory, $idType)
     {
         $sql = "INSERT INTO InspCatTypes (`idInspCategory`, `idInspType`)" . 
                "VALUES({$idInspCategory}, {$idType})";
 
-        $types = DB::sql($sql);
-        
+        DB::sql($sql);
         return true;
     }
     
+    /**
+     * Delete category inspection types to database
+     * @param $idInspCategory
+     * @param $idType
+     * @return boolean
+     */
     public static function deleteInspectionCategoryType($idInspCategory, $idType)
     {
         $sql = "DELETE FROM InspCatTypes " . 
                "WHERE idInspCategory = {$idInspCategory} AND idInspType = {$idType}";
                
-        $types = DB::sql($sql);
-        
+        DB::sql($sql);
         return true;
     }
     
-    
+    /**
+     * @param $title
+     * @param $description
+     */
     public static function make($title = "0", $description = "") {
 
         $rowData = ['title'=>$title,
@@ -305,6 +386,10 @@ class InspectionCategories extends Model
         return self::InspectionCategoryConstruct($rowData);
     }
 
+    /**
+     * @param type $rowData
+     * @return \self
+     */
     public static function InspectionCategoryConstruct($rowData = []) {
         $instance = new self();
         $instance->data = self::keydict();

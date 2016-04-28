@@ -1,5 +1,5 @@
 /**
- * Category: Views
+ * Limitation: Views
  */
 
 /**
@@ -11,14 +11,14 @@
 var LimitationListMainView = BizzyBone.BaseView.extend({
     /**
      * @param options
-     * @returns {CategoryListMainView}
+     * @returns {LimitationListMainView}
      */
     initialize: function(options) {
 
         var thisView = this;
         this.limitationViews = [];
 
-        // For each CategoryModel in the collection, instantiate a view
+        // For each LimitationModel in the collection, instantiate a view
         _.each(this.collection.models, function(limitationModel) {
             thisView.limitationViews.push(new LimitationListItemView({model: limitationModel}));
         });
@@ -32,7 +32,6 @@ var LimitationListMainView = BizzyBone.BaseView.extend({
      */
     render: function() {
 
-        
         var template, limitationList;
 
         template = Handlebars.templates.limitationListMain;
@@ -54,7 +53,7 @@ var LimitationListMainView = BizzyBone.BaseView.extend({
         "click #btn-new-group": "eventButtonNewLimitation"
     },
     /**
-     * Event handler for click "New Group" button
+     * Event handler for click "New Limitation" button
      * @param {Object} e
      */
     eventButtonNewLimitation: function(e) {
@@ -62,7 +61,7 @@ var LimitationListMainView = BizzyBone.BaseView.extend({
         modalEditLimitation.show(newLimitation, this.collection);
     },
     /**
-     * Event hander for collection add group
+     * Event hander for collection add limitation
      * @param model
      */
     eventLimitationAdded: function(model) {
@@ -73,7 +72,7 @@ var LimitationListMainView = BizzyBone.BaseView.extend({
 });
 
 /**
- * backbone view for group list item
+ * backbone view for limitation list item
  * @typedef {Object} LimitationListItemView
  */
 var LimitationListItemView = BizzyBone.BaseView.extend({
@@ -84,7 +83,7 @@ var LimitationListItemView = BizzyBone.BaseView.extend({
     initialize: function(options) {
 
         this.defaultElement = _.has(options, 'el') ? false : true;
-        this.listenTo(this.model, 'change', this.eventCategoryUpdated);
+        this.listenTo(this.model, 'change', this.eventLimitationUpdated);
 
         return Backbone.View.prototype.initialize.call(this, options);
     },
@@ -132,24 +131,24 @@ var LimitationListItemView = BizzyBone.BaseView.extend({
         Inspection: 'meta'
     },
     events: {
-        "click .btn-edit": "eventButtonEditGroup",
-        "click .btn-remove": "eventButtonRemoveGroup"
+        "click .btn-edit": "eventButtonEditLimitation",
+        "click .btn-remove": "eventButtonRemoveLimitation"
     },
     /**
-     * Event handler for click edit group button
+     * Event handler for click edit limitation button
      * @param {Object} e
      */
-    eventButtonEditGroup: function(e) {
+    eventButtonEditLimitation: function(e) {
         modalEditLimitation.show(this.model);
     },
     /**
-     * Event hander for click remove group button
+     * Event hander for click remove limitation button
      * @param {Object} e
      */
-    eventButtonRemoveGroup: function(e) {
+    eventButtonRemoveLimitation: function(e) {
         var thisView = this;
 
-        bootbox.confirm("Are you sure you want to delete this group?", function(result) {
+        bootbox.confirm("Are you sure you want to delete this limitation?", function(result) {
             if (result) {
                 thisView.model.destroy({
                     wait: true,
@@ -166,22 +165,22 @@ var LimitationListItemView = BizzyBone.BaseView.extend({
         });
     },
     /**
-     * Event handler for group model change
+     * Event handler for limitation model change
      * @param {GroupModel} model
      */
-    eventCategoryUpdated: function(model) {
+    eventLimitationUpdated: function(model) {
         this.render();
     }
 });
 
 /**
- * Backbone view for edit group modal
- * @typedef {Object} ModalEditGroup
+ * Backbone view for edit limitation modal
+ * @typedef {Object} ModalEditLimitation
  */
 var ModalEditLimitation = BizzyBone.BaseView.extend({
     /**
      * @param {Object} options
-     * @returns {ModalEditGroup}
+     * @returns {ModalEditLimitation}
      */
     initialize: function(options) {
 
@@ -190,7 +189,7 @@ var ModalEditLimitation = BizzyBone.BaseView.extend({
         return Backbone.View.prototype.initialize.call(this, options);
     },
     /**
-     * @returns {ModalEditGroupUser}
+     * @returns {ModalEditLimitation}
      */
     render: function() {
 
@@ -203,7 +202,6 @@ var ModalEditLimitation = BizzyBone.BaseView.extend({
             this.rendered = true;
         }
 
-
         return this;
     },
     events: {
@@ -211,12 +209,11 @@ var ModalEditLimitation = BizzyBone.BaseView.extend({
         "click .btn-default": "eventCancel",
         "submit form": "eventSave"
     },
+    
     /**
-     * Show the group add/edit group modal. To set up save callbacks, takes a
-     * new or existing group model and (for adding) a collection to add to.
-     * @param {GroupModel} groupModal
-     * @param {GroupList} groupCollection
-     * @returns {ModalEditGroup}
+     * @param {:imitationModal} limitationModal
+     * @param {LimitationCollection} limitationCollection
+     * @returns {ModalEditLimitation}
      */
     show: function(limitationModal, limitationCollection) {
         this.model = limitationModal;
@@ -230,14 +227,14 @@ var ModalEditLimitation = BizzyBone.BaseView.extend({
     },
     /**
      * Just hide the modal
-     * @returns {ModalEditGroup}
+     * @returns {ModalEditLimitation}
      */
     hide: function() {
         this.$el.children().first().modal('hide');
         return this;
     },
     /**
-     * Even handler for "Save" button. Saves new or existing group model.
+     * Even handler for "Save" button. Saves new or existing limitation model.
      * @param {Object} e
      */
     eventSave: function(e) {

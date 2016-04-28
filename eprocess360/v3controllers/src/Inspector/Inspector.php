@@ -2,7 +2,6 @@
 
 namespace eprocess360\v3controllers\Inspector;
 
-
 use eprocess360\v3core\Controller\Auth;
 use eprocess360\v3core\Controller\Controller;
 use eprocess360\v3core\Controller\Router;
@@ -10,23 +9,18 @@ use eprocess360\v3core\Controller\Warden;
 use eprocess360\v3core\Controller\Warden\Privilege;
 use eprocess360\v3core\Request\Request;
 use eprocess360\v3controllers\Inspector\Model\Inspectors;
-
-
 use eprocess360\v3core\Form;
 use eprocess360\v3core\Keydict\Entry\Email;
 use eprocess360\v3core\Keydict\Entry\PhoneNumber;
 use eprocess360\v3core\Keydict\Entry\String;
-
 use eprocess360\v3controllers\Inspection\Model\InspectionSkills;
 use eprocess360\v3controllers\Inspection\Model\InspectionLimitations;
-
 use eprocess360\v3modules\Toolbar\Toolbar;
-
 use Exception;
 
 /**
- * Class Dashboard
- * @package eprocess360\v3controllers\Dashboard
+ * Class Inspector
+ * @package eprocess360\v3controllers\Inspector
  */
 class Inspector extends Controller
 {
@@ -77,7 +71,13 @@ class Inspector extends Controller
         
     }
     
-    
+    /**
+     * Generic function for the response
+     * @param array $data
+     * @param int $responseCode
+     * @param string $apiType
+     * @param mixed $error
+     */
     private function standardResponse($data = [], $responseCode = 200, $apiType = "", $error = false)
     {
         if($error == false)
@@ -86,7 +86,6 @@ class Inspector extends Controller
         $responseData = [
             'data' => $data
         ];
-        
         
         $response = $this->getResponseHandler();
         $toolbar = $this->buildDashboardToolbar();
@@ -100,7 +99,9 @@ class Inspector extends Controller
             $response->setErrorResponse(new Exception($error));
     }
     
-    
+    /**
+     * API Function to get all inspectors.
+     */
     public function getInspectorsAPI()
     {
         $data = Inspectors::allInspectors();
@@ -108,6 +109,9 @@ class Inspector extends Controller
 
     }
     
+    /**
+     * API Function to create a new inspector
+     */
     public function createInspectorAPI(){
         
         $this->verifyPrivilege(Privilege::CREATE);
@@ -115,10 +119,14 @@ class Inspector extends Controller
         $data = Request::get()->getRequestBody();
         $idUser = $data['idUser'];
         
-        $data = Inspectors::create($idUser);
+        $responseData = Inspectors::create($idUser);
     }
     
-    
+    /**
+     * API Function to get specific inspector
+     * @param $idInspUser
+     * @throws Exception
+     */
     public function getInspectorAPI($idInspUser){
         
         $inspector = Inspectors::getInspector($idInspUser);
@@ -156,6 +164,10 @@ class Inspector extends Controller
 
     }
     
+    /**
+     * API Function to edit inspector data (form submission)
+     * @param type $idInspUser
+     */
     public function postInspectorAPI($idInspUser){
         
         $inspector = Inspectors::getInspector($idInspUser);
@@ -196,6 +208,10 @@ class Inspector extends Controller
         $response->setResponse($responseData);
     }
     
+    /**
+     * Generate Inspector Form
+     * @return Form
+     */
     private function generateInspectorForm(){
         
         $form = Form::build(0, 'inspectorCreation', 'Inspector Creation')->setPublic(true);
@@ -214,7 +230,13 @@ class Inspector extends Controller
         
     }
     
-    public function getInspectorSkillsAPI($idInspector){
+    /**
+     * Get all skills and assigned skills to inspector
+     * @param type $idInspector
+     * @throws Exception
+     */
+    public function getInspectorSkillsAPI($idInspector)
+    {
         
         $allSkills = InspectionSkills::allSkills();
         
@@ -246,16 +268,24 @@ class Inspector extends Controller
         $response->setResponse($responseData);
     }
     
-    public function postInspectorSkillsAPI($idInspector){
-        
+    /**
+     * Add / remove skill to / from inpsector
+     * @param type $idInspector
+     */
+    public function postInspectorSkillsAPI($idInspector)
+    {
         
         $data       = Request::get()->getRequestBody();
         $postData   = $data['skills'];
-        $data       = Inspectors::editSkills($idInspector, $postData);
-        
+        Inspectors::editSkills($idInspector, $postData);
         
     }
     
+    /**
+     * Get all limitations and assigned limitations to inspector
+     * @param type $idInspector
+     * @throws Exception
+     */
     public function getInspectorLimitationsAPI($idInspector){
         
         $allLimitations = InspectionLimitations::allLimitations();
@@ -288,24 +318,38 @@ class Inspector extends Controller
         $response->setResponse($responseData);
     }
     
-    public function postInspectorLimitationsAPI($idInspector){
+    /**
+     * Add / remove limitations to / from inpsector
+     * @param type $idInspector
+     */
+    public function postInspectorLimitationsAPI($idInspector)
+    {
         
         $data       = Request::get()->getRequestBody();
         $postData   = $data['limitations'];
-        $data       = Inspectors::editLimitations($idInspector, $postData);
+        Inspectors::editLimitations($idInspector, $postData);
         
         
     }
     
-    public function deleteInspectorAPI($idInspector){
+    /**
+     * Delete Inspector
+     * @param $idInspector
+     */
+    public function deleteInspectorAPI($idInspector)
+    {
         
         $this->verifyPrivilege(Privilege::DELETE);
-        
         $data = Inspectors::deleteInspector($idInspector);
 
     }
     
-    private function buildDashboardToolbar() {
+    /**
+     * Build toolbar for the inspector module
+     * @return array
+     */
+    private function buildDashboardToolbar()
+    {
         
         $controller = Request::get()->getResponder();
         $toolbar    = Toolbar::buildDashboardBar($controller);

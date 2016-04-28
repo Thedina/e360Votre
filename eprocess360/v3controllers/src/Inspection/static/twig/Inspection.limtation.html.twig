@@ -24,21 +24,9 @@
             _.each({
                 categoryListMain: '#hb-category-list-main',
                 categoryListItem: '#hb-category-list-item',
-                
-                //hb-inspection-modal-editlimitation
-
-                {#groupListItem: '#hb-group-list-item',
-                groupInsideMain: '#hb-group-inside-main',
-                groupInsideUser: '#hb-group-inside-user',
-                groupModalEditGroup: '#hb-group-modal-editgroup',
-                groupModalEditUser: '#hb-group-modal-edituser'#}
             }, hbCompileTemplate);
 
             getData = hbInitData().data;
-
-
-            //modalEditGroup = new ModalEditGroup();
-            //modalEditUser = new ModalEditGroupUser();
 
             if(_.isArray(getData)) {
 
@@ -52,11 +40,7 @@
                 return;
 
             }
-            else if(_.isObject(getData)) {
-                baseModel = new GroupModel(getData);
-                baseView = new GroupView({el: $('#content-container'), model: baseModel});
-                baseView.render();
-            }
+
         });
     </script>
 {% endblock %}

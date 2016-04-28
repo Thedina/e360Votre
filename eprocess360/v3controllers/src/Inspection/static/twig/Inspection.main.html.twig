@@ -1,30 +1,50 @@
-{% extends 'SystemController.plain.html.twig' %}
+{% extends 'SystemController.backbone.base.html.twig' %}
 
-{% set active = 'dashboard' %}
-
+{% block moduleCSS %}
+    <link rel="Stylesheet" type="text/css" href="{{ Response.meta.SystemController.static }}/css/typeahead.css"/>
+{% endblock %}
 {% block body %}
-   
-    
-    <div class="col-md12">
-        Test
-    </div>
+    <div id="modal-node"></div>
+    <div id="content-container"></div>
+{% endblock %}
+{% block moduleJS %}
+    <script src="{{ Response.meta.SystemController.static }}/js/typeahead.bundle.min.js"></script>
+    <script src="{{ Response.meta.SystemController.static }}/js/util.js"></script>
+    <script src="{{ Response.meta.SystemController.static }}/js/bizzybone.js"></script>
+    <script src="{{ Response.meta.Inspection.static }}/js/models/categories.js"></script>
+    <script src="{{ Response.meta.Inspection.static }}/js/views/categories.js"></script>
 {% endblock %}
 {% block javascript %}
     <script type="text/javascript">
-        {#$(document).ready(function(){
-            $('#make-project').click(function() {
-                var controller = this;
+        $(document).ready(function() {
+            var getData, meta, baseModel, baseCollection, baseView;
 
-                $.ajax({
-                    url: $(controller).attr('data-SiteUrl')+'/api/v1/controllers/'+$(controller).attr('data-idController')+'/projects',
-                    type: 'POST',
-                    data: null,
-                    async: false,
-                    dataType: 'json'
-                }).done(function (data) {
-                    window.location = $(controller).attr('data-SiteUrl')+'/controllers/'+$(controller).attr('data-idController')+'/projects/'+data.data.idProject;
-                });
-            });
-        });#}
+            // Precompile all the relevant templates
+            _.each({
+                inspectionListMain: '#hb-inspection-list-main',
+                inspectionListItem: '#hb-inspection-list-item',
+
+            }, hbCompileTemplate);
+
+            getData = hbInitData().data;
+
+            if(_.isArray(getData)) {
+
+                baseCollection = new InspectionList(_.map(getData, function(inspectionData) {
+                    return new InspectionModel(inspectionData);
+                }));
+
+                baseView = new InspectionListMainView({collection: baseCollection, el: $('#content-container')});
+                baseView.render();
+
+                return;
+
+            }
+            else if(_.isObject(getData)) {
+                baseModel = new InspectionModel(getData);
+                baseView = new InspectionView({el: $('#content-container'), model: baseModel});
+                baseView.render();
+            }
+        });
     </script>
 {% endblock %}

@@ -36,7 +36,7 @@ var TypesListMainView = BizzyBone.BaseView.extend({
         this.$el.html(template({meta: hbInitData().meta.Inspection}));
         this.applyPermissions();
         
-        typeList = $('#type-list'); //module.type.categories.handlerbars.html
+        typeList = $('#type-list');
         
         _.each(this.typeViews, function(typeViews) {
             typeList.append(typeViews.render().$el);
@@ -48,18 +48,18 @@ var TypesListMainView = BizzyBone.BaseView.extend({
         Inspection: 'meta'
     },
     events: {
-        "click #btn-new-type": "eventButtonNewGroup"
+        "click #btn-new-type": "eventButtonNewType"
     },
     /**
      * Event handler for click "New Inspection Type" button
      * @param {Object} e
      */
-    eventButtonNewGroup: function(e) {
-        var newGroup = new TypesModel();
-        modalAddType.show(newGroup, this.collection);
+    eventButtonNewType: function(e) {
+        var newType = new TypesModel();
+        modalAddType.show(newType, this.collection);
     },
     /**
-     * Event hander for collection add group
+     * Event hander for collection add type
      * @param model
      */
     eventTypeAdded: function(model) {
@@ -137,7 +137,7 @@ var TypeListItemView = BizzyBone.BaseView.extend({
         modalEditType.show(this.model);
     },
     /**
-     * Event hander for click remove TYpe button
+     * Event hander for click remove Type button
      * @param {Object} e
      */
     eventButtonRemoveGroup: function(e) {
@@ -184,10 +184,6 @@ var ModalEditType = BizzyBone.BaseView.extend({
         this.userIDs = {};
         return Backbone.View.prototype.initialize.call(this, options);
     },
-    /**
-     * 
-     * @returns {typesAnonym$8}
-     */
     render: function() {
         
         var template;
@@ -209,9 +205,9 @@ var ModalEditType = BizzyBone.BaseView.extend({
     },
    /**
     * 
-    * @param {type} typesModal
-    * @param {type} typesCollection
-    * @returns {typesAnonym$8}
+    * @param {TypesModal} typesModal
+    * @param {TypesCollection} typesCollection
+    * @returns {ModalEditType}
     */
     show: function(typesModal, typesCollection) {
         this.model = typesModal;
@@ -273,7 +269,7 @@ var ModalEditType = BizzyBone.BaseView.extend({
 var ModalAddType = BizzyBone.BaseView.extend({
     /**
      * @param {Object} options
-     * @returns {ModalEditType}
+     * @returns {ModalAddType}
      */
     initialize: function(options) {
         
@@ -305,9 +301,9 @@ var ModalAddType = BizzyBone.BaseView.extend({
     },
    /**
     * 
-    * @param {type} groupModal
-    * @param {type} groupCollection
-    * @returns {typesAnonym$11}
+    * @param {TypeModal} typeModal
+    * @param {TypeCollection} typeCollection
+    * @returns {ModalAddType}
     */
     show: function(typeModal, typeCollection) {
         this.model = typeModal;
@@ -321,7 +317,7 @@ var ModalAddType = BizzyBone.BaseView.extend({
     },
     /**
      * Just hide the modal
-     * @returns {ModalEditType}
+     * @returns {ModalAddType}
      */
     hide: function() {
         this.$el.children().first().modal('hide');
@@ -335,12 +331,12 @@ var ModalAddType = BizzyBone.BaseView.extend({
     eventSave: function(e) {
 
         
-        var thisView, toSave, newStatus, wasNew;
+        var thisView, toSave, wasNew;
         thisView = this;
         toSave = {};
 
         wasNew          = this.model.isNew();
-        toSave.title        = $('#Type-addedit-name').val();//Change the in handlerbaar input id
+        toSave.title        = $('#Type-addedit-name').val();
         toSave.description  = $('#Type-addedit-descr').val();
   
         thisView.model.save(toSave, {

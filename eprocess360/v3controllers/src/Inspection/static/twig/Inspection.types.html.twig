@@ -11,7 +11,6 @@
     <script src="{{ Response.meta.SystemController.static }}/js/typeahead.bundle.min.js"></script>
     <script src="{{ Response.meta.SystemController.static }}/js/util.js"></script>
     <script src="{{ Response.meta.SystemController.static }}/js/bizzybone.js"></script>
-{#    <script src="{{ Response.meta.Inspection.static }}/js/helpers/groupHelpers.js"></script>#}
     <script src="{{ Response.meta.Inspection.static }}/js/models/types.js"></script>
     <script src="{{ Response.meta.Inspection.static }}/js/views/types.js"></script>
 {% endblock %}
@@ -30,9 +29,8 @@
             
             getData = hbInitData().data;
             
-            
-             modalEditType = new ModalEditType();
-             modalAddType = new ModalAddType();
+            modalEditType = new ModalEditType();
+            modalAddType = new ModalAddType();
 
             if(_.isArray(getData)) {
                 
@@ -45,11 +43,6 @@
                 
                 return;
 
-            }
-            else if(_.isObject(getData)) {
-                baseModel = new TypesModel(getData);
-                baseView = new TypesModel({el: $('#content-container'), model: baseModel});
-                baseView.render();
             }
         });
     </script>

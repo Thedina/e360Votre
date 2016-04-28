@@ -35,15 +35,7 @@ class Groups extends Model
      */
     public static function keydict()
     {
-        return Table::build(
-            PrimaryKeyInt::build('idGroup', 'Group ID'),
-            IdInteger::build('idController', 'Controller ID'),
-            FixedString128::build('title', 'Group Title')->setRequired(),
-            Bits8::make('status',
-                Keydict\Entry\Bit::build(0, 'isActive'),
-                Keydict\Entry\Bit::build(1, 'isSystem')
-            )
-        )->setName('Groups')->setLabel('Groups');
+        
     }
 
     /**

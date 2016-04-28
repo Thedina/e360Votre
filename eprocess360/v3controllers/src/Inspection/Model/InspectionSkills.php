@@ -2,31 +2,18 @@
 
 
 namespace eprocess360\v3controllers\Inspection\Model;
-use Composer\Command\SelfUpdateCommand;
-use eprocess360\v3core\Keydict;
-use eprocess360\v3core\Keydict\Entry\Bits8;
+
 use eprocess360\v3core\Keydict\Entry\FixedString128;
-use eprocess360\v3core\Keydict\Entry\FixedString256;
-use eprocess360\v3core\Keydict\Entry\FixedString32;
-use eprocess360\v3core\Keydict\Entry\Flag;
 use eprocess360\v3core\Keydict\Entry\IdInteger;
-use eprocess360\v3core\Keydict\Entry\JSONArrayFixed128;
 use eprocess360\v3core\Keydict\Entry\PrimaryKeyInt;
-use eprocess360\v3core\Keydict\Entry\String;
-use eprocess360\v3core\Keydict\Entry\TinyInteger;
-use eprocess360\v3core\Keydict\Entry\Datetime;
 use eprocess360\v3core\Keydict\Table;
 use eprocess360\v3core\Model;
-use eprocess360\v3core\Model\Roles;
-use eprocess360\v3core\Model\UserRoles;
-use eprocess360\v3core\Model\Users;
-use eprocess360\v3core\User;
 use eprocess360\v3core\DB;
 use Exception;
 
 /**
- * Class GroupUsers
- * @package eprocess360\v3controllers\Group\Model
+ * Class InspectionSkills
+ * @package eprocess360\v3controllers\Inspection\Model
  */
 class InspectionSkills extends Model
 {
@@ -37,15 +24,21 @@ class InspectionSkills extends Model
     {
         return Table::build(
             PrimaryKeyInt::build('idInspSkill', 'Skill ID'),
-            FixedString128::build('description', 'Description'),
             FixedString128::build('title', 'Title'),
+            FixedString128::build('description', 'Description'),
             IdInteger::build('status', 'Controller ID'),
             IdInteger::build('createdUserId', 'Created By')
         )->setName('InspSkills')->setLabel('InspSkills');
     }
     
-    public static function create($title, $description){
-        
+    /**
+     * Insert skill to database
+     * @param $title
+     * @param $description
+     * @return array
+     */
+    public static function create($title, $description)
+    {        
         $f = static::make($title, $description);
         $f->insert();
 
@@ -53,12 +46,14 @@ class InspectionSkills extends Model
         return $result;
         
     }
-
-
-    public static function allSkills($readable = false)
+    
+    /**
+     * Get all skills from database
+     * @return array
+     */
+    public static function allSkills()
     {
         
-        //find all Groups where User has a UserGroup
         $sql = "SELECT * FROM InspSkills";
 
         $new = array();
@@ -74,7 +69,11 @@ class InspectionSkills extends Model
         return $new;
     }
     
-    
+    /**
+     * Delete skill from database
+     * @param $idInspSkill
+     * @throws Exception
+     */
     public static function deleteSkill($idInspSkill)
     {
         
@@ -88,6 +87,11 @@ class InspectionSkills extends Model
         
     }
     
+    /**
+     * Get all categories, which assigend this skill
+     * @param $idInspSkill
+     * @return array
+     */
     public static function getAllSkillAssignedCategories($idInspSkill)
     {
         
@@ -107,6 +111,11 @@ class InspectionSkills extends Model
         
     }
     
+    /**
+     * Get all inspectors, which assigend this skill
+     * @param $idInspSkill
+     * @return array
+     */
     public static function getAllSkillAssignedInspectors($idInspSkill)
     {
         $sql = "SELECT * FROM InspectorSkills " . 

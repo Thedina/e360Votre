@@ -139,15 +139,24 @@ var CategoryListItemView = BizzyBone.BaseView.extend({
     eventButtonEditCategory: function(e) {
         modalEditCategory.show(this.model);
     },
-    
+    /**
+     * Event handler for click assign types button
+     * @param {Object} e
+     */
     eventButtonAssignTypes: function(e){
         modalAssignTypes.show(this.model);
     },
-    
+    /**
+     * Event handler for click assign skills button
+     * @param {Object} e
+     */
     eventButtonAssignSkills: function(e){
         modalAssignSkills.show(this.model);
     },
-    
+    /**
+     * Event handler for click assign limitations button
+     * @param {Object} e
+     */
     eventButtonAssignLimitations: function(e){
         modalAssignLimitations.show(this.model);
     },
@@ -240,7 +249,7 @@ var ModalEditCategory = BizzyBone.BaseView.extend({
     },
     /**
      * Just hide the modal
-     * @returns {ModalEditGroup}
+     * @returns {ModalEditCategory}
      */
     hide: function() {
         this.$el.children().first().modal('hide');
@@ -286,21 +295,17 @@ var ModalEditCategory = BizzyBone.BaseView.extend({
 
 
 
-
-
-
-
 var ModalAssignSkills = BizzyBone.BaseView.extend({
     /**
      * @param {Object} options
-     * @returns {ModalEditCategory}
+     * @returns {ModalAssignSkills}
      */
     initialize: function(options) {
         this.rendered = false;
         return Backbone.View.prototype.initialize.call(this, options);
     },
     /**
-     * @returns {ModalEditCategory}
+     * @returns {ModalAssignSkills}
      */
     render: function() {
         
@@ -337,7 +342,6 @@ var ModalAssignSkills = BizzyBone.BaseView.extend({
         
         this.$el.html(template({category: this.model.attributes, meta: hbInitData().meta.Inspection}));
         
-        
         // If never rendered before, insert the modal div at the top of the page
         if(!this.rendered) {
             $(document.body).prepend(this.$el);
@@ -357,12 +361,11 @@ var ModalAssignSkills = BizzyBone.BaseView.extend({
         "click .btn-default": "eventCancel",
         "submit form": "eventSave"
     },
+
     /**
-     * Show the category add/edit category modal. To set up save callbacks, takes a
-     * new or existing category model and (for adding) a collection to add to.
      * @param {CategoryModel} categoryModal
      * @param {CategoryList} categoryCollection
-     * @returns {ModalEditGroup}
+     * @returns {ModalAssignSkills}
      */
     show: function(categoryModal, categoryCollection) {
         
@@ -379,14 +382,14 @@ var ModalAssignSkills = BizzyBone.BaseView.extend({
     },
     /**
      * Just hide the modal
-     * @returns {ModalEditGroup}
+     * @returns {ModalAssignSkills}
      */
     hide: function() {
         this.$el.children().first().modal('hide');
         return this;
     },
     /**
-     * Even handler for "Save" button. Saves new or existing category model.
+     * Even handler for "Save" button. Saves assigend skills.
      * @param {Object} e
      */
     eventSave: function(e) {
@@ -397,7 +400,6 @@ var ModalAssignSkills = BizzyBone.BaseView.extend({
         
         var skillValues = [];
         $.each($("input[name='skills[]']"), function(element) {
-            
             var skillsData, skillId, skillAssigned;
             skillId = $(this).attr('attr-id');
             skillAssigned = $(this).prop('checked');
@@ -420,24 +422,6 @@ var ModalAssignSkills = BizzyBone.BaseView.extend({
                 Util.showError(response.responseJSON);
             }
         });
-
-//        wasNew          = this.model.isNew();
-//
-//        toSave.title        = $('#category-addedit-title').val();
-//        toSave.description  = $('#category-addedit-desc').val();
-//      
-//        thisView.model.save(toSave, {
-//            wait: true,
-//            success: function(model, response, options) {
-//                if(wasNew) {
-//                    thisView.collection.add(model);
-//                }
-//                thisView.hide();
-//            },
-//            error: function(model, response, options) {
-//                Util.showError(response.responseJSON);
-//            }
-//        });
     },
     /**
      * Even handler for "Cancel" button
@@ -450,22 +434,17 @@ var ModalAssignSkills = BizzyBone.BaseView.extend({
 
 
 
-
-
-
-
-
 var ModalAssignLimitations = BizzyBone.BaseView.extend({
     /**
      * @param {Object} options
-     * @returns {ModalEditCategory}
+     * @returns {ModalAssignLimitations}
      */
     initialize: function(options) {
         this.rendered = false;
         return Backbone.View.prototype.initialize.call(this, options);
     },
     /**
-     * @returns {ModalEditCategory}
+     * @returns {ModalAssignLimitations}
      */
     render: function() {
         
@@ -522,12 +501,11 @@ var ModalAssignLimitations = BizzyBone.BaseView.extend({
         "click .btn-default": "eventCancel",
         "submit form": "eventSave"
     },
+    
     /**
-     * Show the category add/edit category modal. To set up save callbacks, takes a
-     * new or existing category model and (for adding) a collection to add to.
      * @param {CategoryModel} categoryModal
      * @param {CategoryList} categoryCollection
-     * @returns {ModalEditGroup}
+     * @returns {ModalAssignLimitations}
      */
     show: function(categoryModal, categoryCollection) {
         
@@ -544,14 +522,14 @@ var ModalAssignLimitations = BizzyBone.BaseView.extend({
     },
     /**
      * Just hide the modal
-     * @returns {ModalEditGroup}
+     * @returns {ModalAssignLimitations}
      */
     hide: function() {
         this.$el.children().first().modal('hide');
         return this;
     },
     /**
-     * Even handler for "Save" button. Saves new or existing category model.
+     * Even handler for "Save" button. Saves assigned limitations.
      * @param {Object} e
      */
     eventSave: function(e) {
@@ -601,17 +579,14 @@ var ModalAssignLimitations = BizzyBone.BaseView.extend({
 var ModalAssignTypes = BizzyBone.BaseView.extend({
     /**
      * 
-     * @param {type} options
-     * @returns {unresolved}
+     * @param {Object} options
+     * @returns {ModalAssignTypes}
      */
     initialize: function(options) {
         this.rendered = false;
         return Backbone.View.prototype.initialize.call(this, options);
     },
-    /**
-     * 
-     * @returns {categoriesAnonym$23}
-     */
+
     render: function() {
         
         var thisView, url;
@@ -644,9 +619,7 @@ var ModalAssignTypes = BizzyBone.BaseView.extend({
         var template, elemTypesList, templateTypeItem;
         
         template = Handlebars.templates.categoryModalAddTypes;
-        
         this.$el.html(template({category: this.model.attributes, meta: hbInitData().meta.Inspection}));
-        
         
         // If never rendered before, insert the modal div at the top of the page
         if(!this.rendered) {
@@ -669,9 +642,9 @@ var ModalAssignTypes = BizzyBone.BaseView.extend({
     },
     /**
      * 
-     * @param {type} categoryModal
-     * @param {type} categoryCollection
-     * @returns {categoriesAnonym$23}
+     * @param {CategoryModal} categoryModal
+     * @param {CategoryCollection} categoryCollection
+     * @returns {ModalAssignTypes}
      */
     show: function(categoryModal, categoryCollection) {
         
@@ -688,7 +661,7 @@ var ModalAssignTypes = BizzyBone.BaseView.extend({
     },
     /**
      * Just hide the modal
-     * @returns {ModalEditGroup}
+     * @returns {ModalAssignTypes}
      */
     hide: function() {
         this.$el.children().first().modal('hide');

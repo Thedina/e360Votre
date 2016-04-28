@@ -2,7 +2,6 @@
 
 namespace eprocess360\v3controllers\Inspection;
 
-
 use eprocess360\v3controllers\Inspection\Model\InspectionSkills;
 use eprocess360\v3core\Controller\Auth;
 use eprocess360\v3core\Controller\Controller;
@@ -11,18 +10,15 @@ use eprocess360\v3core\Controller\Warden;
 use eprocess360\v3core\Controller\Warden\Privilege;
 use eprocess360\v3core\Request\Request;
 use eprocess360\v3core\Controller\Dashboard;
-
 use eprocess360\v3controllers\Inspection\Model\InspectionType;
 use eprocess360\v3controllers\Inspection\Model\InspectionLimitations;
 use eprocess360\v3controllers\Inspection\Model\InspectionCategories;
-
 use eprocess360\v3modules\Toolbar\Toolbar;
-
 use Exception;
 
 /**
- * Class Dashboard
- * @package eprocess360\v3controllers\Dashboard
+ * Class Inspection
+ * @package eprocess360\v3controllers\Inspection
  */
 class Inspection extends Controller
 {
@@ -39,13 +35,6 @@ class Inspection extends Controller
         [ 'id' =>'limitations', 'title'=> 'Limitations','url'=> '/inspection/limitations' ]
     ];
     
-//    private $toolbarMore = [
-//        [ 'id' =>'utils', 'title'=> 'Inspection Utils', 
-//          'url'=> '/inspection/categories', 'activeOn' => [ 'categories', 'types', 'skills', 'limitations' ] 
-//        ],
-//        [ 'id' =>'inspectors', 'title'=> 'Manage Inspector','url'=> '/inspectors' ],
-//    ];
-
     /*********************************************   #ROUTING#  **********************************************/
 
     /**
@@ -74,6 +63,9 @@ class Inspection extends Controller
         $this->routes->map('POST', '/categories/getskills/[i:idInspCategory]', function ($idInspCategory) {
             $this->getInspectionCategorySkillsAPI($idInspCategory);
         });
+        $this->routes->map('POST', '/categories/getTypes/[i:idInspCategory]', function ($idInspCategory) {
+            $this->getInspectionCategoryTypeAPI($idInspCategory);
+        });
         $this->routes->map('POST', '/categories/skills/[i:idInspCategory]', function ($idInspCategory) {
             $this->postInspectionCategorySkillsAPI($idInspCategory);
         });
@@ -95,9 +87,6 @@ class Inspection extends Controller
         $this->routes->map('DELETE', '/types/[i:idInspType]', function ($idInspType) {
             $this->deleteInspectionTypeAPI($idInspType);
         });
-        $this->routes->map('POST', '/categories/getTypes/[i:idInspCategory]', function ($idInspCategory) {
-            $this->getInspectionCategoryTypeAPI($idInspCategory);
-        });
         $this->routes->map('POST', '/categories/types/[i:idInspCategory]', function ($idInspCategory) {
             $this->postInspectionCategoryTypesAPI($idInspCategory);
         });
@@ -113,8 +102,6 @@ class Inspection extends Controller
         $this->routes->map('DELETE', '/skills/[i:idInspSkill]', function ($idInspSkill) {
             $this->deleteInspectionSkillsAPI($idInspSkill);
         });
-        
-        //getskills
         $this->routes->map('GET', '/limitations', function () {
             $this->getLimitationAPI();
         });
@@ -131,15 +118,6 @@ class Inspection extends Controller
             $this->getProjectConfigAPI();
         });
 
-    }
-    
-    public function getInspectionAPI()
-    {
-        $response = $this->getResponseHandler();
-        $toolbar  = $this->buildDashboardToolbar();
-        
-        if($toolbar)
-            $response->addResponseMeta('dashboardBar', $toolbar);
     }
     
     private function standardResponse($data = [], $responseCode = 200, $apiType = "", $error = false)
@@ -165,16 +143,22 @@ class Inspection extends Controller
             $response->setErrorResponse(new Exception($error));
     }
     
-    
-    private function changeApiPaths($response, $apiType){
-        
+    /**
+     * Change default api path according to the active section (ie. categories,types)
+     * @param $response
+     * @param $apiType
+     */
+    private function changeApiPaths($response, $apiType)
+    {
         if(!$apiType){
             return false;
         }
-        
+
         $responseMeta   = $response->getResponseMeta();
         $currentApi     = $responseMeta["Inspection"]["api"];
         $currentApiPath = $responseMeta["Inspection"]["apiPath"];
+        $newApi         = "";
+        $newApiPath     = "";
         
         if($apiType == "categories"){
             $newApi     = $currentApi . '/categories';
@@ -196,14 +180,20 @@ class Inspection extends Controller
             $newApi     = $currentApi . '/inspectors';
             $newApiPath = $currentApiPath . '/inspectors';
         }
-            
-        $response->extendResponseMeta('Inspection', array('api' => $newApi));
-        $response->extendResponseMeta('Inspection', array('apiPath' => $newApiPath));
-        
+         
+        if(!empty($newApi) && !empty($newApiPath)){
+            $response->extendResponseMeta('Inspection', array('api' => $newApi));
+            $response->extendResponseMeta('Inspection', array('apiPath' => $newApiPath));
+        }
     }
     
-    private function setRenderingTemplates($response, $apiType){
-        
+    /**
+     * Set rendering template for the active section
+     * @param $response
+     * @param $apiType
+     */
+    private function setRenderingTemplates($response, $apiType)
+    {
         if($apiType == "categories"){
             $response->setTemplate('Inspection.category.html.twig', 'server');
             $response->setTemplate('module.inspection.categories.handlebars.html', 'client', $this);
@@ -230,31 +220,52 @@ class Inspection extends Controller
         
     }
     
-    public function getInspectionCategoryAPI()
+    /**
+     * API Function to get all Inspections
+     * @todo complete coding of the function
+     */
+    public function getInspectionAPI()
     {
+        $response = $this->getResponseHandler();
+        $toolbar  = $this->buildDashboardToolbar();
         
+        if($toolbar)
+            $response->addResponseMeta('dashboardBar', $toolbar);
+        
+        $response->setTemplate('Inspection.base.html.twig', 'server');
+    }
+
+    /**
+     * API Function to get all categories
+     */
+    public function getInspectionCategoryAPI()
+    {   
         $data = InspectionCategories::allCategories();
         $this->standardResponse($data, 200, "categories");
 
     }
     
-    public function createInspectionCategoryAPI(){
-        
+    /**
+     * API Function to create inspection category
+     */
+    public function createInspectionCategoryAPI()
+    {
         $this->verifyPrivilege(Privilege::CREATE);
-
-        $data = Request::get()->getRequestBody();
-        $title = $data['title'];
-        $description = $data['description'];
-
-        $responseData = InspectionCategories::create($title, $description);
+        $data           = Request::get()->getRequestBody();
+        $title          = $data['title'];
+        $description    = $data['description'];
+        $responseData   = InspectionCategories::create($title, $description);
         
         $this->standardResponse($responseData);
     }
     
-    public function editInspectionCategoryAPI($idInspCategory){
-        
+    /**
+     * API Function to edit inspection category
+     * @param $idInspCategory
+     */
+    public function editInspectionCategoryAPI($idInspCategory)
+    {
         $this->verifyPrivilege(Privilege::WRITE);
-        
         $category    = InspectionCategories::sqlFetch($idInspCategory);
         $data        = Request::get()->getRequestBody();
         $title       = $data['title'];
@@ -272,20 +283,26 @@ class Inspection extends Controller
         
     }
     
-    public function deleteInspectionCategoryAPI($idInspCategory){
-        
+    /**
+     * API Function to delete inspection category
+     * @param $idInspCategory
+     */
+    public function deleteInspectionCategoryAPI($idInspCategory)
+    {
         $this->verifyPrivilege(Privilege::DELETE);
-
         $data = InspectionCategories::deleteCategory($idInspCategory);
-
         $this->standardResponse($data, 200, "categories");
         
     }
     
     
+    /**
+     * API Function to get skills assigned to category
+     * @param $idInspCategory
+     * @throws Exception
+     */
     public function getInspectionCategorySkillsAPI($idInspCategory)
     {
-        
         $allSkills = InspectionSkills::allSkills();
         
         if(empty($allSkills))
@@ -293,7 +310,7 @@ class Inspection extends Controller
         
         $categorySkills = InspectionCategories::getSkills($idInspCategory);
         $assignedSkills = array();
-        $allSkillsData = array();
+        $allSkillsData  = array();
         
         foreach($categorySkills as $categorySkill){
             $skillId = $categorySkill['idInspSkill'];
@@ -316,16 +333,24 @@ class Inspection extends Controller
         $response->setResponse($responseData);
     }
     
+    /**
+     * API Function to assign / remove skills to / from category
+     * @param $idInspCategory
+     */
     public function postInspectionCategorySkillsAPI($idInspCategory)
     {
-        $data       = Request::get()->getRequestBody();
-        $postData   = $data['skills'];
-        $data       = InspectionCategories::editSkills($idInspCategory, $postData);
+        $data     = Request::get()->getRequestBody();
+        $postData = $data['skills'];
+        InspectionCategories::editSkills($idInspCategory, $postData);
     }
     
+    /**
+     * API Function to get types assigned to category
+     * @param $idInspCategory
+     * @throws Exception
+     */
     public function getInspectionCategoryTypeAPI($idInspCategory)
-    {
-        
+    {   
         $allTypes = InspectionType::allInspectionTypes();
         
         if(empty($allTypes))
@@ -356,18 +381,25 @@ class Inspection extends Controller
         $response->setResponse($responseData);
     }
     
+    /**
+     * API Function to assign / remove types to / from category
+     * @param type $idInspCategory
+     */
     public function postInspectionCategoryTypesAPI($idInspCategory)
     {
-        $data       = Request::get()->getRequestBody();
-        $postData   = $data['types'];
-
-        $responseData       = InspectionCategories::editTypes($idInspCategory, $postData);
+        $data         = Request::get()->getRequestBody();
+        $postData     = $data['types'];
+        $responseData = InspectionCategories::editTypes($idInspCategory, $postData);
         $this->standardResponse($responseData);
     }
     
+    /**
+     * API Function to get limitations assigned to category
+     * @param $idInspCategory
+     * @throws Exception
+     */
     public function getInspectionCategoryLimitationsAPI($idInspCategory)
     {
-        
         $allLimitations = InspectionLimitations::allLimitations();
         
         if(empty($allLimitations))
@@ -399,58 +431,49 @@ class Inspection extends Controller
         $response->setResponse($responseData);
     }
     
+    /**
+     * API Function to assign / remove limitations to / from category
+     * @param $idInspCategory
+     */
     public function postInspectionCategoryLimitationsAPI($idInspCategory)
     {
         $data       = Request::get()->getRequestBody();
         $postData   = $data['limitations'];
-        $data       = InspectionCategories::editLimitations($idInspCategory, $postData);
+        InspectionCategories::editLimitations($idInspCategory, $postData);
     }
     
-
+    /**
+     * API Function to get all inspection types
+     */
     public function getInspectionTypesAPI()
-    {
-       
+    {  
         $data = InspectionType::allInspectionTypes($this->hasPrivilege(Privilege::ADMIN));
-       
         $this->standardResponse($data, 200, "types");
         
     }
     
-    public function getInspectionTypesForCatAPI()
-    {
-       
-        $data = InspectionType::allInspectionTypes($this->hasPrivilege(Privilege::ADMIN));
-       
-        $this->standardResponse($data, 200, "categories");
-        
-    }
-    
     /**
-     * 
+     * API Function to create inpsection type
      */
-    public function createInspectionTypeAPI(){
-        
+    public function createInspectionTypeAPI()
+    {   
         $this->verifyPrivilege(Privilege::CREATE);
-
-        $data = Request::get()->getRequestBody();
-        $title = $data['title'];
-        $description = $data['description'];
-
+        $data         = Request::get()->getRequestBody();
+        $title        = $data['title'];
+        $description  = $data['description'];
         $responseData = InspectionType::create($title, $description);
         $this->standardResponse($responseData);
     }
     
     /**
-     * 
+     * API Function to edit inpsection type
      * @param type $idInspType
      */
-    public function editInspectionTypesAPI($idInspType){
-  
+    public function editInspectionTypesAPI($idInspType)
+    {
         $this->verifyPrivilege(Privilege::WRITE);
-        
-        $types    = InspectionType::sqlFetch($idInspType);
+        $types       = InspectionType::sqlFetch($idInspType);
         $data        = Request::get()->getRequestBody();
-        
         $title       = $data['title'];
         $description = $data['description'];
         
@@ -466,44 +489,50 @@ class Inspection extends Controller
         
     }
 
+    /**
+     * API Function to delete inpsection type
+     * @param $idInspType
+     */
     public function deleteInspectionTypeAPI($idInspType)
     {
-        
         $this->verifyPrivilege(Privilege::DELETE);
-
         $data = InspectionType::deleteTypes($idInspType);
-
         $this->standardResponse($data, 200, "types");
         
     }
-
+    
+    /**
+     * API Function to get all inspection skills
+     */
     public function getInspectionSkillAPI()
     {
-
         $data = InspectionSkills::allSkills($this->hasPrivilege(Privilege::ADMIN));
-
         $this->standardResponse($data, 200, "skills");
 
     }
 
-    public function createInspectionSkillAPI(){
-
+    /**
+     * API Function to create skill
+     */
+    public function createInspectionSkillAPI()
+    {
         $this->verifyPrivilege(Privilege::CREATE);
-
-        $data = Request::get()->getRequestBody();
-        $title = $data['title'];
-        $description = $data['description'];
-
+        $data         = Request::get()->getRequestBody();
+        $title        = $data['title'];
+        $description  = $data['description'];
         $responseData = InspectionSkills::create($title, $description);
         
         $this->standardResponse($responseData);
     }
 
-    public function editInspectionSkillsAPI($idInspSkill){
-
+    /**
+     * API Function to edit skill
+     * @param $idInspSkill
+     */
+    public function editInspectionSkillsAPI($idInspSkill)
+    {
         $this->verifyPrivilege(Privilege::WRITE);
-
-        $skill   = InspectionSkills::sqlFetch($idInspSkill);
+        $skill       = InspectionSkills::sqlFetch($idInspSkill);
         $data        = Request::get()->getRequestBody();
         $title       = $data['title'];
         $description = $data['description'];
@@ -519,44 +548,50 @@ class Inspection extends Controller
 
     }
     
+    /**
+     * API Function to delete skill
+     * @param type $idInspSkill
+     */
     public function deleteInspectionSkillsAPI($idInspSkill)
     {
         $this->verifyPrivilege(Privilege::DELETE);
-        
         $data = InspectionSkills::deleteSkill($idInspSkill);
-        
         $this->standardResponse($data, 200, "skills");
     }
     
-    
+    /**
+     * API Function to get all limitation
+     */
     public function getLimitationAPI()
     {
-
         $data = InspectionLimitations::allLimitations($this->hasPrivilege(Privilege::ADMIN));
-
         $this->standardResponse($data, 200, "limitations");
 
     }
 
-    public function createLimitationAPI(){
-
+    /**
+     * API Function to create limitation
+     */
+    public function createLimitationAPI()
+    {
         $this->verifyPrivilege(Privilege::CREATE);
-
-        $data = Request::get()->getRequestBody();
-        $title = $data['title'];
-        $description = $data['description'];
-
+        $data         = Request::get()->getRequestBody();
+        $title        = $data['title'];
+        $description  = $data['description'];
         $responseData = InspectionLimitations::create($title, $description);
         
         $this->standardResponse($responseData);
 
     }
 
-    public function editLimitationAPI($idInspLimitation){
-
+    /**
+     * API Function to edit limitation
+     * @param $idInspLimitation
+     */
+    public function editLimitationAPI($idInspLimitation)
+    {
         $this->verifyPrivilege(Privilege::WRITE);
-
-        $limitation    = InspectionLimitations::sqlFetch($idInspLimitation);
+        $limitation  = InspectionLimitations::sqlFetch($idInspLimitation);
         $data        = Request::get()->getRequestBody();
         $title       = $data['title'];
         $description = $data['description'];
@@ -572,22 +607,32 @@ class Inspection extends Controller
         $this->standardResponse($responseData);
     }
 
+    /**
+     * API Function to delete limitation
+     * @param $idLimitation
+     */
     public function deleteLimitationAPI($idLimitation)
     {
         $this->verifyPrivilege(Privilege::DELETE);
-
         $data = InspectionLimitations::deletelimitation($idLimitation);
-
         $this->standardResponse($data, 200, "limitations");
     }
-
+    
+    /**
+     * API Function to gell all project inspection  config
+     */
     public function getProjectConfigAPI()
     {
 
     }
     
-    private function buildDashboardToolbar($apiType = '', $removeFirstLink = false) {
-        
+    /**
+     * Build toolbar for the inspection module
+     * @param $apiType
+     * @param $removeFirstLink
+     */
+    private function buildDashboardToolbar($apiType = '') 
+    {
         
         $controller = Request::get()->getResponder();
         $toolbar    = Toolbar::buildDashboardBar($controller);
