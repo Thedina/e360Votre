@@ -405,7 +405,7 @@ class Inspection extends Controller implements InterfaceTriggers
      */
     public function getInspectionSkillAPI()
     {
-        $data = InspectionSkills::allSkills($this->hasPrivilege(Privilege::ADMIN));
+        $data = InspectionSkills::allSkills();
         $this->standardResponse($data, 200, "skills");
 
     }
@@ -463,7 +463,7 @@ class Inspection extends Controller implements InterfaceTriggers
      */
     public function getLimitationAPI()
     {
-        $data = InspectionLimitations::allLimitations($this->hasPrivilege(Privilege::ADMIN));
+        $data = InspectionLimitations::allLimitations();
         $this->standardResponse($data, 200, "limitations");
 
     }
