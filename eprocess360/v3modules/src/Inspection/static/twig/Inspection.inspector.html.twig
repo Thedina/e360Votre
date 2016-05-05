@@ -1,0 +1,29 @@
+{% extends 'SystemController.backbone.base.html.twig' %}
+
+{% block moduleCSS %}
+    <link rel="Stylesheet" type="text/css" href="{{ Response.meta.SystemController.static }}/css/typeahead.css"/>
+{% endblock %}
+{% block body %}
+    <div id="modal-node"></div>
+    <div id="content-container"></div>
+{% endblock %}
+{% block moduleJS %}
+    <script src="{{ Response.meta.SystemController.static }}/js/typeahead.bundle.min.js"></script>
+    <script src="{{ Response.meta.SystemController.static }}/js/util.js"></script>
+    <script src="{{ Response.meta.SystemController.static }}/js/bizzybone.js"></script>
+    <script src="{{ Response.meta.Inspection.static }}/js/models/inspectors.js"></script>
+    <script src="{{ Response.meta.Inspection.static }}/js/views/inspectors.js"></script>
+{% endblock %}
+{% block javascript %}
+    <script type="text/javascript">
+        $(document).ready(function() {
+
+            // Precompile all the relevant templates
+            _.each({
+                inspectorListMain: '#hb-inspection-list-main',
+                inspectorListItem: '#hb-inspection-list-item',
+            }, hbCompileTemplate);
+            
+        });
+    </script>
+{% endblock %}

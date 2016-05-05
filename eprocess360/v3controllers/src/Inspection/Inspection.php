@@ -54,7 +54,7 @@ class Inspection extends Controller
         $this->routes->map('POST', '/categories', function () {
             $this->createInspectionCategoryAPI();
         });
-         $this->routes->map('PUT', '/categories/[i:idInspCategory]', function ($idInspCategory) {
+        $this->routes->map('PUT', '/categories/[i:idInspCategory]', function ($idInspCategory) {
             $this->editInspectionCategoryAPI($idInspCategory);
         });
         $this->routes->map('DELETE', '/categories/[i:idInspCategory]', function ($idInspCategory) {

@@ -1,0 +1,51 @@
+{% extends 'SystemController.backbone.base.html.twig' %}
+
+{% block moduleCSS %}
+    <link rel="Stylesheet" type="text/css" href="{{ Response.meta.SystemController.static }}/css/typeahead.css"/>
+{% endblock %}
+{% block body %}
+    <div id="modal-node"></div>
+    <div id="content-container"></div>
+{% endblock %}
+{% block moduleJS %}
+    <script src="{{ Response.meta.SystemController.static }}/js/typeahead.bundle.min.js"></script>
+    <script src="{{ Response.meta.SystemController.static }}/js/util.js"></script>
+    <script src="{{ Response.meta.SystemController.static }}/js/bizzybone.js"></script>
+    <script src="{{ Response.meta.Inspection.static }}/js/models/skills.js"></script>
+    <script src="{{ Response.meta.Inspection.static }}/js/views/skills.js"></script>
+{% endblock %}
+{% block javascript %}
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var getData, baseCollection, baseView;
+
+            // Precompile all the relevant templates
+            _.each({
+                skillListMain: '#hb-skill-list-main',
+                skillListItem: '#hb-skill-list-item',
+                EditSkill:'#hb-inspection-modal-editskill',
+                AddSkill: '#hb-inspection-modal-addskill',
+            }, hbCompileTemplate);
+            
+            getData = hbInitData().data;
+            
+            
+            modalEditSkill = new ModalEditSkill();
+            modalAddSkill = new ModalAddSkill();
+
+            if(_.isArray(getData)) {
+
+                baseCollection = new SkillList(_.map(getData, function(skillData) {
+                    return new SkillModel(skillData);
+                }));
+                
+                baseView = new SkillListMainView({collection: baseCollection, el: $('#content-container')});
+                baseView.render();
+                
+                return;
+
+            }
+            
+        });
+    </script>
+{% endblock %}

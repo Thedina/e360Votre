@@ -1,0 +1,55 @@
+{% extends 'SystemController.backbone.base.html.twig' %}
+
+{% block moduleCSS %}
+    <link rel="Stylesheet" type="text/css" href="{{ Response.meta.SystemController.static }}/css/typeahead.css"/>
+{% endblock %}
+{% block body %}
+    <div id="modal-node"></div>
+    <div id="content-container"></div>
+{% endblock %}
+{% block moduleJS %}
+    <script src="{{ Response.meta.SystemController.static }}/js/typeahead.bundle.min.js"></script>
+    <script src="{{ Response.meta.SystemController.static }}/js/util.js"></script>
+    <script src="{{ Response.meta.SystemController.static }}/js/bizzybone.js"></script>
+    {#    <script src="{{ Response.meta.Inspection.static }}/js/helpers/groupHelpers.js"></script>#}
+    <script src="{{ Response.meta.Inspection.static }}/js/models/limitation.js"></script>
+    <script src="{{ Response.meta.Inspection.static }}/js/views/limitation.js"></script>
+{% endblock %}
+{% block javascript %}
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var getData, meta, baseModel, baseCollection, baseView;
+
+            // Precompile all the relevant templates
+            _.each({
+                limitationListMain: '#hb-limitation-list-main',
+                limitationListItem: '#hb-limitation-list-item',
+                limitationEditView: '#hb-inspection-modal-editlimitation'
+            }, hbCompileTemplate);
+
+            getData = hbInitData().data;
+
+
+            modalEditLimitation = new ModalEditLimitation();
+            //modalEditUser = new ModalEditGroupUser();
+
+            if(_.isArray(getData)) {
+
+                baseCollection = new LimitationList(_.map(getData, function(categoryData) {
+                    return new LimitationModel(categoryData);
+                }));
+
+                baseView = new LimitationListMainView({collection: baseCollection, el: $('#content-container')});
+                baseView.render();
+
+                return;
+
+            }
+            else if(_.isObject(getData)) {
+                baseModel = new GroupModel(getData);
+                baseView = new GroupView({el: $('#content-container'), model: baseModel});
+                baseView.render();
+            }
+        });
+    </script>
+{% endblock %}

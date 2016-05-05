@@ -1,0 +1,61 @@
+{% extends 'SystemController.backbone.base.html.twig' %}
+
+{% block moduleCSS %}
+    <link rel="Stylesheet" type="text/css" href="{{ Response.meta.SystemController.static }}/css/typeahead.css"/>
+{% endblock %}
+{% block body %}
+    <div id="modal-node"></div>
+    <div id="content-container"></div>
+{% endblock %}
+{% block moduleJS %}
+    <script src="{{ Response.meta.SystemController.static }}/js/typeahead.bundle.min.js"></script>
+    <script src="{{ Response.meta.SystemController.static }}/js/util.js"></script>
+    <script src="{{ Response.meta.SystemController.static }}/js/bizzybone.js"></script>
+    <script src="{{ Response.meta.Inspection.static }}/js/models/categories.js"></script>
+    <script src="{{ Response.meta.Inspection.static }}/js/views/categories.js"></script>
+{% endblock %}
+{% block javascript %}
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var getData, meta, baseModel, baseCollection, baseView;
+
+            // Precompile all the relevant templates
+            _.each({
+                categoryListMain: '#hb-category-list-main',
+                categoryListItem: '#hb-category-list-item',
+                categoryModalEditCategory: '#hb-category-modal-editcategory',
+                categoryModalAddSkills: '#hb-category-modal-addskills',
+                categorySkillItem: '#hb-skill-list-item',
+                categoryModalAddLimitations : '#hb-category-modal-addlimitations',
+                categoryLimitationItem : '#hb-limitation-list-item',
+                categoryModalAddTypes:'#hb-category-modal-addtypes',
+                categoryTypesItem:'#hb-type-list-item',
+            }, hbCompileTemplate);
+            
+            getData = hbInitData().data;
+            
+            modalEditCategory = new ModalEditCategory();
+            modalAssignTypes = new ModalAssignTypes();
+            modalAssignSkills = new ModalAssignSkills();
+            modalAssignLimitations = new ModalAssignLimitations();
+
+            if(_.isArray(getData)) {
+                
+                baseCollection = new CategoryList(_.map(getData, function(categoryData) {
+                    return new CategoryModel(categoryData);
+                }));
+                
+                baseView = new CategoryListMainView({collection: baseCollection, el: $('#content-container')});
+                baseView.render();
+                
+                return;
+
+            }
+            else if(_.isObject(getData)) {
+                baseModel = new CategoryModel(getData);
+                baseView = new CategoryView({el: $('#content-container'), model: baseModel});
+                baseView.render();
+            }
+        });
+    </script>
+{% endblock %}
