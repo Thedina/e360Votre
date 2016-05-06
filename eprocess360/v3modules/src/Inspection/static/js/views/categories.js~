@@ -214,7 +214,7 @@ var ModalEditCategory = BizzyBone.BaseView.extend({
      * @returns {ModalEditCategory}
      */
     render: function() {
-
+        console.log("DASDAS");
         var template;
         template = Handlebars.templates.categoryModalEditCategory;
         

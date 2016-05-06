@@ -262,6 +262,7 @@ class Inspection extends Controller implements InterfaceTriggers
         $assignedTypes = array();
         $allTypessData = array();
         
+print_r($categoryTypes);
 
         foreach($categoryTypes as $categoryType){
             $typeId = $categoryType['idInspType'];
