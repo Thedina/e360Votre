@@ -50,22 +50,26 @@ class InspectionLimitations extends Model
      * Get all limitations from database
      * @return array
      */
-    public static function allLimitations()
-    {
-        //find all Limitation
-        $sql = "SELECT * From InspLimitations";
+    public static function allLimitations($multiView = false)
+    {   
         
-        $new = array();
-        foreach (self::each($sql)
-                 as $sqlResult){
-            $resultArray = $sqlResult->toArray();
+        $sql = "SELECT * FROM InspLimitations ORDER BY title";
+        
+        $keydict = self::keydict();
+        
+        if($multiView){
+            $select = "*";
+            $result = ['keydict'=>$keydict, 'select'=>$select,'join'=>NULL, 'where'=>NULL];
+            return $result;
+        }
+        
+        $limitations = DB::sql($sql);
 
-            if(isset($resultArray['idInspLimitation'])) {
-                $new[] = $resultArray;
-            }
+        foreach ($limitations as &$limitation) {
+            $limitation = $keydict->wakeup($limitation)->toArray();
         }
 
-        return $new;
+        return $limitations;
     }
     
     /**

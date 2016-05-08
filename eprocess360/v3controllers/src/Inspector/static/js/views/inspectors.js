@@ -63,7 +63,7 @@ var InspectorListMainView = BizzyBone.BaseView.extend({
 });
 
 /**
- * backbone view for category list item
+ * backbone view for inpsector list item
  * @typedef {Object} InspectorListItemView
  */
 var InspectorListItemView = BizzyBone.BaseView.extend({
@@ -400,14 +400,7 @@ var ModalAssignInspectorSkills = BizzyBone.BaseView.extend({
         "click .btn-primary": "eventSave",
         "click .btn-default": "eventCancel"
     },
-    /**
-     * Show the group add/edit user modal. To set up save callbacks, takes a
-     * new or existing group user model and (for adding) a collection to add
-     * to.
-     * @param {GroupUserModel} userModel
-     * @param {GroupUserList} userCollection
-     * @returns {ModalEditGroupUser}
-     */
+
     show: function(inspSkillModel, skillCollection) {
         
         

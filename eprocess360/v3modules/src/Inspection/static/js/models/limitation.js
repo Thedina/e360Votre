@@ -15,6 +15,7 @@ var LimitationModel = BizzyBone.BaseModel.extend({
     }
 });
 
+LimitationModel = Multiview.modelMultiviewable(LimitationModel, hbInitData().meta.Inspection);
 
 /**
  * A list of LimitationModel
@@ -24,3 +25,6 @@ var LimitationList = BizzyBone.BaseCollection.extend({
     model: LimitationModel,
     url: hbInitData().meta.Inspection.apiPath
 });
+
+
+LimitationList = Multiview.collectionMultiviewable(LimitationList);

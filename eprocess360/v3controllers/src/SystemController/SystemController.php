@@ -96,7 +96,7 @@ class SystemController extends Controller
         $this->addController(MigrationsController::build()->setName('migrations')->setDescription
         ('Migration Manager'));
         
-        $this->addController(Inspection::build()->setName('inspection')->setDescription("Inspection"));
+//        $this->addController(Inspection::build()->setName('inspection')->setDescription("Inspection"));
         $this->addController(Inspector::build()->setName('inspector')->setDescription("Inspector"));
 
         $this->setChildrenBuilt(true);

@@ -2,12 +2,9 @@
 
 namespace eprocess360\v3modules\Inspection\Model;
 use eprocess360\v3core\Keydict\Entry\PrimaryKeyInt;
-use eprocess360\v3core\Keydict\Entry\String;
 use eprocess360\v3core\Keydict\Entry\Integer;
 use eprocess360\v3core\Keydict\Table;
 use eprocess360\v3core\Model;
-use eprocess360\v3core\Controller\Controller;
-use eprocess360\v3controllers\Inspection\Inspection;
 
 use eprocess360\v3core\DB;
 /**
@@ -38,12 +35,12 @@ class InspectionCategoryTypes extends Model
         $sql = "SELECT * FROM InspCatTypes LEFT JOIN InspTypes ON InspCatTypes.idInspType = InspTypes.idInspType " . 
                "WHERE InspCatTypes.idInspCategory = {$idInspCategory}";
 
-        $skills = DB::sql($sql);
+        $types = DB::sql($sql);
         
         $new = [];
-        foreach($skills as $skill){
-            if(isset($skill['idInspCatType'])) {
-                $new[] = $skill;
+        foreach($types as $type){
+            if(isset($type['idInspCatType'])) {
+                $new[] = $type;
             }
         }
         

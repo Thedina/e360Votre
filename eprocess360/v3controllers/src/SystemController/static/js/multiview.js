@@ -182,7 +182,10 @@ Multiview = (function() {
         _.each({
             mvCustomColumnEdit: $('#hb-multiview-custom-column-edit'),
             mvCustomColumnRemove: $('#hb-multiview-custom-column-remove'),
-            mvCustomColumnStatusActive : $('#hb-multiview-custom-status-active')
+            mvCustomColumnStatusActive : $('#hb-multiview-custom-status-active'),
+            mvCustomColumnAssignType: $('#hb-multiview-custom-column-assign-types'),
+            mvCustomColumnAssignSkill: $('#hb-multiview-custom-column-assign-skills'),
+            mvCustomColumnAssignLimitation: $('#hb-multiview-custom-column-assign-limitations'),
         }, compiler);
     };
 

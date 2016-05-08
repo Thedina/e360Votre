@@ -4,37 +4,14 @@
             <h3>Limitations</h3>
         </div>
         <div class="col-sm-6 clearfix">
-            <div class="btn-category pull-right h3 use-perm" data-ifperm="Inspection:create" role="category" aria-label="Category Options">
-                <button type="button" class="btn btn-info" id="btn-new-group">New Limitation</button>
+            <div class="btn-limitation pull-right h3 use-perm" data-ifperm="Inspection:create" role="category" aria-label="Category Options">
+                <button type="button" class="btn btn-info" id="btn-new-limitation">New Limitation</button>
             </div>
         </div>
-        <div class="col-sm-12">
-            <ol class="breadcrumb"><li class="active">Limitations</li></ol>
-        </div>
     </div>
-    <div class="panel panel-default">
-        <div class="table-responsive">
-            <table class="table table-hover">
-                <thead><tr><th>Name</th><th>Description</th></tr></thead>
-                <tbody id="limitation-list"></tbody>
-            </table>
-        </div>
-    </div>
+    
+    <div id="multiview"></div>
 </script>
-
-<script id="hb-limitation-list-item" type="text/x-handlebars-template">
-    <tr>
-        <td>{{limitation.title}}</td>
-        <td>{{limitation.description}}</td>
-        <td>
-            <div class="btn-category pull-right" role="limitation" aria-label="Limitation Options">
-                <button type="button" class="btn btn-default btn-xs btn-edit use-perm" data-ifperm="Inspection:write">Edit</button>
-                <button type="button" class="btn btn-default btn-xs btn-remove use-perm" data-ifperm="Inspection:delete">Remove</button>
-            </div>
-        </td>
-    </tr>
-</script>
-
 
 
 <script id="hb-inspection-modal-editlimitation" type="text/x-handlebars-template">

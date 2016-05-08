@@ -26,8 +26,10 @@ use eprocess360\v3modules\Inspection\Model\InspectionCategoryTypes;
 use eprocess360\v3modules\Inspection\Model\InspectionCategorySkills;
 use eprocess360\v3modules\Inspection\Model\InspectionCategoryLimitations;
 use eprocess360\v3modules\Inspection\Model\InspectionType;
-use eprocess360\v3controllers\Inspection\Model\InspectionSkills;
+use eprocess360\v3modules\Inspection\Model\InspectionSkills;
 use eprocess360\v3modules\Inspection\Model\InspectionLimitations;
+use eprocess360\v3core\View\StandardView;
+use eprocess360\v3core\View\Column;
 use Exception;
 
 /**
@@ -50,78 +52,85 @@ class Inspection extends Controller implements InterfaceTriggers
      */
     public function routes()
     {
-        $this->routes->map('GET', '', function () {
-            $this->getInspectionsAPI();
-        });
-        $this->routes->map('GET', '/categories', function () {
-            $this->getInspectionCategoryAPI();
-        });
-        $this->routes->map('POST', '/categories', function () {
-            $this->createInspectionCategoryAPI();
-        });
-        $this->routes->map('PUT', '/categories/[i:idInspCategory]', function ($idInspCategory) {
-            $this->editInspectionCategoryAPI($idInspCategory);
-        });
-        $this->routes->map('DELETE', '/categories/[i:idInspCategory]', function ($idInspCategory) {
-            $this->deleteInspectionCategoryAPI($idInspCategory);
-        });
-        $this->routes->map('POST', '/categories/getskills/[i:idInspCategory]', function ($idInspCategory) {
-            $this->getInspectionCategorySkillsAPI($idInspCategory);
-        });
-        $this->routes->map('POST', '/categories/getTypes/[i:idInspCategory]', function ($idInspCategory) {
-            $this->getInspectionCategoryTypeAPI($idInspCategory);
-        });
-        $this->routes->map('POST', '/categories/skills/[i:idInspCategory]', function ($idInspCategory) {
-            $this->postInspectionCategorySkillsAPI($idInspCategory);
-        });
-        $this->routes->map('POST', '/categories/getlimitations/[i:idInspCategory]', function ($idInspCategory) {
-            $this->getInspectionCategoryLimitationsAPI($idInspCategory);
-        });
-        $this->routes->map('POST', '/categories/limitations/[i:idInspCategory]', function ($idInspCategory) {
-            $this->postInspectionCategoryLimitationsAPI($idInspCategory);
-        });
-        $this->routes->map('GET', '/types', function () {
-            $this->getInspectionTypesAPI();
-        });
-        $this->routes->map('POST', '/types', function () {
-            $this->createInspectionTypeAPI();
-        });
-        $this->routes->map('PUT', '/types/[i:idInspType]', function ($idInspType) {
-            $this->editInspectionTypesAPI($idInspType);
-        });
-        $this->routes->map('DELETE', '/types/[i:idInspType]', function ($idInspType) {
-            $this->deleteInspectionTypeAPI($idInspType);
-        });
-        $this->routes->map('POST', '/categories/types/[i:idInspCategory]', function ($idInspCategory) {
-            $this->postInspectionCategoryTypesAPI($idInspCategory);
-        });
-        $this->routes->map('GET', '/skills', function () {
-            $this->getInspectionSkillAPI();
-        });
-        $this->routes->map('POST', '/skills', function () {
-            $this->createInspectionSkillAPI();
-        });
-        $this->routes->map('PUT', '/skills/[i:idInspSkill]', function ($idInspSkill) {
-            $this->editInspectionSkillsAPI($idInspSkill);
-        });
-        $this->routes->map('DELETE', '/skills/[i:idInspSkill]', function ($idInspSkill) {
-            $this->deleteInspectionSkillsAPI($idInspSkill);
-        });
-        $this->routes->map('GET', '/limitations', function () {
-            $this->getLimitationAPI();
-        });
-        $this->routes->map('POST', '/limitations', function () {
-            $this->createLimitationAPI();
-        });
-        $this->routes->map('PUT', '/limitations/[i:idInspLimiattion]', function ($idlimitation) {
-            $this->editLimitationAPI($idlimitation);
-        });
-        $this->routes->map('DELETE', '/limitations/[i:idInspLimiattion]', function ($idlimitation) {
-            $this->deleteLimitationAPI($idlimitation);
-        });
-        $this->routes->map('GET', '/projectconfig', function () {
-            $this->getProjectConfigAPI();
-        });
+        
+        if($this->getParent()->hasObjectId()) {
+            
+        }
+        else{
+            $this->routes->map('GET', '', function () {
+                $this->getInspectionsAPI();
+            });
+            $this->routes->map('GET', '/categories', function () {
+                $this->getInspectionCategoryAPI();
+            });
+            $this->routes->map('POST', '/categories', function () {
+                $this->createInspectionCategoryAPI();
+            });
+            $this->routes->map('PUT', '/categories/[i:idInspCategory]', function ($idInspCategory) {
+                $this->editInspectionCategoryAPI($idInspCategory);
+            });
+            $this->routes->map('DELETE', '/categories/[i:idInspCategory]', function ($idInspCategory) {
+                $this->deleteInspectionCategoryAPI($idInspCategory);
+            });
+            $this->routes->map('GET', '/categories/skills/[i:idInspCategory]', function ($idInspCategory) {
+                $this->getInspectionCategorySkillsAPI($idInspCategory);
+            });
+            $this->routes->map('PUT', '/categories/skills/[i:idInspCategory]', function ($idInspCategory) {
+                $this->postInspectionCategorySkillsAPI($idInspCategory);
+            });
+            $this->routes->map('GET', '/categories/types/[i:idInspCategory]', function ($idInspCategory) {
+                $this->getInspectionCategoryTypeAPI($idInspCategory);
+            });
+            $this->routes->map('PUT', '/categories/types/[i:idInspCategory]', function ($idInspCategory) {
+                $this->postInspectionCategoryTypesAPI($idInspCategory);
+            });
+            $this->routes->map('GET', '/categories/limitations/[i:idInspCategory]', function ($idInspCategory) {
+                $this->getInspectionCategoryLimitationsAPI($idInspCategory);
+            });
+            $this->routes->map('PUT', '/categories/limitations/[i:idInspCategory]', function ($idInspCategory) {
+                $this->postInspectionCategoryLimitationsAPI($idInspCategory);
+            });
+            $this->routes->map('GET', '/types', function () {
+                $this->getInspectionTypesAPI();
+            });
+            $this->routes->map('POST', '/types', function () {
+                $this->createInspectionTypeAPI();
+            });
+            $this->routes->map('PUT', '/types/[i:idInspType]', function ($idInspType) {
+                $this->editInspectionTypesAPI($idInspType);
+            });
+            $this->routes->map('DELETE', '/types/[i:idInspType]', function ($idInspType) {
+                $this->deleteInspectionTypeAPI($idInspType);
+            });
+            $this->routes->map('GET', '/skills', function () {
+                $this->getInspectionSkillAPI();
+            });
+            $this->routes->map('POST', '/skills', function () {
+                $this->createInspectionSkillAPI();
+            });
+            $this->routes->map('PUT', '/skills/[i:idInspSkill]', function ($idInspSkill) {
+                $this->editInspectionSkillsAPI($idInspSkill);
+            });
+            $this->routes->map('DELETE', '/skills/[i:idInspSkill]', function ($idInspSkill) {
+                $this->deleteInspectionSkillsAPI($idInspSkill);
+            });
+            $this->routes->map('GET', '/limitations', function () {
+                $this->getLimitationAPI();
+            });
+            $this->routes->map('POST', '/limitations', function () {
+                $this->createLimitationAPI();
+            });
+            $this->routes->map('PUT', '/limitations/[i:idInspLimiattion]', function ($idlimitation) {
+                $this->editLimitationAPI($idlimitation);
+            });
+            $this->routes->map('DELETE', '/limitations/[i:idInspLimiattion]', function ($idlimitation) {
+                $this->deleteLimitationAPI($idlimitation);
+            });
+            $this->routes->map('GET', '/projectconfig', function () {
+                $this->getProjectConfigAPI();
+            });
+        }
+            
     }
     /**
      * API Function that builds and returns Inspections on this Controller.
@@ -142,7 +151,24 @@ class Inspection extends Controller implements InterfaceTriggers
     {   
         
         $this->verifyPrivilege(Privilege::READ);
-        $data = InspectionCategories::allCategories();
+        $result = InspectionCategories::allCategories(true);
+        
+        $table = $result['keydict'];
+        
+        $view = StandardView::build('Categories.All', 'Categories', $result['keydict'], $result);
+        
+        $view->add(
+            Column::import($table->idInspCategory)->setEnabled(false)->bucketBy(),
+            Column::import($table->title, "Name")->filterBySearch()->bucketBy()->setSort(true),
+            Column::import($table->description, "Description"),
+            Column::build("inspection-type", "Inspection type")->setTemplate("mvCustomColumnAssignType"),
+                Column::build("skill", "Skills")->setTemplate("mvCustomColumnAssignSkill"),
+                Column::build("limitation", "Limitations")->setTemplate("mvCustomColumnAssignLimitation"),
+            Column::build("options", "")->setTemplate("mvCustomColumnEdit")
+        );
+
+        $view->response($this);
+        $data = $view->json(false);
         $this->standardResponse($data, 200, "categories");
 
     }
@@ -204,7 +230,7 @@ class Inspection extends Controller implements InterfaceTriggers
      * @throws Exception
      */
     public function getInspectionCategorySkillsAPI($idInspCategory)
-    {
+    {   
         $allSkills = InspectionSkills::allSkills();
         
         if(empty($allSkills))
@@ -240,7 +266,7 @@ class Inspection extends Controller implements InterfaceTriggers
      * @param $idInspCategory
      */
     public function postInspectionCategorySkillsAPI($idInspCategory)
-    {
+    {      
         $data     = Request::get()->getRequestBody();
         $postData = $data['skills'];
         InspectionCategorySkills::editSkills($idInspCategory, $postData);
@@ -253,8 +279,9 @@ class Inspection extends Controller implements InterfaceTriggers
      */
     public function getInspectionCategoryTypeAPI($idInspCategory)
     {   
-        $allTypes = InspectionType::allInspectionTypes();
         
+        $allTypes = InspectionType::allInspectionTypes();
+
         if(empty($allTypes))
             throw new Exception("Types not found. Add Types before assign");
         
@@ -350,7 +377,22 @@ class Inspection extends Controller implements InterfaceTriggers
      */
     public function getInspectionTypesAPI()
     {  
-        $data = InspectionType::allInspectionTypes();
+        
+        $this->verifyPrivilege(Privilege::READ);
+        $result = InspectionType::allInspectionTypes(true);
+        
+        $table = $result['keydict'];
+        
+        $view = StandardView::build('Types.All', 'Types', $result['keydict'], $result);
+        
+        $view->add(
+            Column::import($table->idInspType)->setEnabled(false)->bucketBy(),
+            Column::import($table->title, "Name")->filterBySearch()->bucketBy()->setSort(true),
+            Column::import($table->description, "Description"),
+            Column::build("options", "")->setTemplate("mvCustomColumnEdit")
+        );
+        $view->response($this);
+        $data = $view->json(false);
         $this->standardResponse($data, 200, "types");
         
     }
@@ -409,7 +451,22 @@ class Inspection extends Controller implements InterfaceTriggers
      */
     public function getInspectionSkillAPI()
     {
-        $data = InspectionSkills::allSkills();
+        
+        $this->verifyPrivilege(Privilege::READ);
+        
+        $result = InspectionSkills::allSkills(true);
+        $table = $result['keydict'];
+        
+        $view = StandardView::build('Skills.All', 'Skills', $result['keydict'], $result);
+        
+        $view->add(
+            Column::import($table->idInspSkill)->setEnabled(false)->bucketBy(),
+            Column::import($table->title, "Name")->filterBySearch()->bucketBy()->setSort(true),
+            Column::import($table->description, "Description"),
+            Column::build("options", "")->setTemplate("mvCustomColumnEdit")
+        );
+        $view->response($this);
+        $data = $view->json(false);
         $this->standardResponse($data, 200, "skills");
 
     }
@@ -467,7 +524,22 @@ class Inspection extends Controller implements InterfaceTriggers
      */
     public function getLimitationAPI()
     {
-        $data = InspectionLimitations::allLimitations();
+        
+        $this->verifyPrivilege(Privilege::READ);
+        $result = InspectionLimitations::allLimitations(true);
+        
+        $table = $result['keydict'];
+        
+        $view = StandardView::build('Skills.All', 'Skills', $result['keydict'], $result);
+        
+        $view->add(
+            Column::import($table->idInspLimitation)->setEnabled(false)->bucketBy(),
+            Column::import($table->title, "Name")->filterBySearch()->bucketBy()->setSort(true),
+            Column::import($table->description, "Description"),
+            Column::build("options", "")->setTemplate("mvCustomColumnEdit")
+        );
+        $view->response($this);
+        $data = $view->json(false);
         $this->standardResponse($data, 200, "limitations");
 
     }
@@ -531,22 +603,23 @@ class Inspection extends Controller implements InterfaceTriggers
     
     /**********************************************   #HELPER#  **********************************************/
     
-    private function standardResponse($data = [], $responseCode = 200, $apiType = "", $error = false)
+    private function standardResponse($data = [], $responseCode = 200, $objectType = "", $error = false)
     {
         if($error == false)
             $error = $this->messages[$responseCode];
         
         
-        $this->objectType = $apiType;
+        $this->objectType = $objectType;
 
         $responseData = [
             'data' => $data
         ];
 
         $response = $this->getResponseHandler();        
-        $this->changeApiPaths($response, $apiType);
+        $this->changeApiPaths($response, $objectType);
         $response->setResponse($responseData, $responseCode, false);
-        $this->setRenderingTemplates($response, $apiType);
+        $this->setRenderingTemplates($response, $objectType);
+        $response->extendResponseMeta('Inspection', ['objectType'=>$objectType]);
         
         if($error)
             $response->setErrorResponse(new Exception($error));
@@ -585,11 +658,7 @@ class Inspection extends Controller implements InterfaceTriggers
             $newApi     = $currentApi . '/limitations';
             $newApiPath = $currentApiPath . '/limitations';
         }
-        else if($apiType == "inspectors"){
-            $newApi     = $currentApi . '/inspectors';
-            $newApiPath = $currentApiPath . '/inspectors';
-        }
-         
+
         if(!empty($newApi) && !empty($newApiPath)){
             $response->extendResponseMeta('Inspection', array('api' => $newApi));
             $response->extendResponseMeta('Inspection', array('apiPath' => $newApiPath));
@@ -601,30 +670,29 @@ class Inspection extends Controller implements InterfaceTriggers
      * @param $response
      * @param $apiType
      */
-    private function setRenderingTemplates($response, $apiType)
+    private function setRenderingTemplates($response, $objectType)
     {
-        if($apiType == "categories"){
-            $response->setTemplate('Inspection.category.html.twig', 'server');
-            $response->setTemplate('module.inspection.categories.handlebars.html', 'client', $this);
-        }
-        else if($apiType == "types"){
-            $response->setTemplate('Inspection.types.html.twig', 'server');
-            $response->setTemplate('module.inspection.types.handlebars.html', 'client', $this);
-        }
-        else if($apiType == "skills"){
-            $response->setTemplate('Inspection.skills.html.twig', 'server');
-            $response->setTemplate('module.inspection.skills.handlebars.html', 'client', $this);
-        }
-        else if($apiType == "limitations"){
-            $response->setTemplate('Inspection.lim.html.twig', 'server');
-            $response->setTemplate('module.inspection.limitation.handlebars.html', 'client', $this);
-        }
-        else if($apiType == "inspectors"){
-            $response->setTemplate('Inspection.inspector.html.twig', 'server');
-            $response->setTemplate('module.inspector.handlebars.html', 'client', $this);
+        
+        if($this->getParent()->hasObjectId()) {
+            
         }
         else{
-            $response->setTemplate('Inspection.main.html', 'server');
+            
+            $response->setTemplate('inspections.settings.html.twig', 'server');
+            $response->setTemplate(APP_PATH.'/eprocess360/v3controllers/src/SystemController/static/handlebars/global.multiview.handlebars.html', 'client', $this);
+            
+            if($objectType == "categories"){
+                $response->setTemplate('module.inspection.categories.handlebars.html', 'client', $this);
+            }
+            else if($objectType == "types"){
+                $response->setTemplate('module.inspection.types.handlebars.html', 'client', $this);
+            }
+            else if($objectType == "skills"){
+                $response->setTemplate('module.inspection.skills.handlebars.html', 'client', $this);
+            }
+            else if($objectType == "limitations"){
+                $response->setTemplate('module.inspection.limitation.handlebars.html', 'client', $this);
+            }   
         }
         
     }

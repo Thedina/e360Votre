@@ -1,0 +1,123 @@
+{% extends 'SystemController.backbone.base.html.twig' %}
+{% block moduleCSS %}
+    <link rel="Stylesheet" type="text/css" href="{{ Response.meta.SystemController.static }}/css/typeahead.css"/>
+    <link rel="Stylesheet" type="text/css" href="{{ Response.meta.SystemController.static }}/css/multiview.css"/>
+{% endblock %}
+{% block body %}
+    <div id="content-container"></div>
+{% endblock %}
+{% block moduleJS %}
+    <script src="{{ Response.meta.SystemController.static }}/js/util.js"></script>
+    <script src="{{ Response.meta.SystemController.static }}/js/bizzybone.js"></script>
+    <script src="{{ Response.meta.SystemController.static }}/js/multiview.js"></script>
+    {% if Response.meta.Inspection.objectType == "categories" %}
+        <script src="{{ Response.meta.Inspection.static }}/js/models/categories.js" type="text/javascript"></script>
+        <script src="{{ Response.meta.Inspection.static }}/js/views/categories.js" type="text/javascript"></script>
+    {% elseif Response.meta.Inspection.objectType == "types" %}
+        <script src="{{ Response.meta.Inspection.static }}/js/models/types.js" type="text/javascript"></script>
+        <script src="{{ Response.meta.Inspection.static }}/js/views/types.js" type="text/javascript"></script>
+    {% elseif Response.meta.Inspection.objectType == "skills" %}
+        <script src="{{ Response.meta.Inspection.static }}/js/models/skills.js" type="text/javascript"></script>
+        <script src="{{ Response.meta.Inspection.static }}/js/views/skills.js" type="text/javascript"></script>
+    {% elseif Response.meta.Inspection.objectType == "limitations" %}
+        <script src="{{ Response.meta.Inspection.static }}/js/models/limitation.js" type="text/javascript"></script>
+        <script src="{{ Response.meta.Inspection.static }}/js/views/limitation.js" type="text/javascript"></script>
+    {% endif %}
+{% endblock %}
+{% block javascript %}
+    <script type="text/javascript">
+        
+        $(document).ready(function() {
+            var getData, metaData, baseCollection, baseView;
+
+            getData = hbInitData().data;
+            metaData = hbInitData().meta.Inspection;
+            
+            if(metaData.objectType === "categories") {
+                
+                // Precompile all the relevant templates            
+                _.each({
+                    categoryListMain: '#hb-category-list-main',
+                    categoryModalEditCategory: '#hb-category-modal-editcategory',
+                    categoryModalAddSkills: '#hb-category-modal-addskills',
+                    categorySkillItem: '#hb-skill-list-item',
+                    categoryModalAddLimitations : '#hb-category-modal-addlimitations',
+                    categoryLimitationItem : '#hb-limitation-list-item',
+                    categoryModalAddTypes:'#hb-category-modal-addtypes',
+                    categoryTypesItem:'#hb-type-list-item',
+                }, hbCompileTemplate);
+
+                Multiview.compileTemplates(hbCompileTemplate);
+                Multiview.compileExtendedTemplates(hbCompileTemplate);
+                
+                modalEditCategory = new ModalEditCategory();
+                modalAssignTypes = new ModalAssignTypes();
+                modalAssignSkills = new ModalAssignSkills();
+                modalAssignLimitations = new ModalAssignLimitations();
+                
+                baseCollection = new CategoryList();
+                baseCollection.loadData(getData, {silent: true});
+                
+                baseView = new CategoryListMainView({collection: baseCollection, el: $('#content-container')});
+                baseView.render();
+                
+            }
+            else if(metaData.objectType === "types") {
+                
+                _.each({
+                    typeListMain: '#hb-type-list-main',
+                    typeModelEdit: '#hb-list-modal-edittype',
+                }, hbCompileTemplate);
+                
+                Multiview.compileTemplates(hbCompileTemplate);
+                Multiview.compileExtendedTemplates(hbCompileTemplate);
+                
+                modalEditType = new ModalEditType();
+                
+                baseCollection = new TypesList();
+                baseCollection.loadData(getData, {silent: true});
+                
+                baseView = new TypesListMainView({collection: baseCollection, el: $('#content-container')});
+                baseView.render();
+            }
+            else if(metaData.objectType === "skills") {
+                
+                _.each({
+                    skillListMain: '#hb-skill-list-main',
+                    EditSkill:'#hb-inspection-modal-editskill',
+                }, hbCompileTemplate);
+                
+                Multiview.compileTemplates(hbCompileTemplate);
+                Multiview.compileExtendedTemplates(hbCompileTemplate);
+                
+                modalEditSkill = new ModalEditSkill();
+                
+                baseCollection = new SkillsList();
+                baseCollection.loadData(getData, {silent: true});
+                
+                baseView = new SkillListMainView({collection: baseCollection, el: $('#content-container')});
+                baseView.render();
+            }
+            else if(metaData.objectType === "limitations") {
+                
+                _.each({
+                    limitationListMain: '#hb-limitation-list-main',
+                    limitationEditView: '#hb-inspection-modal-editlimitation'
+                }, hbCompileTemplate);
+                
+                Multiview.compileTemplates(hbCompileTemplate);
+                Multiview.compileExtendedTemplates(hbCompileTemplate);
+                
+                modalEditLimitation = new ModalEditLimitation();
+                
+                baseCollection = new LimitationList();
+                baseCollection.loadData(getData, {silent: true});
+                
+                baseView = new LimitationListMainView({collection: baseCollection, el: $('#content-container')});
+                baseView.render();
+
+            }
+        });
+            
+    </script>
+{% endblock %}

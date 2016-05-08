@@ -51,22 +51,26 @@ class InspectionSkills extends Model
      * Get all skills from database
      * @return array
      */
-    public static function allSkills()
+    public static function allSkills($multiView = false)
     {
         
-        $sql = "SELECT * FROM InspSkills";
-
-        $new = array();
-        foreach (self::each($sql)
-                 as $sqlResult){
-            
-            $resultArray = $sqlResult->toArray();
-
-            if(isset($resultArray['idInspSkill'])) {
-                $new[] = $resultArray;
-            }
+        $sql = "SELECT * FROM InspSkills ORDER BY title";
+        
+        $keydict = self::keydict();
+        
+        if($multiView){
+            $select = "*";
+            $result = ['keydict'=>$keydict, 'select'=>$select,'join'=>NULL, 'where'=>NULL];
+            return $result;
         }
-        return $new;
+        
+        $skills = DB::sql($sql);
+
+        foreach ($skills as &$skill) {
+            $skill = $keydict->wakeup($skill)->toArray();
+        }
+
+        return $skills;
     }
     
     /**

@@ -2,7 +2,6 @@
 
 {% if User.isIdentified() %}{% set navbar = navbar|merge([ ['dashboard', 'Dashboard']]) %}{% endif %}
 {% if User.isIdentified() %}{% set navbar = navbar|merge([ ['projects', 'Projects']]) %}{% endif %}
-{% if User.isIdentified() %}{% set navbar = navbar|merge([ ['inspection', 'Inspection']]) %}{% endif %}
 {% if User.isAdmin() %}{% set navbar = navbar|merge([['admin','Admin']]) %}{% endif %}
 {% set active = active|default('') %}
 

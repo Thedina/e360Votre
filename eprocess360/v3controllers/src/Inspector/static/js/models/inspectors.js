@@ -1,5 +1,5 @@
 /**
- * Categories: Models
+ * Inspectors: Models
  */
 
 /**
@@ -17,10 +17,7 @@ var InspectorModel = BizzyBone.BaseModel.extend({
     },
 });
 
-/**
- * A list of CategoryModels
- * @typedef {Object} CategoryList
- */
+
 var InspectorList = BizzyBone.BaseCollection.extend({
     model: InspectorModel,
     url: hbInitData().meta.Inspector.apiPath,

@@ -10,11 +10,12 @@ var TypesModel = BizzyBone.BaseModel.extend({
     urlRoot: hbInitData().meta.Inspection.apiPath,
     idAttribute: 'idInspType',
     defaults: {
-        idController: 0,
         title: '',
         description: '',
     },
 });
+
+TypesModel = Multiview.modelMultiviewable(TypesModel, hbInitData().meta.Inspection);
 
 /**
  * A list of TypesModel
@@ -24,3 +25,5 @@ var TypesList = BizzyBone.BaseCollection.extend({
     model: TypesModel,
     url: hbInitData().meta.Inspection.apiPath
 });
+
+TypesList = Multiview.collectionMultiviewable(TypesList);

@@ -6,7 +6,7 @@
  * Backbone model for skills
  * @typedef {Object} SkillModel
  */
-var SkillModel= BizzyBone.BaseModel.extend({
+var SkillsModel= BizzyBone.BaseModel.extend({
     urlRoot: hbInitData().meta.Inspection.apiPath,
     idAttribute: 'idInspSkill',
     defaults: {
@@ -15,11 +15,15 @@ var SkillModel= BizzyBone.BaseModel.extend({
     },
 });
 
+SkillsModel = Multiview.modelMultiviewable(SkillsModel, hbInitData().meta.Inspection);
+
 /**
  * A list of SkillModel
  * @typedef {Object} SkillList
  */
-var SkillList = BizzyBone.BaseCollection.extend({
-    model: SkillModel,
+var SkillsList = BizzyBone.BaseCollection.extend({
+    model: SkillsModel,
     url: hbInitData().meta.Inspection.apiPath
 });
+
+SkillsList = Multiview.collectionMultiviewable(SkillsList);

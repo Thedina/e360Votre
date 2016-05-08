@@ -5,8 +5,6 @@ use eprocess360\v3core\Keydict\Entry\PrimaryKeyInt;
 use eprocess360\v3core\Keydict\Entry\String;
 use eprocess360\v3core\Keydict\Table;
 use eprocess360\v3core\Model;
-use eprocess360\v3core\Controller\Controller;
-use eprocess360\v3controllers\Inspection\Inspection;
 
 use eprocess360\v3core\DB;
 /**
@@ -46,21 +44,26 @@ class InspectionCategories extends Model
      * Get all categories from database
      * @return array
      */
-    public static function allCategories()
+    public static function allCategories($multiView = false)
     {        
         //find all Inspection Categories
         $sql = "SELECT * FROM InspCategories ORDER BY title";
-
-        $new = array();
-        foreach (self::each($sql) as $sqlResult){
-            
-            $resultArray = $sqlResult->toArray();
-
-            if(isset($resultArray['idInspCategory'])) {
-                $new[] = $resultArray;
-            }
+        
+        $keydict = self::keydict();
+        
+        if($multiView){
+            $select = "*";
+            $result = ['keydict'=>$keydict, 'select'=>$select,'join'=>NULL, 'where'=>NULL];
+            return $result;
         }
-        return $new;
+        
+        $categories = DB::sql($sql);
+
+        foreach ($categories as &$category) {
+            $category = $keydict->wakeup($category)->toArray();
+        }
+
+        return $categories;
     }
     
     /**

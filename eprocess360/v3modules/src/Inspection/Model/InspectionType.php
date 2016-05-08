@@ -22,10 +22,7 @@ class InspectionType extends Model
         return Table::build(
             PrimaryKeyInt::build('idInspType', 'Type Id'),	
             String::build('title', 'Title'),
-            String::build('description', 'Description'),
-            IdInteger::build('status', 'Status'),
-            IdInteger::build('createdUserId', 'Created By'),
-            Datetime::build('creaetdDate', 'Date')
+            String::build('description', 'Description')
            
         )->setName('InspTypes')->setLabel('InspTypes');
     }
@@ -34,22 +31,26 @@ class InspectionType extends Model
      * Get all inspection types from database
      * @return array
      */
-    public static function allInspectionTypes()
+    public static function allInspectionTypes($multiView = false)
     {
-
-        $sql = "SELECT * FROM InspTypes";
-
-        $new = array();
-        foreach (self::each($sql)
-                 as $sqlResult){
-            $resultArray = $sqlResult->toArray();
-
-            if(isset($resultArray['idInspType'])) {
-                $new[] = $resultArray;
-            }
+        //find all Inspection types
+        $sql = "SELECT * FROM InspTypes ORDER BY title";
+        
+        $keydict = self::keydict();
+        
+        if($multiView){
+            $select = "*";
+            $result = ['keydict'=>$keydict, 'select'=>$select,'join'=>NULL, 'where'=>NULL];
+            return $result;
         }
+                
+        $types = DB::sql($sql);
 
-        return $new;
+        foreach ($types as &$type) {
+            $type = $keydict->wakeup($type)->toArray();
+        }
+        
+        return $types;
     }
     
     /**
@@ -121,10 +122,6 @@ class InspectionType extends Model
         $instance->data->acceptArray($rowData);
         return $instance;
     }
-    
-  
-    
-    
     
 }
 
